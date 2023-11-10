@@ -1,0 +1,121 @@
+<title>Form</title>
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: sans-serif;
+    }
+    body {
+        background-color: #F4F6F9;
+    }
+    .container {
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid #D8DDE6;
+        color: #16325c;
+        background-color: #fff;
+        font-size: 16px;
+        width: 340px;
+        position: absolute;
+        margin-left: calc(-340px / 2);
+        margin-top: calc(-136px / 2);
+        left: 50%;
+        top: 50%;
+        text-align: center;
+    }
+    input, button {
+        line-height: 100%;
+        border-radius: 4px;
+        height: 42px;
+    }
+    input {
+        width: 100%;
+        border: 1px solid #d8dde6;
+        margin: 0 0 15px 0;
+        padding: 0 14px;
+        font-size: 14px;
+    }
+    button {
+        border: 0;
+        margin: 0;
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        background-color: #215ca0;
+        text-transform: uppercase;
+        color: white;
+        padding: 0 24px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .form .block {}
+    .form .block .error {
+        border: red solid 1px;
+        border-top: none;
+        display: block;
+        font-size: 12px;
+        margin: -18px 0 15px 0;
+        padding: 10px;
+    }
+
+</style>
+
+<!-- 
+%%[
+    var @name
+
+    set @name = requestParameter("name")
+    set @success = requestParameter("success")
+
+    if @success != 1 then
+]%%
+    <form action="%%=CloudPagesURL(9088)=%%" method="post" class="form centered">
+        <input name="Name" type="text" placeholder="Your name" >
+        <button>Send</button>
+    </form>
+%%[ else ]%%
+    <div>
+        <p>Thank you %%=v(@Name)=%%!</p>
+    </div>
+%%[ endif ]%% 
+-->
+%%[
+    /*-- Form Handler Capturing --*/
+    var @name
+    var @age
+    var @formCompletionStatus /* complete, errors */
+    var @errors
+
+    set @name = requestParameter("name")
+    set @age = requestParameter("age")
+    set @formCompletionStatus = requestParameter("formCompletionStatus")
+    set @errors = requestParameter("errors")
+]%%
+errors: %%=v(@errors)=%%
+%%[if @formCompletionStatus != 'complete' then]%%
+    <div class="container">
+        <form action="%%=CloudPagesURL(9088)=%%" method="post" class="form centered">
+            <div class="block">
+                <input name="name" type="text" placeholder="Your name" autocomplete="off" value="%%=v(@name)=%%">
+                %%[if indexOf(@errors, 'name') > 0 then]%%
+                <span class="error error-name">
+                    Please insert name
+                </span>
+                %%[endif]%%
+            </div>
+            <div class="block">
+                <input type="number" id="age" name="age" min="1" max="120" placeholder="Your age" value="%%=v(@age)=%%">
+                %%[if indexOf(@errors, 'age') > 0 then]%%
+                <span class="error error-age">
+                    Please insert age
+                </span>
+                %%[endif]%%
+            </div>
+            <button>Send</button>
+        </form>
+    </div>
+%%[else]%%
+    <div class="container">
+        <p>Thank you %%=v(@name)=%%!</p>
+    </div>
+%%[endif]%%

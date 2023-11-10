@@ -1,0 +1,97 @@
+%%[
+SET @SM12_padding_top = '30px'
+SET @SM12_padding_bottom = '0px'
+SET @SM12_bg_color ='#fffffe'
+SET @SM12_heading_color =  @navy
+SET @SM12_font_color = '#000000'
+
+SET @SM12_copyA1 = 'Help soothe their mind'
+SET @SM12_copyA2 = Concat('Help keep your pet relaxed and comfortable by keeping their mealtimes and other routines as consistent <span style="white-space:nowrap;display:inline-block;line-height:1.2em">as&nbsp;possible.</span>')
+
+SET @SM12_copyA3 = 'Help them stay hydrated'
+SET @SM12_copyA4 = Concat('Have fresh, clean water available at all times. Providing multiple water bowls in different locations for them helps ensure they never <span style="white-space:nowrap;display:inline-block;line-height:1.2em">go&nbsp;thirsty.</span>')
+
+SET @SM12_imgA1 = RegExMatch(ContentImagebyKey(CONCAT(@target_id_folder, "_DR",@EID,"_",@email_type,"-img-",@ILTR,".jpg")), @regEx, 1, "IgnoreCase")
+
+SET @SM12_copyB1 = 'Make comfort a priority'
+SET @SM12_copyB2 = Concat('Placing a blanket or sheet over their carrier or crate can provide them with added feelings of security. Be sure to monitor for proper air flow <span style="white-space:nowrap;display:inline-block;line-height:1.2em">and&nbsp;temperature.</span>')
+
+SET @SM12_copyB3 = 'Adjust your walking routine'
+SET @SM12_copyB4 = Concat('Prioritize cooler times of the day for walks, and don’t forget that sidewalks can get hot for pets’ paw pads. Seek cooler surfaces like dirt or grass to help keep <span style="white-space:nowrap;display:inline-block;line-height:1.2em">them&nbsp;comfortable.</span>')
+SET @SM12_imgB1 = RegExMatch(ContentImagebyKey(CONCAT(@target_id_folder, "_DR",@EID,"_",@email_type,"-img-",@ILTR,".jpg")), @regEx, 1, "IgnoreCase")
+
+SET @SM12_copyC1 = 'Add enrichment to their day'
+SET @SM12_copyC2 = Concat('Give your pet toys or long-lasting chews to help burn pent-up energy and stimulate <span style="white-space:nowrap;display:inline-block;line-height:1.2em">their&nbsp;mind.</span>')
+
+SET @SM12_copyC3 = 'Cool off with a <span style="white-space:nowrap;display:inline-block;line-height:1.2em">quick&nbsp;comb-out</span>'
+SET @SM12_copyC4 = Concat('Brush away their old hair to help them feel like they’re taking off a sweater—especially during <span style="white-space:nowrap;display:inline-block;line-height:1.2em">shedding&nbsp;season.</span>')
+SET @SM12_imgC1 = RegExMatch(ContentImagebyKey(CONCAT(@target_id_folder, "_DR",@EID,"_",@email_type,"-img-",@ILTR,".jpg")), @regEx, 1, "IgnoreCase")
+
+
+
+IF @email_type=="fire" or @email_type == "heat" THEN
+  IF @ILTR == 1 THEN
+  SET @SM12_copy1 = @SM12_copyA3
+  SET @SM12_copy2 = @SM12_copyA4
+  SET @SM12_img1 = @SM12_imgA1 
+  ELSEIF @ILTR == 2 THEN
+  SET @SM12_copy1 = @SM12_copyB3
+  SET @SM12_copy2 = @SM12_copyB4
+  SET @SM12_img1 = @SM12_imgB1
+  ELSE
+  SET @SM12_copy1 = @SM12_copyC3
+  SET @SM12_copy2 = @SM12_copyC4
+  SET @SM12_img1 = @SM12_imgC1
+  ENDIF
+ELSE
+  IF @ILTR == 1 THEN
+  SET @SM12_copy1 = @SM12_copyA1
+  SET @SM12_copy2 = @SM12_copyA2
+  SET @SM12_img1 = @SM12_imgA1 
+  ELSEIF @ILTR == 2 THEN
+  SET @SM12_copy1 = @SM12_copyB1
+  SET @SM12_copy2 = @SM12_copyB2
+  SET @SM12_img1 = @SM12_imgB1
+  ELSE
+  SET @SM12_copy1 = @SM12_copyC1
+  SET @SM12_copy2 = @SM12_copyC2
+  SET @SM12_img1 = @SM12_imgC1
+  ENDIF
+ENDIF
+
+]%%
+%%=ContentBlockbyKey(CONCAT(@master_id_folder, "_", "MOD_START"))=%%
+<tr bgcolor="%%=v(@SM12_bg_color)=%%">
+   <td bgcolor="%%=v(@SM12_bg_color)=%%" width="100%" style="padding:%%=v(@SM12_padding_top)=%% 0px %%=v(@SM12_padding_bottom)=%% 0px;">
+      <table align="center" width="90%" border="0" cellpadding="0" cellspacing="0" dir="%%=IIF(mod(@ILTR,2) == 0, 'rtl','ltr')=%%">
+         <tr>
+            <td class="mobile-hide" width="215" valign="middle" align="%%=IIF(mod(@ILTR,2) == 0, 'right','left')=%%" >
+               <img class="width-90" src="%%=v(@SM12_img1)=%%" width="205" border="0" style="display:block;" />
+            </td>
+            <td width="60%" valign="top" class="full-width" dir="ltr">
+               <table class="width-90" width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
+                  <!--[if !mso]><\!-->
+                  <tr class="show-on-mobile" style="display:none">
+                     <td align="center" width="100%" style="">
+                        <img class="width-80" src="%%=v(@SM12_img1)=%%" width="280" border="0" style="display:block;" />
+                     </td>
+                  </tr>
+                  <!-- <![endif]-->
+                  <tr>
+                     <td class="text-align-center mobile-pad-t-20" align="left" style="font-size:18px; color:%%=v(@navy)=%%; font-family:'PetcoCircularTT-Bold',Arial,Helvetica,sans-serif; font-weight:600; line-height:1.2em;">
+                        %%=v(@SM12_copy1)=%%
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="text-align-center mobile-pad-t-20" align="left" style="font-size:16px; color:#000000; font-family:'PetcoCircularTT-Regular',Arial,Helvetica,sans-serif; font-weight:normal; padding-top:5px; line-height:1.2em;">
+                        %%=v(@SM12_copy2)=%%
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+   </td>
+</tr>
+%%=ContentBlockbyKey(CONCAT(@master_id_folder, "_", "MOD_END"))=%%
+%%[SET @ILTR = '']%%

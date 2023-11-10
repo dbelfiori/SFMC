@@ -1,0 +1,47 @@
+%%[
+SET @AppID = AttributeValue("ApplicationID")
+SET @ProspectLeadID = AttributeValue("DS_Prospect_Lead_ID__c")
+
+IF NOT EMPTY (@AppID) THEN
+  SET @AppID = AttributeValue("ApplicationID")
+  SET @prospectRow = RetrieveSalesforceObjects("User","Id","ID", "=", @AppID)
+
+  IF RowCount(@prospectRow) > 0 THEN
+    SET @Row = Row(@prospectRow,1)
+    SET @Id = field(@row, "Id")
+  ENDIF
+ELSE
+  SET @prospectRow = RetrieveSalesforceObjects("User","Id","ID", "=", @ProspectLeadID)
+  IF RowCount(@prospectRow) > 0 THEN
+    SET @Row = Row(@prospectRow,1)
+    SET @Id = field(@row, "Id")
+  ELSE
+    SET @OwnerError = 'Prospect Detail Error'
+  ENDIF
+
+ELSE
+  SET @OwnerError = 'No Detail Error'
+ENDIF
+
+
+SET @UserRow = RetrieveSalesforceObjects(
+  "User",
+  "ID,Name,Title,NMLS__c,ProfileName_Custom__c,Email,Phone,Extension,Fax,MLO_Webpage_URL__c,Photo_URL__C",
+  "ID", "=", @ID)
+
+IF RowCount(@UserRow) > 0 then 
+  SET @Row = Row(@UserRow,1)
+  SET @Name = field(@row, "Name")
+  SET @Title = field(@row, "Title")
+  SET @NMLS = field(@row, "NMLS__c")
+  SET @ProfileName_Custom = field(@row, "ProfileName_Custom__c")
+  SET @Email = field(@row, "Email")
+  SET @Phone = field(@row, "Phone")
+  SET @Extension = field(@row, "Extension")
+  SET @Fax = field(@row, "Fax")
+  SET @MLO_Webpage_URL = field(@row, "MLO_Webpage_URL__c")
+  SET @Photo_URL = field(@row, "Photo_URL__C")
+ELSE
+  SET @OwnerError = 'User Detail Error'
+ENDIF
+]%%

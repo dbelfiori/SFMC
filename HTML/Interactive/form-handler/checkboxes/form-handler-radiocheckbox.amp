@@ -1,0 +1,69 @@
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+%%[
+    set @domain = "exacttarget"
+    set @origin = HTTPRequestHeader("Referer")
+    set @pattern = concat("^(https:\/\/(.*\.)?((",@domain,")\.com))($|\/)")
+    set @match = RegExMatch(@origin, @pattern, 1)
+]%%
+<script runat="server">
+    Platform.Load("core","1");
+    var MATCH = Variable.GetValue("@match");
+    if (!MATCH) { MATCH = null }
+    HTTPHeader.SetValue("Access-Control-Allow-Methods","POST");
+    HTTPHeader.SetValue("Access-Control-Allow-Origin",MATCH);
+    Platform.Response.SetResponseHeader("Strict-Transport-Security","max-age=200"); 
+    Platform.Response.SetResponseHeader("X-XSS-Protection","1; mode=block"); 
+    Platform.Response.SetResponseHeader("X-Frame-Options","Deny"); 
+    Platform.Response.SetResponseHeader("X-Content-Type-Options","nosniff"); 
+    Platform.Response.SetResponseHeader("Referrer-Policy","strict-origin-when-cross-origin"); 
+    Platform.Response.SetResponseHeader("Content-Security-Policy","default-src 'self'");
+</script>
+%%[
+if length(@match) > 0 then  
+
+    var @subscribe
+    var @sms
+    var @email
+    var @communicationType
+    var @formCompletionStatus 
+    var @formHandlerMessage 
+
+    set @subscribe = requestParameter("subscribe")
+    set @sms = requestParameter("sms")
+    set @email = requestParameter("email")
+
+
+    /*-- form validation --*/
+    if empty(@subscribe) then
+        set @formCompletionStatus = "error"
+        set @formHandlerMessage = "Please choose whether or not you would like to subscribe"
+
+        if not empty(@sms) or not empty(@email) then
+            set @formHandlerMessage = concat("Please confirm your communication type by checking the 'Yes' checkbox.")
+        endif
+    else
+        if @subscribe == "yes" then
+            if empty(@sms) and empty(@email) then
+                set @formCompletionStatus = "error"
+                set @formHandlerMessage = "Please choose which communication type (text or email) you prefer"
+            else
+                set @formCompletionStatus = "complete"
+                set @formHandlerMessage = "Thank you for subscribing!"
+            endif
+        else
+            /* no */
+            /* error if sms or email are checked */
+            if not empty(@sms) or not empty(@email) then
+                set @formCompletionStatus = "error"
+                set @formHandlerMessage = "You have selected to not subscribe and chose a subscription communication type. Please correct the form."
+            else 
+                set @formCompletionStatus = "complete"
+                set @formHandlerMessage = "Thank you for your time!"
+            endif
+        endif
+
+    endif
+
+    redirect(concat(cloudPagesUrl(9087,'subscribe',@subscribe,'sms',@sms,'email',@email,'formCompletionStatus',@formCompletionStatus,'formHandlerMessage',@formHandlerMessage)))
+endif
+]%%

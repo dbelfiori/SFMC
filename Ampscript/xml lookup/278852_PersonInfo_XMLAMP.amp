@@ -1,0 +1,111 @@
+%%[
+SET @PersonInfo = "<PersonInfo><PersonID>dominic.belfiori@gmail.com</PersonID><EmailAddress>dominic.belfiori@gmail.com</EmailAddress><FirstName>Robin</FirstName><LastName>Wolfe</LastName><MiddleInitial/><Gender>N</Gender><Title/><CellularPhone/><FaxPhone/><CIMUniqueId/><eCommercerCampConID>ECOM1623409208764</eCommercerCampConID><ExternalCampaignRunNumber>1</ExternalCampaignRunNumber><PalsID/><ReferenceURL/></PersonInfo>"
+/* SET @PersonInfo = [PersonInfo] */
+
+SET @pi_firstName = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/FirstName",1)
+IF RowCount(@pi_firstName) >= 1 THEN
+  SET @FirstName = Field(Row(@pi_firstName,1),"Value")
+ELSE
+  SET @FirstName = ""
+ENDIF
+
+SET @pi_LastName = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/LastName",1)
+IF RowCount(@pi_LastName) >= 1 THEN
+  SET @LastName = Field(Row(@pi_LastName,1),"Value")
+ELSE
+  SET @LastName = ""
+ENDIF
+
+SET @pi_PetName = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/PetName",1)
+IF RowCount(@pi_PetName) >= 1 THEN
+  SET @PetName = Field(Row(@pi_PetName,1),"Value")
+ELSE
+  SET @PetName = ""
+ENDIF
+
+SET @pi_eCommerceCustomerID = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/eCommerceCustomerID",1)
+IF RowCount(@pi_eCommerceCustomerID) >= 1 THEN
+  SET @eCommerceCustomerID = Field(Row(@pi_eCommerceCustomerID,1),"Value")
+ELSE
+  SET @eCommerceCustomerID = ""
+ENDIF
+
+SET @pi_PalsID = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/PalsID",1)
+IF RowCount(@pi_PalsID) >= 1 THEN
+  SET @PalsID = Field(Row(@pi_PalsID,1),"Value")
+ELSE
+  SET @PalsID = ""
+ENDIF
+
+SET @pi_TempPassword = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/TempPassword",1)
+IF RowCount(@pi_TempPassword) >= 1 THEN
+  SET @TempPassword = Field(Row(@pi_TempPassword,1),"Value")
+ELSE
+  SET @TempPassword = ""
+ENDIF
+
+SET @pi_ReferenceURL = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/ReferenceURL",1)
+IF RowCount(@pi_ReferenceURL) >= 1 THEN
+  SET @ReferenceURL = Field(Row(@pi_ReferenceURL,1),"Value")
+ELSE
+  SET @ReferenceURL = ""
+ENDIF
+
+SET @pi_AddressLine1 = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/AddressLine1",1)
+IF RowCount(@pi_AddressLine1) >= 1 THEN
+  SET @AddressLine1 = Field(Row(@pi_AddressLine1,1),"Value")
+ELSE
+  SET @AddressLine1 = ""
+ENDIF
+
+SET @pi_AddressLine2 = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/AddressLine2",1)
+IF RowCount(@pi_AddressLine2) >= 1 THEN
+  SET @AddressLine2 = Field(Row(@pi_AddressLine2,1),"Value")
+ELSE
+  SET @AddressLine2 = ""
+ENDIF
+
+SET @pi_State = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/State",1)
+IF RowCount(@pi_State) >= 1 THEN
+  SET @State = Field(Row(@pi_State,1),"Value")
+ELSE
+  SET @State = ""
+ENDIF
+
+SET @pi_City = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/City",1)
+IF RowCount(@pi_City) >= 1 THEN
+  SET @City = Field(Row(@pi_City,1),"Value")
+ELSE
+  SET @City = ""
+ENDIF
+
+SET @pi_Country = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/Country",1)
+IF RowCount(@pi_Country) >= 1 THEN
+  SET @Country = Field(Row(@pi_Country,1),"Value")
+ELSE
+  SET @Country = ""
+ENDIF
+
+SET @pi_Zip = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/Zip",1)
+IF RowCount(@pi_Zip) >= 1 THEN
+  SET @Zip = Field(Row(@pi_Zip,1),"Value")
+ELSE
+  SET @Zip = ""
+ENDIF
+
+SET @pi_HomePhone = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/HomePhone",1)
+IF RowCount(@pi_HomePhone) >= 1 THEN
+  SET @HomePhone = Field(Row(@pi_HomePhone,1),"Value")
+ELSE
+  SET @HomePhone = ""
+ENDIF
+
+SET @pi_EmailAddress = BuildRowsetFromXML(@PersonInfo,"//PersonInfo/EmailAddress",1)
+IF RowCount(@pi_EmailAddress) >= 1 THEN
+  SET @EmailAddress = Field(Row(@pi_EmailAddress,1),"Value")
+ELSE
+  SET @EmailAddress = ""
+ENDIF
+
+
+]%%

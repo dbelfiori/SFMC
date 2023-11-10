@@ -1,0 +1,41 @@
+%%[
+Set @Email_Address = Base64Encode(EncryptSymmetric(URLEncode(@Email_Address), 'AES', 'pass_abcdefghijklm', @null, 'salt_anioawsdjha', @null, 'iv_njhlahfdabl', @null)
+
+/*****/
+
+set @Email_Address = [Email_Address]
+
+set @password_external_key = 'abcdefghijklm'
+set @salt_external_key = 'agr_ext_anionawsdjha'
+set @IV_external_key = 'agr_njlahfdabl'
+
+set @enc_EmailAddress = Base64Encode(EncryptSymmentic(@Email_Address,'AES',@password_external_key,@null,@salt_external_key,@null,@IV_external_key,@null))
+
+set @dec_EmailAddress = DecryptSymmentic(Base64Decode(@enc_EmailAddress,'UTF-8',1),"AES",@password_external_key,@null,@salt_external_key,@null,@IV_external_key,@null)
+
+]%%
+
+
+%%[
+set @Email_Address = AttributeValue("Email_Address")
+set @rows = lookuprows("PTMS_Email_Audience", "Email_Address", @Email_Address)
+if rowcount(@rows) > 0 then
+  for @i=1 to rowcount(@rows) do 
+      set @row = Row(@rows, @i) 
+      set @Email_Address = field(@row, "Email_Address")
+      set @PNR_Reservation_Number = field(@row, "PNR_Reservation_Number")
+      set @PNR_Create_Date = field(@row, "PNR_Create_Date")
+      set @Ticket_Number = field(@row, "Ticket_Number")
+      set @Segment_Number = field(@row, "Segment_Number")
+      set @Departure_Date = field(@row, "Departure_Date")
+  next @i
+endif
+set @null = ''
+set @Email_Address = Base64Encode(EncryptSymmetric(URLEncode(@Email_Address), 'AES', 'abcdefghijklm', @null, 'toc_ext_anioawsdjha', @null, 'ive_njhlahfdabl', @null))
+set @PNR_Reservation_Number = Base64Encode(EncryptSymmetric(URLEncode(@PNR_Reservation_Number), 'AES', 'abcdefghijklm', @null, 'toc_ext_anioawsdjha', @null, 'ive_njhlahfdabl', @null))
+set @PNR_Create_Date  = Base64Encode(EncryptSymmetric(URLEncode(@PNR_Create_Date), 'AES', 'abcdefghijklm', @null, 'toc_ext_anioawsdjha', @null, 'ive_njhlahfdabl', @null))
+set @Ticket_Number = Base64Encode(EncryptSymmetric(URLEncode(@Ticket_Number), 'AES', 'abcdefghijklm', @null, 'toc_ext_anioawsdjha', @null, 'ive_njhlahfdabl', @null))
+set @Segment_Number = Base64Encode(EncryptSymmetric(URLEncode(@Segment_Number), 'AES', 'abcdefghijklm', @null, 'toc_ext_anioawsdjha', @null, 'ive_njhlahfdabl', @null))
+
+set @Email_Address1 = DecryptSymmetric(Base64Decode(QueryParameter("ea"),'UTF-8', 1), "AES", "abcdefghijklm", @null, "toc_ext_anioawsdjha", @null, "ive_njhlahfdabl", @null)
+]%%

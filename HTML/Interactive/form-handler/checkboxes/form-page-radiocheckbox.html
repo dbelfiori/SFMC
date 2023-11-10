@@ -1,0 +1,111 @@
+
+
+
+    <title>Form</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+        body {
+            background-color: #F4F6F9;
+            font-size: 16px;
+        }
+        .optin {
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #D8DDE6;
+            color: #16325c;
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 960px;
+        }
+        .optin [type="checkbox"] {
+            border: 2px solid #6e6e6e;
+            vertical-align: middle;
+        }
+        .optin button {
+            background-color: #215ca0;
+            border: 0;
+            color: white;
+            cursor: pointer;
+            display: block;
+            font-size: 14px;
+            margin-top: 10px;
+            margin: 0;
+            padding: 0 24px;
+            text-transform: uppercase;
+        }
+    </style>
+
+
+
+
+
+
+%%[
+    /*-- Form Handler Capturing when returning from handler --*/
+    var @subscribe
+    var @sms
+    var @email
+    var @formCompletionStatus
+    var @errorMessages
+
+    set @subscribe = requestParameter("subscribe")
+    set @sms = requestParameter("sms")
+    set @email = requestParameter("email")
+    set @formCompletionStatus = requestParameter("formCompletionStatus")
+    set @formHandlerMessage = requestParameter("formHandlerMessage")
+
+    set @subscribeYesChecked = iif(@subscribe == "yes", 'checked', '')
+    set @subscribeNoChecked = iif(@subscribe == "no", 'checked', '')
+    set @smsChecked = iif(not empty(@sms), 'checked', '')
+    set @emailChecked = iif(not empty(@email), 'checked', '')
+
+]%%
+subscribe: %%=v(@subscribe)=%%<br>
+sms: %%=v(@sms)=%%<br>
+email: %%=v(@email)=%%<br>
+formHandlerMessage: %%=v(@formHandlerMessage)=%%<br>
+
+
+%%[if @formCompletionStatus != 'complete' then]%%
+<div class="optin container">
+    <form id="optin-form" class="optin-form form" action="%%=CloudPagesURL(9088)=%%" method="post">
+        <div class="row">
+            <label for="optin-yes">
+                <input class="radio" type="radio" id="optin-yes" name="subscribe" value="yes" %%=v(@subscribeYesChecked)=%%> Yes, I wish to receive the following electronic communications from Superior
+            </label>
+            <div class="optin-communication-types">
+                <div class="ptin-communication-type">
+                    <label for="optin-sms">
+                        <input class="checkbox" type="checkbox" id="optin-sms" name="sms" value="text" %%=v(@smsChecked)=%%> Text
+                    </label>
+                </div>
+                <div class="ptin-communication-type">
+                    <label for="optin-email">
+                        <input class="checkbox" type="checkbox" id="optin-email" name="email" value="email" %%=v(@emailChecked)=%%> Email
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label for="optin-no">
+                <input class="radio" type="radio" id="optin-no" name="subscribe" value="no" %%=v(@subscribeNoChecked)=%%> No, I do not wish to receive electronic communications from Superior.
+            </label>
+        </div>
+        <button>Submit</button>
+    </form>
+</div>
+%%[else]%%
+<div class="optin container">
+    <p>%%=v(@formHandlerMessage)=%%</p>
+</div>
+%%[endif]%%
+
+
+
+
+
+
+

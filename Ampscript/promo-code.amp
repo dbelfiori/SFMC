@@ -1,0 +1,81 @@
+%%[
+IF @htmlIdB == "Off1_A" OR @htmlIdB == "Off1_B" OR @htmlIdB == "Off1_Old_A" OR @htmlIdB == "Off1_Old_B" OR @htmlIdB == "Off1REM_A" OR @htmlIdB == "Off1REM_B" OR @htmlIdB == "Off1REM_Old_A" OR "Off1REM_Old_B" OR @htmlIdB == "Off1REM_Old_B" THEN
+ SET @Coupon_DE = '11056_PromoCodes_10_Master'
+ELSEIF @htmlIdB == "Off2_A" OR @htmlIdB == "Off2_B" OR @htmlIdB == "Off2_Old_A" OR @htmlIdB == "Off2_Old_B" OR @htmlIdB == "Off2REM_A" OR @htmlIdB == "Off2REM_B" OR @htmlIdB == "Off2REM_Old_A" OR @htmlIdB == "Off2REM_Old_B" THEN
+ SET @Coupon_DE = '11056_PromoCodes_20_Master'
+ELSE
+ RaiseError("Email not included on coupon logic",false)
+ENDIF
+/* Set Seed Master back for LOGGING - Reset before returning to email */
+IF @IS_Check1 == 1 THEN
+ SET @OGMasterID = @MasterID
+ IF _messagecontext == 'LANDINGPAGE' THEN ELSE]%%
+  %%=CONTENTBLOCKBYKEY(CONCAT(@target_id_folder,'_','MOD_M_ID'))=%%
+ %%[ENDIF
+ENDIF
+
+IF @EmailType == 'reminder' OR _messagecontext == 'VAWP' THEN
+   
+ IF _messagecontext == "PREVIEW" OR _messagecontext == 'LANDINGPAGE' THEN
+  /* Prevents expired coupons from breaking preview versions  */
+  SET @promo_code = "TEST-XXOff-ABCDEF"
+  SET @expiryDate =  DATEADD(NOW(),'7','D')
+ ELSE
+  var @Rows, @RowCount
+  SET @RowsReturn = 0
+  SET @Rows = LookupOrderedRows(@Coupon_DE, @RowsReturn, "ClaimedDate desc, EndDate desc", "ClaimingMasterID", @MasterID)
+  SET @RowCount = rowcount(@Rows)
+
+  IF @RowCount > 0 THEN
+   var @ClaimedEnd, @EndDate, @Promocode
+   set @row = row(@rows, 1)
+   set @ClaimedEnd = DATEADD(field(@row,"claimedDate"),'22','D')
+   set @EndDate = field(@row,"EndDate")
+   set @Promocode = field(@row,"Promocode")
+   set @Today = Now()
+   set @EndDate_Check = dateDiff(@Today,@EndDate,"D")
+   set @ClaimedEnd_Check = dateDiff(@Today,@ClaimedEnd,"D")
+      IF @EndDate_Check < 0 OR @ClaimedEnd_Check < 0 THEN
+       RaiseError("Coupon has Expired (For Customer or Usage Period)",false)
+   ENDIF
+  ELSE @RowCount <=0 THEN
+   RaiseError("No Coupon Found for MasterID",false)
+  ENDIF
+  SET @promo_code = @Promocode
+  SET @expiryDate = @ClaimedEnd
+ ENDIF
+ELSE
+ SET @expiryDate = DATEADD(NOW(),'22','D')
+ /* Duplicated because claim row does not like dynamic variables for DE names */
+ 
+ IF _messagecontext == "PREVIEW" OR _messagecontext == 'LANDINGPAGE' THEN 
+  /* When message is previewed prevent coupon claim  */
+  SET @promo_code = "TEST-XXOff-ABCDEF"
+ ELSE
+  IF @htmlIdB == "Off1_A" OR @htmlIdB == "Off1_B" OR @htmlIdB == "Off1_Old_A" OR @htmlIdB == "Off1_Old_B" THEN
+
+   SET @promo_row = ClaimRow('11056_PromoCodes_10_Master', "Claimed", "ClaimingMasterID", @MasterID)
+
+  ELSEIF @htmlIdB == "Off2_A" OR @htmlIdB == "Off2_B" OR @htmlIdB == "Off2_Old_A" OR @htmlIdB == "Off2_Old_B" THEN
+
+   SET @promo_row = ClaimRow('11056_PromoCodes_20_Master', "Claimed", "ClaimingMasterID", @MasterID)
+  ENDIF
+
+  IF not empty(@promo_row) THEN
+    SET @promo_code = Field(@promo_row,"PromoCode")
+  ELSE
+   RaiseError("All promo codes have been claimed",false)
+  ENDIF
+  
+ ENDIF
+ENDIF
+/* FORMAT FOR MODS */
+SET @expiryDate = FORMAT(@expiryDate, "MM/dd/yyyy")
+SET @expiryDateText = FORMAT(@expiryDate, "MMMM d, yyyy")
+
+/* Set Seed Master back for LOGGING - Reset back so reset of email loads properly */
+IF @IS_Check1 == 1 THEN
+ SET @MasterID = @OGMasterID
+ENDIF
+
+]%%

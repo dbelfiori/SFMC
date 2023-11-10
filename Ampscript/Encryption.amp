@@ -1,0 +1,15 @@
+%%[
+set @Email_Address = [Email_Address]
+
+set @password_external_key = 'abcdefghijklm'
+set @salt_external_key = 'marvin_ext_abcdefghijk'
+set @IV_external_key = 'marvin_ext_lmnopqrs'
+
+/* Encoded email variable */
+set @enc_EmailAddress =
+Base64Encode(EncryptSymmentic(@Email_Address,'AES',@password_external_key,@null,@salt_external_key,@null,@IV_external_key,@null))
+
+/* Decoded email variable */
+set @dec_EmailAddress =
+DecryptSymmentic(Base64Decode(@enc_EmailAddress,'UTF-8',1),"AES",@password_external_key,@null,@salt_external_key,@null,@IV_external_key,@null)
+]%%

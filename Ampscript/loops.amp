@@ -1,0 +1,50 @@
+%%[
+    SET @mod_item = 'item1,item2,item3,item4'
+    SET @mod_item_count = RowCount(@mod_item)
+
+IF @mod_item_count > 0 THEN
+    for @i = 1 TO @mod_item_count do
+    SET @mod_item_row = Row(@mod_item, @i)
+    SET @mod_ID = Field(@mod_item_row,1)
+    ContentBlockByID('41494') /* Pull in module specs */
+]%%
+<div id="%%=v(Field(@mod_item_row,1))=%%" class="row">
+    <div class="col">
+        <h3>%%=v(@Module_Title)=%%</h3>
+        %%[IF not empty(@Module_Image_width) THEN]%%
+        <p>
+            Image Size: <code>width:%%=v(@Module_Image_width)=%%px; height:%%=v(@Module_Image_height)=%%px;</code><br>
+            Retina-Optimized: <code>width:%%=multiply(@Module_Image_width,2)=%%px; height:%%=multiply(@Module_Image_height,2)=%%px;</code></p>
+        %%[ENDIF]%%
+        </p>
+        <ul>
+            %%[IF not empty(@Module_List_1) THEN]%%<li>%%=v(@Module_List_1)=%%</li>%%[ENDIF]%%
+            %%[IF not empty(@Module_List_2) THEN]%%<li>%%=v(@Module_List_2)=%%</li>%%[ENDIF]%%
+            %%[IF not empty(@Module_List_3) THEN]%%<li>%%=v(@Module_List_3)=%%</li>%%[ENDIF]%%
+        </ul>
+    </div>
+    <div class="col">
+        <div style="max-width: 700px;">
+            %%=ContentBlockByID(Concat(Field(@mod_item_row,1)))=%%
+        </div>
+    </div>
+</div>
+%%[next @i]%%
+%%[ENDIF]%%
+
+
+
+
+/* loop until you hit a flag */
+%%[
+set @flag = 0
+if @rowcount > 0
+  for @counter = 1 to @rowset do
+    set @rows = row(@rowset, @counter)
+    set @fieldtotriggerbulletpoint = field(@rows,"field") 
+    IF @fieldtotriggerbulletpoint == "Rec1" OR @fieldtotriggerbulletpoint == "Rec2" THEN SET @flag=1 ENDIF
+    next @counter
+  endif
+
+IF @flag==1 THEN ]%% HTML with Single Bullet %%[ ENDIF
+]%%

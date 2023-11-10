@@ -1,0 +1,296 @@
+%%[
+/* TOP LEVEL ORDER INFO */
+SET @Order = "<Order><IsRepeatDeliveryOrder>0</IsRepeatDeliveryOrder><Total>0.00</Total><Subtotal>0.00</Subtotal><SalesTax>0.00</SalesTax><ShippingAmount>0.00</ShippingAmount><ShippingDiscount>0.00</ShippingDiscount><OtherDiscount>0.00</OtherDiscount><TotalDiscount>0.00</TotalDiscount><Surcharge>0.00</Surcharge><OrderDetail><LineNumber/><ProductID>0</ProductID><SKU>376850</SKU><ProductName>Tetra Water Clarifier Clears Cloudy Aquarium Water, 3.38 oz.</ProductName><ProductImage>//assets.petco.com/petco/image/upload/f_auto,q_auto/376850-center-1</ProductImage><ProductURL>https://www.petco.com/shop/PetcoRepeatDeliveryDetailsView?catalogId=10051&amp;storeId=10151&amp;langId=-1&amp;subscriptionId=2986870</ProductURL><ItemSalePrice>0.00</ItemSalePrice><ItemListPrice>0.00</ItemListPrice><Quantity>0</Quantity><ProductTotal>0.00</ProductTotal><ShippingChargeAmount>0.00</ShippingChargeAmount><ShippingTaxAmount>0.00</ShippingTaxAmount><SurchargeAmount>0.00</SurchargeAmount><TaxAmount>0.00</TaxAmount><LineTotal>0.00</LineTotal></OrderDetail></Order>"
+/* SET @Order = [Order] */
+
+SET @od_nodes = BuildRowsetFromXML(@Order,"//Order",1)
+IF Rowcount(@od_nodes) > 0 THEN
+  SET @od_node = concat("<root>", Field(Row(@od_nodes,1),"Xml"), ",</root>")
+
+  SET @od_SubscriptionID = BuildRowsetFromXML(@od_node,"//SubscriptionID",1)
+  IF RowCount(@od_SubscriptionID) >= 1 THEN
+    SET @SubscriptionID = Field(Row(@od_SubscriptionID,1),"Value")
+  ELSE
+    SET @SubscriptionID = ""
+  ENDIF
+
+  SET @od_OrderID = BuildRowsetFromXML(@od_node,"//OrderID",1)
+  IF RowCount(@od_OrderID) >= 1 THEN
+    SET @OrderID = Field(Row(@od_OrderID,1),"Value")
+  ELSE
+    SET @OrderID = ""
+  ENDIF
+
+  SET @od_CustomerOrderNumber = BuildRowsetFromXML(@od_node,"//CustomerOrderNumber",1)
+  IF RowCount(@od_CustomerOrderNumber) >= 1 THEN
+    SET @CustomerOrderNumber = Field(Row(@od_CustomerOrderNumber,1),"Value")
+  ELSE
+    SET @CustomerOrderNumber = ""
+  ENDIF
+
+  SET @od_OrderType = BuildRowsetFromXML(@od_node,"//OrderType",1)
+  IF RowCount(@od_OrderType) >= 1 THEN
+    SET @OrderType = Field(Row(@od_OrderType,1),"Value")
+  ELSE
+    SET @OrderType = ""
+  ENDIF
+
+  SET @od_Currency = BuildRowsetFromXML(@od_node,"//Currency",1)
+  IF RowCount(@od_Currency) >= 1 THEN
+    SET @Currency = Field(Row(@od_Currency,1),"Value")
+  ELSE
+    SET @Currency = ""
+  ENDIF
+
+  SET @od_OrderName = BuildRowsetFromXML(@od_node,"//OrderName",1)
+  IF RowCount(@od_OrderName) >= 1 THEN
+    SET @OrderName = Field(Row(@od_OrderName,1),"Value")
+  ELSE
+    SET @OrderName = ""
+  ENDIF
+
+  SET @od_OrderFrequency = BuildRowsetFromXML(@od_node,"//OrderFrequency",1)
+  IF RowCount(@od_OrderFrequency) >= 1 THEN
+    SET @OrderFrequency = Field(Row(@od_OrderFrequency,1),"Value")
+  ELSE
+    SET @OrderFrequency = ""
+  ENDIF
+
+  SET @od_IsRepeatDeliveryOrder = BuildRowsetFromXML(@od_node,"//IsRepeatDeliveryOrder",1)
+  IF RowCount(@od_IsRepeatDeliveryOrder) >= 1 THEN
+    SET @IsRepeatDeliveryOrder = Field(Row(@od_IsRepeatDeliveryOrder,1),"Value")
+  ELSE
+    SET @IsRepeatDeliveryOrder = ""
+  ENDIF
+
+  SET @od_ProjectedShipmentDate = BuildRowsetFromXML(@od_node,"//ProjectedShipmentDate",1)
+  IF RowCount(@od_ProjectedShipmentDate) >= 1 THEN
+    SET @ProjectedShipmentDate = Field(Row(@od_ProjectedShipmentDate,1),"Value")
+  ELSE
+    SET @ProjectedShipmentDate = ""
+  ENDIF
+
+  SET @od_NextShipmentDate = BuildRowsetFromXML(@od_node,"//NextShipmentDate",1)
+  IF RowCount(@od_NextShipmentDate) >= 1 THEN
+    SET @NextShipmentDate = Field(Row(@od_NextShipmentDate,1),"Value")
+  ELSE
+    SET @NextShipmentDate = ""
+  ENDIF
+
+  SET @od_Total = BuildRowsetFromXML(@od_node,"//Total",1)
+  IF RowCount(@od_Total) >= 1 THEN
+    SET @Total = Field(Row(@od_Total,1),"Value")
+  ELSE
+    SET @Total = ""
+  ENDIF
+
+  SET @od_Subtotal = BuildRowsetFromXML(@od_node,"//Subtotal",1)
+  IF RowCount(@od_Subtotal) >= 1 THEN
+    SET @Subtotal = Field(Row(@od_Subtotal,1),"Value")
+  ELSE
+    SET @Subtotal = ""
+  ENDIF
+  
+  SET @od_ShippingChargeMessage = BuildRowsetFromXML(@od_node,"//ShippingChargeMessage",1)
+  IF RowCount(@od_ShippingChargeMessage) >= 1 THEN
+    SET @ShippingChargeMessage = Field(Row(@od_ShippingChargeMessage,1),"Value")
+  ELSE
+    SET @ShippingChargeMessage = ""
+  ENDIF
+  
+
+  SET @od_SalesTax = BuildRowsetFromXML(@od_node,"//SalesTax",1)
+  IF RowCount(@od_SalesTax) >= 1 THEN
+    SET @SalesTax = Field(Row(@od_SalesTax,1),"Value")
+  ELSE
+    SET @SalesTax = ""
+  ENDIF
+
+  SET @od_ShippingDiscount = BuildRowsetFromXML(@od_node,"//ShippingDiscount",1)
+  IF RowCount(@od_ShippingDiscount) >= 1 THEN
+    SET @ShippingDiscount = Field(Row(@od_ShippingDiscount,1),"Value")
+  ELSE
+    SET @ShippingDiscount = ""
+  ENDIF
+  
+  SET @od_ShippingTrackingNumber = BuildRowsetFromXML(@od_node,"//ShippingTrackingNumber",1)
+  IF RowCount(@od_ShippingTrackingNumber) >= 1 THEN
+    SET @ShippingTrackingNumber = Field(Row(@od_ShippingTrackingNumber,1),"Value")
+  ELSE
+    SET @ShippingTrackingNumber = ""
+  ENDIF
+  
+   SET @od_ShippingTrackingURL = BuildRowsetFromXML(@od_node,"//ShippingTrackingURL",1)
+  IF RowCount(@od_ShippingTrackingURL) >= 1 THEN
+    SET @ShippingTrackingURL = Field(Row(@od_ShippingTrackingURL,1),"Value")
+  ELSE
+    SET @ShippingTrackingURL = ""
+  ENDIF
+
+
+  SET @od_ShippingAmount = BuildRowsetFromXML(@od_node,"//ShippingAmount",1)
+  IF RowCount(@od_ShippingAmount) >= 1 THEN
+    SET @ShippingAmount = Field(Row(@od_ShippingAmount,1),"Value")
+  ELSE
+    SET @ShippingAmount = ""
+  ENDIF
+
+  SET @od_OtherDiscount = BuildRowsetFromXML(@od_node,"//OtherDiscount",1)
+  IF RowCount(@od_OtherDiscount) >= 1 THEN
+    SET @OtherDiscount = Field(Row(@od_OtherDiscount,1),"Value")
+  ELSE
+    SET @OtherDiscount = ""
+  ENDIF
+
+  SET @od_TotalDiscount = BuildRowsetFromXML(@od_node,"//TotalDiscount",1)
+  IF RowCount(@od_TotalDiscount) >= 1 THEN
+    SET @TotalDiscount = Field(Row(@od_TotalDiscount,1),"Value")
+  ELSE
+    SET @TotalDiscount = ""
+  ENDIF
+
+  SET @od_Surcharge = BuildRowsetFromXML(@od_node,"//Surcharge",1)
+  IF RowCount(@od_Surcharge) >= 1 THEN
+    SET @Surcharge = Field(Row(@od_Surcharge,1),"Value")
+  ELSE
+    SET @Surcharge = ""
+  ENDIF
+ 
+  
+  SET @od_ActivePrescription = BuildRowsetFromXML(@od_node,"//ActivePrescription",1)
+  IF RowCount(@od_ActivePrescription) >= 1 THEN
+    SET @ActivePrescription = Field(Row(@od_ActivePrescription,1),"Value")
+  ELSE
+    SET @ActivePrescription = ""
+  ENDIF
+
+  SET @od_TimePlaced = BuildRowsetFromXML(@od_node,"//TimePlaced",1)
+  IF RowCount(@od_TimePlaced) >= 1 THEN
+    SET @TimePlaced = Field(Row(@od_TimePlaced,1),"Value")
+  ELSE
+    SET @TimePlaced = ""
+  ENDIF
+
+  SET @od_OrderURL = BuildRowsetFromXML(@od_node,"//OrderURL",1)
+  IF RowCount(@od_OrderURL) >= 1 THEN
+    SET @OrderURL = Field(Row(@od_OrderURL,1),"Value")
+  ELSE
+    SET @OrderURL = ""
+  ENDIF
+
+  SET @od_ShippingAddressLine1 = BuildRowsetFromXML(@od_node,"//ShippingAddressLine1",1)
+  IF RowCount(@od_ShippingAddressLine1) >= 1 THEN
+    SET @ShippingAddressLine1 = Field(Row(@od_ShippingAddressLine1,1),"Value")
+  ELSE
+    SET @ShippingAddressLine1 = ""
+  ENDIF
+
+  SET @od_ShippingAddressLine2 = BuildRowsetFromXML(@od_node,"//ShippingAddressLine2",1)
+  IF RowCount(@od_ShippingAddressLine2) >= 1 THEN
+    SET @ShippingAddressLine2 = Field(Row(@od_ShippingAddressLine2,1),"Value")
+  ELSE
+    SET @ShippingAddressLine2 = ""
+  ENDIF
+
+  SET @od_ShippingCity = BuildRowsetFromXML(@od_node,"//ShippingCity",1)
+  IF RowCount(@od_ShippingCity) >= 1 THEN
+    SET @ShippingCity = Field(Row(@od_ShippingCity,1),"Value")
+  ELSE
+    SET @ShippingCity = ""
+  ENDIF
+
+  SET @od_ShippingState = BuildRowsetFromXML(@od_node,"//ShippingState",1)
+  IF RowCount(@od_ShippingState) >= 1 THEN
+    SET @ShippingState = Field(Row(@od_ShippingState,1),"Value")
+  ELSE
+    SET @ShippingState = ""
+  ENDIF
+
+  SET @od_ShippingCountry = BuildRowsetFromXML(@od_node,"//ShippingCountry",1)
+  IF RowCount(@od_ShippingCountry) >= 1 THEN
+    SET @ShippingCountry = Field(Row(@od_ShippingCountry,1),"Value")
+  ELSE
+    SET @ShippingCountry = ""
+  ENDIF
+
+  SET @od_ShippingZip = BuildRowsetFromXML(@od_node,"//ShippingZip",1)
+  IF RowCount(@od_ShippingZip) >= 1 THEN
+    SET @ShippingZip = Field(Row(@od_ShippingZip,1),"Value")
+  ELSE
+    SET @ShippingZip = ""
+  ENDIF
+
+  SET @od_PurchaseStoreNumber = BuildRowsetFromXML(@od_node,"//PurchaseStoreNumber",1)
+  IF RowCount(@od_PurchaseStoreNumber) >= 1 THEN
+    SET @PurchaseStoreNumber = Field(Row(@od_PurchaseStoreNumber,1),"Value")
+  ELSE
+    SET @PurchaseStoreNumber = ""
+  ENDIF
+
+  SET @od_PurchaseStoreName = BuildRowsetFromXML(@od_node,"//PurchaseStoreName",1)
+  IF RowCount(@od_PurchaseStoreName) >= 1 THEN
+    SET @PurchaseStoreName = Field(Row(@od_PurchaseStoreName,1),"Value")
+  ELSE
+    SET @PurchaseStoreName = ""
+  ENDIF
+
+  SET @od_PurchaseStoreMainPhoneNumber = BuildRowsetFromXML(@od_node,"//PurchaseStoreMainPhoneNumber",1)
+  IF RowCount(@od_PurchaseStoreMainPhoneNumber) >= 1 THEN
+    SET @PurchaseStoreMainPhoneNumber = Field(Row(@od_PurchaseStoreMainPhoneNumber,1),"Value")
+  ELSE
+    SET @PurchaseStoreMainPhoneNumber = ""
+  ENDIF
+
+  SET @od_PurchaseStoreAddress1 = BuildRowsetFromXML(@od_node,"//PurchaseStoreAddress1",1)
+  IF RowCount(@od_PurchaseStoreAddress1) >= 1 THEN
+    SET @PurchaseStoreAddress1 = Field(Row(@od_PurchaseStoreAddress1,1),"Value")
+  ELSE
+    SET @PurchaseStoreAddress1 = ""
+  ENDIF
+
+  SET @od_PurchaseStoreAddress2 = BuildRowsetFromXML(@od_node,"//PurchaseStoreAddress2",1)
+  IF RowCount(@od_PurchaseStoreAddress2) >= 1 THEN
+    SET @PurchaseStoreAddress2 = Field(Row(@od_PurchaseStoreAddress2,1),"Value")
+  ELSE
+    SET @PurchaseStoreAddress2 = ""
+  ENDIF
+
+  SET @od_PurchaseStoreAddress3 = BuildRowsetFromXML(@od_node,"//PurchaseStoreAddress3",1)
+  IF RowCount(@od_PurchaseStoreAddress3) >= 1 THEN
+    SET @PurchaseStoreAddress3 = Field(Row(@od_PurchaseStoreAddress3,1),"Value")
+  ELSE
+    SET @PurchaseStoreAddress3 = ""
+  ENDIF
+
+  SET @od_PurchaseStoreCity = BuildRowsetFromXML(@od_node,"//PurchaseStoreCity",1)
+  IF RowCount(@od_PurchaseStoreCity) >= 1 THEN
+    SET @PurchaseStoreCity = Field(Row(@od_PurchaseStoreCity,1),"Value")
+  ELSE
+    SET @PurchaseStoreCity = ""
+  ENDIF
+
+  SET @od_PurchaseStoreState = BuildRowsetFromXML(@od_node,"//PurchaseStoreState",1)
+  IF RowCount(@od_PurchaseStoreState) >= 1 THEN
+    SET @PurchaseStoreState = Field(Row(@od_PurchaseStoreState,1),"Value")
+  ELSE
+    SET @PurchaseStoreState = ""
+  ENDIF
+
+  SET @od_PurchaseStoreZip = BuildRowsetFromXML(@od_node,"//PurchaseStoreZip",1)
+  IF RowCount(@od_PurchaseStoreZip) >= 1 THEN
+    SET @PurchaseStoreZip = Field(Row(@od_PurchaseStoreZip,1),"Value")
+  ELSE
+    SET @PurchaseStoreZip = ""
+  ENDIF
+  
+  SET @od_Status = BuildRowsetFromXML(@od_node,"//Status",1)
+  IF RowCount(@od_Status) >= 1 THEN
+    SET @Status = Field(Row(@od_Status,1),"Value")
+  ELSE
+    SET @Status = ""
+  ENDIF
+
+ELSE
+ENDIF
+
+]%%

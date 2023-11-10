@@ -1,0 +1,207 @@
+%%=ContentBlockByKey("278852_PersonInfo_XMLAMP")=%%
+%%=ContentBlockByKey("278852_BaseOrderInfo_XMLAMP")=%%
+
+<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr bgcolor="#00205B">
+    <td bgcolor="#00205B" align="center" width="100%" style="padding:30px 0px; border-top:5px solid #6EDCFA; border-bottom-left-radius:10px; border-bottom-right-radius:10px;">
+      <table role="presentation" width="90%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td class="width-20" width="15%" valign="top" align="left">
+            <img class="width-80" src="http://image.e.petco.com/lib/fe32157075640575771d78/m/1/9cf6e8e7-eda5-4f8a-bb54-0b0def187600.png" alt="" width="60" border="0" style="display:block;" />
+          </td>
+          <td width="85%" class="reduce-headline" align="left" style="font-size:35px; color:#fffffe; font-family:'PetcoCircularTT-Bold',Arial,Helvetica,sans-serif; font-weight:600; mso-line-height-rule:exactly; line-height:1.2em;">
+            %%=uppercase('Your item is moving online only')=%%
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center" width="100%" style="padding-top:40px;">
+      <table role="presentation" width="90%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="left" style="font-size:16px; color:#000000; font-family:'PetcoCircularTT-Regular',Arial,Helvetica,sans-serif; font-weight:normal; line-height:1.2em;">
+            Starting November 3, the below item(s) will be available online only at <a alias="Copy-Petco-com" mc-deep-link="false" href="%%=redirectTo('https://www.petco.com/shop/en/petcostore')=%%" style="color:#000000; text-decoration: underline;"><span style="color:#000000">petco.com</span></a> and in our <a alias="copy-app" mc-deep-link="false" href="%%=redirectTo('https://www.petco.com/shop/en/petcostore/c/petco-app')=%%" style="color:#000000; text-decoration: underline;"><span style="color:#000000">app</span></a>.
+          </td>
+        </tr>
+        <tr>
+            <td align="left" style="font-size:16px; color:#000000; font-family:'PetcoCircularTT-Regular',Arial,Helvetica,sans-serif; font-weight:normal; padding-top:20px; line-height:1.2em;">
+              We understand how important finding the right formula for your pet is and we will be here for you every step of the way. Sign up for Repeat Delivery to get all your pet’s necessities delivered on the schedule that’s right for you, so you can set it and forget it.
+            </td>
+          </tr>
+          <tr>
+            <td align="left" style="font-size:16px; color:#000000; font-family:'PetcoCircularTT-Regular',Arial,Helvetica,sans-serif; font-weight:normal; padding-top:20px; line-height:1.2em;">
+              To get started, here’s <b>35% off</b> your first Repeat Delivery! Plus save 5% on every subsequent delivery.
+            </td>
+          </tr>
+        <!--FullWidth_BTN start -->
+        <tr>
+          <td valign="top" align="center" style="padding-top: 20px; padding-bottom: 0">
+            <table border="0" width="220" cellpadding="0" cellspacing="0" align="center" role="presentation">
+              <tr>
+                <td bgcolor="#00205B" class="btn-one-line-mob" valign="middle" height="37" align="center" style="-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; font-family: 'PetcoCircularTT-Bold', Arial, Helvetica, sans-serif; font-weight: 600; padding-left: 10px; padding-right: 10px; font-size: 15px; color: #ffffff; border: 1px #00205b solid">
+                  <a href="%%=redirectto('https://www.petco.com/shop/en/petcostore/category/repeat-delivery-eligible-products')=%%" alias="CTA-Try-Repeat-Delivery" style="text-decoration: none; color: #ffffff; display: inline-block; width: 100%; line-height: 37px" target="_blank">TRY&nbsp;REPEAT&nbsp;DELIVERY</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!--FullWidth_BTN end -->
+      </table>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center" width="100%" style="padding:40px 0px;">
+      <table role="presentation" width="90%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center" style="font-size:25px; color:#000000; font-family:'PetcoCircularTT-Bold',Arial,Helvetica,sans-serif; font-weight:600; line-height:1.2em;">
+            IMPACTED ITEMS
+          </td>
+        </tr>
+        <tr>
+          <td align="center" width="100%" style="padding:40px 0 10px 0; border-bottom:1px solid #ADADAD;">
+            <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="100%" align="left" valign="bottom" class="body-copy" style="font-size:16px; color:#000000; font-family:'PetcoCircularTT-Bold',Arial,Helvetica,sans-serif; font-weight:600; line-height:1.2em;">
+                  Items:
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" width="100%" style="padding-bottom:20px;">
+            <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+              %%[
+                /* Product LOOPING XML */
+                SET @bps_nodes = BuildRowsetFromXML(@Order,"//Order/OrderDetail",1)
+                SET @rows_bps_nodes = RowCount(@bps_nodes)
+                IF @rows_bps_nodes > 0 THEN
+                  FOR @i = 1 TO @rows_bps_nodes DO
+                    SET @bps_Node = concat("<root>", Field(Row(@bps_nodes,@i),"Xml"), ",</root>")
+
+                    /* Product Name */
+                    SET @bps_ProductName = BuildRowsetFromXML(@bps_Node,"//ProductName",1)
+                    SET @ProductName = IIF(RowCount(@bps_ProductName) > 0, Field(Row(@bps_ProductName, 1), "Value"), '')
+
+                    /* Product Image */
+                    SET @bps_ProductImage = BuildRowsetFromXML(@bps_Node,"//ProductImage",1)
+                    IF RowCount(@bps_ProductImage) >= 1 THEN
+                      SET @ProductImage = Field(Row(@bps_ProductImage, 1), "Value")
+                      IF IndexOf(@ProductImage, "https:") > 0 THEN ELSE
+                        SET @ProductImage = Concat("https:", @ProductImage)
+                      ENDIF
+                    ELSE
+                      SET @ProductImage = ''
+                    ENDIF
+
+                    /* Product Quantity 
+                    SET @bps_Quantity = BuildRowsetFromXML(@bps_Node,"//Quantity",1)
+                    SET @Quantity = IIF(RowCount(@bps_Quantity) > 0, Field(Row(@bps_Quantity, 1), "Value"), '') */
+
+                    /* Product URL */
+                    SET @bps_ProductURL = BuildRowsetFromXML(@bps_Node,"//ProductURL",1)
+                    SET @ProductURL = IIF(RowCount(@bps_ProductURL) > 0, Field(Row(@bps_ProductURL, 1), "Value"), '')
+
+                    /* Product Total 
+                    SET @bps_ProductTotal = BuildRowsetFromXML(@bps_Node,"//ProductTotal",1)
+                    SET @ProductTotal = IIF(RowCount(@bps_ProductTotal) > 0, Field(Row(@bps_ProductTotal, 1), "Value"), '') */
+              ]%%
+                    <tr>
+                      <td width="80%" align="left" valign="top" style="padding-top:30px;">
+                        <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td width="20%" align="left" valign="top">
+                              %%[IF @SKU == "3775709" OR @SKU == "3775717" OR @SKU == "3775725" THEN]%%
+                                <img class="width-90" src="%%=v(@ProductImage)=%%" alt="" width="100" border="0" style="display:block;" />
+                              %%[ELSE]%%
+                                <a href="%%=RedirectTo(@ProductURL)=%%" alias="Order-Details-Product-Link-Img" style="text-decoration:none;" target="_blank">
+                                  <img class="width-90" src="%%=v(@ProductImage)=%%" alt="" width="100" border="0" style="display:block;" />
+                                </a>
+                              %%[ENDIF]%%
+                            </td>
+                            <td width="60%" align="left" valign="top" class="body-copy" style="font-size:16px; color:#505050; font-family:'PetcoCircularTT-Regular',Arial,Helvetica,sans-serif; font-weight:normal; line-height:1.2em;">
+                              %%[IF @SKU == "3775709" OR @SKU == "3775717" OR @SKU == "3775725" THEN]%%
+                                %%=v(@ProductName)=%%
+                              %%[ELSE]%%
+                                <a href="%%=RedirectTo(@ProductURL)=%%" alias="Order-Details-Product-Link-Name" target="_blank" style="color:#00205B; text-decoration:none;">%%=v(@ProductName)=%%</a>
+                              %%[ENDIF]%%
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td width="10%" align="left" valign="top" style="padding-top:30px;">&nbsp;</td>
+                    </tr>
+              %%[
+                  NEXT @i
+                ENDIF
+              ]%%
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+%%[if @toggle_selectReplacement == 'YES' THEN]%%
+<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center" width="100%" style="padding-bottom:10px;">
+      <table role="presentation" width="90%" border="0" cellpadding="0" cellspacing="0">
+        <tr bgcolor="#F0F1F5">
+          <td bgcolor="#F0F1F5" align="center" width="100%" style="padding:30px 0;">
+            <table role="presentation" width="90%" border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td class="width-20" width="15%" valign="top" align="left">
+                  <img class="width-90" src="http://image.e.petco.com/lib/fe32157075640575771d78/m/1/9cf6e8e7-eda5-4f8a-bb54-0b0def187600.png" alt="" width="50" border="0" style="display:block;" />
+                </td>
+                <td class="width-80" width="85%" align="left">
+                  <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td align="left" style="font-size:16px; color:#000000; font-family:'PetcoCircularTT-Regular',Arial,Helvetica,sans-serif; font-weight:normal; line-height:1.2em;">
+                        If you do not select a replacement, we will automatically substitute your items with our top recommended product.
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+%%[ENDIF]%%
+
+<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center" width="100%" style="padding-bottom:10px;">
+      <table role="presentation" width="90%" border="0" cellpadding="0" cellspacing="0">
+        <tr bgcolor="#F0F1F5">
+          <td bgcolor="#F0F1F5" align="center" width="100%" style="padding:30px 0;">
+            <table role="presentation" width="90%" border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td align="center" style="font-size:20px; color:#000000; font-family:'PetcoCircularTT-Bold',Arial,Helvetica,sans-serif; font-weight:600; line-height:1.2em;">
+                  Need Help?
+                </td>
+              </tr>
+              <tr>
+                <td align="center" style="font-size:16px; color:#000000; font-family:'PetcoCircularTT-Regular',Arial,Helvetica,sans-serif; font-weight:normal; padding-top:10px; line-height:1.2em;">
+                  Call our Customer Care Support Team at 877-738-6742 or email customerrelations@petco.com.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
