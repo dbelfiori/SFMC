@@ -1,0 +1,19 @@
+%%[
+SET @PreheaderSpacer = "&nbsp;&shy;"
+    FOR @i = 1 TO 5 DO
+        SET @PreheaderSpacer = CONCAT(@PreheaderSpacer,@PreheaderSpacer)
+    NEXT @i
+]%%
+<div style="display: none; max-height: 0px; overflow: hidden;">%%=v(@PreheaderSpacer)=%%</div>
+
+
+<!-- Will Render As -->
+<!-- Will Render As -->
+<!-- Will Render As -->
+<!-- Will Render As -->
+<!-- Will Render As -->
+<!-- Will Render As -->
+<!-- Will Render As -->
+
+<div class="preheader" style="font-size: 1px; display: none !important;">This is your %%=v(@preheader)=%%</div>
+<div style="display: none; max-height: 0px; overflow: hidden;">&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;&nbsp;&shy;</div>
