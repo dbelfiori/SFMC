@@ -1,0 +1,640 @@
+%%[
+/* SETTINGS */
+/* Additional trouble shooting info if set to 'True' */
+
+SET @Debug = RequestParameter('D')
+SET @Debug = IIF(EMPTY(@Debug),'False', @Debug)
+
+SET @LayoutType = RequestParameter('T')
+SET @LayoutType = IIF(EMPTY(@LayoutType),'Secondary', @LayoutType)
+
+SET @ViewMode = RequestParameter('V')
+SET @ViewMode = IIF(EMPTY(@ViewMode),'D', @ViewMode)
+
+SET @PreviewType = RequestParameter('P')
+SET @PreviewType = IIF(EMPTY(@PreviewType),'A', @PreviewType)
+
+SET @sl = RequestParameter('sl')
+SET @sl = IIF(EMPTY(@sl),'show', @sl)
+
+SET @Hero_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/MASTER HERO MODULES'
+SET @Hero_Target = '265772'
+SET @Hero_Mods = 'HM1|HM2|HM3|HM4|HM5|HM6|HM7|HM8|HM10|HM11|HM12|HM13|HM14|HM15|HM16|HM17|HM18|HM19|HM20|HM21|HM22'
+SET @Secondary_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/MASTER SECONDARY MODULES'
+SET @Secondary_Target = '265774'
+SET @Secondary_Mods = 'SM1|SM2|SM3|SM4|SM5|SM6|SM7|SM8|SM9|SM10|SM11|SM12|SM13_test|SM14_test|SM15_test|SM16_test|SM17|SM18|SM19|SM20|SM21|SM22|SM23|SM24|SM25|SM26|SM27|SM28|SM29|SM30|SM31|SM32|SM33|SM34|SM35|SM36|SM37|SM38|SM41|SM42|SM43|SM44|SM45|SM46|SM47|SM48|SM49'
+SET @Membership_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/MASTER SECONDARY MODULES'
+SET @Membership_Target = '265774' /* SAME REPO AS THE SECONDARY MODS - 10640-SECONDARY-MODS */
+SET @Membership_Mods = 'MS1|MS2|MS3|PALS_LONG'
+SET @PetcoPay_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/PetcoPay-InviteToApply-MODS/My Contents/'
+SET @PetcoPay_Target = '269888'
+SET @PetcoPay_Mods = 'PP-6'
+SET @Banner_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/MASTER BANNER MODULES'
+SET @Banner_Target = '265775'
+SET @Banner_Mods = 'B1|B2|B3|B4|B5|B6|B7|B8|B9|B10|B11|B12|B13|B14|B15_test|B16'
+SET @Subheader_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/MASTER SUBHEADERS'
+SET @Subheader_Target = '265776'
+SET @Subheader_Mods = 'SHDR1|SHDR2|SHDR3|SHDR4|SHDR5|SHDR6|SHDR7|SHDR8|SHDR9|SHDR10|SHDR11'
+SET @RD_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/MASTER RD INVENTORY'
+SET @RD_Hero_Target = '267810'
+SET @RD_Hero_Mods = 'RD_HM1A|RD_HM1B|RD_HM1C|RD_HM2A|RD_HM2B|RD_HM3A|RD_HM3B|RD_HM3C|RD_HM4A|RD_HM4C|RD_HM4D|MOD_RD_HM1_orange|MOD_RD_HM5_orange|MOD_RD_HM17_orange|MOD_RD_HM15_orange'
+SET @RD_Secondary_Target = '267810'
+SET @RD_Secondary_Mods = 'RD_SM1|RD_SM2|RD_SM3|RD_SM4|RD_SM5|RD_SM6|RD_RX_BANNER'
+SET @RD_Subheader_Target = '267810'
+SET @RD_Subheader_Mods = 'RD_SHDR1|RD_SHDR1B|RD_SHDR2|RD_SHDR3|RD_SHDR4|RD_SHDR4B'
+SET @BOPUS_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/MASTER BOPUS INVENTORY'
+SET @BOPUS_Hero_Target = '268113'
+SET @BOPUS_Hero_Mods = 'BOPUS_HM1|BOPUS_HM1A|BOPUS_HM2|BOPUS_HM3B|BOPUS_HM5|BOPUS_HM7|BOPUS_UPDATE_HM5|BOPUS_UPDATE_HM12|BOPUS_UPDATE_HM15|BOPUS_UPDATE_HM16|BOPUS_UPDATE_HM22|MOD_HM5_green|MOD_HM17_green|MOD_HM3_green|MOD_HM13_green'
+SET @BOPUS_Secondary_Target = '268113'
+SET @BOPUS_Secondary_Mods = 'BOPUS_SM1|BOPUS_SM2|BOPUS_SM3|BOPUS_SM4A|BOPUS_SM4B|BOPUS_SM4C|BOPUS_SM5A|BOPUS_SM5B|BOPUS_SM5C|BOPUS_SM6A|BOPUS_SM6B|BOPUS_SM6C|BOPUS_SM7A|BOPUS_SM7B|BOPUS_SM7C|BOPUS_SM8A|BOPUS_SM8B|BOPUS_SM8C|CHB1_C|CHB1_D|CHB2'
+SET @BOPUS_Banner_Target = '268113'
+SET @BOPUS_Banner_Mods = 'BOPUS_B1|BOPUS_B2|BOPUS_B3'
+SET @BOPUS_Subheader_Target = '268113'
+SET @BOPUS_Subheader_Mods = 'BOPUS_SHDR1|BOPUS_SHDR2'
+SET @SDD_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/MASTER SDD INVENTORY'
+SET @SDD_Hero_Target = '268484'
+SET @SDD_Hero_Mods = 'SDD_HM1A|SDD_HM2A|SDD_HM2B|SDD_HM2C|SDD_HM2D|SDD_HM3A|SDD_HM3B|SDD_HM17A|SDD_HM17B|SDD_HM17C|SDD_HM17D|SDD_HM1|SDD_HM17E|SDD_HM17VF|MOD_SDD_HM17_yellow|MOD_SDD_HM17_2_yellow|MOD_SDD_HM5_yellow|MOD_SDD_HM1_yellow'
+SET @SDD_Secondary_Target = '268484'
+SET @SDD_Secondary_Mods = 'SDD_SM1|SDD_SM2|SDD_SM4A|SDD_SM4B|SDD_SM4C|SDD_SM3_GEN_A|SDD_SM3_GEN_B|SDD_SM3_GEN_C|SDD_SM7|SDD_SM8|SDD_SM9|SDD_SM10|SDD_SM11|SDD_SM13|SDR_SM1|SDR_SM2'
+SET @SDD_Banner_Target = '268484'
+SET @SDD_Banner_Mods = 'SDR_B1_A|SDR_B2_A|SDR_B3|SDR_B4|SDD_B10_A|SDD_B5|SDD_B6'
+SET @SDD_Subheader_Target = '268484'
+SET @SDD_Subheader_Mods = 'SDD_SHDR1|SDD_SHDR2|SDD_SHDR3'
+SET @Vet_Banner_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/Vet-Reusable-Banners'
+SET @Vet_Banner_Target = '270596'
+SET @Vet_Banner_Mods = 'Prescription_B1|Prescription_B2|Prescription_B3|Express_Care_B1|Full_Service_B1|Vet_Diets_B1|Vet_Diets_B2|Vital_Care_B1|Insurance_B1|Vaccination_Clinic_B1|Vaccination_Clinic_B2|Vaccination_Clinic_B3|Vaccination_Clinic_B4'
+SET @Holiday_Banner_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/Reusable Holiday Banners'
+SET @Holiday_Banner_Target = '271832'
+SET @Holiday_Banner_Mods = 'HH1|HS1|HS2|HS6|HS7|HS8|HS9|HS10|HB3|HB4|HB5|HB6|HB7|HB10|HB11|HGCB1|HGCH1|HGCP1|CHH1_C|CHH1_D|CHB1_C|CHB1_D|CHB2|HPC_10off30|HPC_Pals|Black_Friday_BOPOS25'
+SET @Holiday_Banner_2022_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/Reusable Holiday Modules 2022'
+SET @Holiday_Banner_2022_Target = '276095'
+SET @Holiday_Banner_2022_Mods = 'MOD_MIX_MATCH|MOD_ALLPETS|MOD_BNR|HOLIDAY_HERO_1|HOLIDAY_HERO_2|HOLIDAY_HERO_3|HOLIDAY_HERO_4|HOLIDAY_HERO_5|HOLIDAY_HERO_6|HOLIDAY_HERO_7|HOLIDAY_HERO_8|HOLIDAY_HERO_9|MOD_DEAL_1|MOD_DEAL_2|MOD_DEAL_3|MOD_DEAL_4|MOD_DEAL_5|MOD_DEAL_6|MOD_DEAL_7|MOD_DEAL_8|MOD_DEAL_9|MOD_ADDITIONAL_1|MOD_ADDITIONAL_2|MOD_HERO_1|MOD_HERO_2|MOD_HERO_3|MOD_HERO_4|MOD_HERO_5|MOD_HERO_6|MOD_HERO_7|MOD_CYBER_DEAL_1|MOD_CYBER_DEAL_2|MOD_CYBER_DEAL_3|MOD_CYBER_DEAL_4|MOD_CYBER_DEAL_5|MOD_CYBER_DEAL_6|MOD_CYBER_DEAL_7|MOD_CYBER_DEAL_8|MOD_CYBER_DEAL_9|MOD_CYBER_DEAL_10|MOD_CYBER_DEAL_11|MOD_CYBER_DEAL_12|MOD_CYBER_DEAL_13|MOD_CYBER_DEAL_14|MOD_TOP_DEAL_1|MOD_TOP_DEAL_2|MOD_TOP_DEAL_3|MOD_TOP_DEAL_4|MOD_TOP_DEAL_5|MOD_TOP_DEAL_6|MOD_FREE_DELIVERY|MOD_F_BOPUS|MOD_REPEAT_DELIVERY|MOD_CATEGORY_GRID|MOD_BANNER_ALL_DEALS|MOD_HEALTHIER-ORIGINAL'
+SET @UM_Modules_SFMC_Path = 'Content Builder/05 Reusable Components/Templates/Reusable Unified Membership Mods'
+SET @UM_Core_Target = '276670'
+SET @UM_Core_Mods = 'core_mob_1_v1|core_mob_1_v2|core_mob_2_v1|core_mob_2_v2|core_mob_2_v3_cat|core_mob_2_v3_dog|core_mob_3|core_mob_4|core_mob_5|core_mob_6_bird|core_mob_6_cat|core_mob_6_dog|core_mob_6_fish|core_mob_6_rep|core_mob_6_smallpet'
+SET @UM_Premier_Target = '276670'
+SET @UM_Premier_Mods = 'premier_mob_1|premier_mob_2_v2_cat|premier_mob_2_v2_dog|premier_mob_2|premier_mob_3|premier_mob_4|premier_mob_5'
+SET @UM_Generic_Target = '276670'
+SET @UM_Generic_Mods = 'vc_mob_1_v1|vc_mob_1_v2|vc_mob_2|vc_mob_3|vc_mob_4'
+SET @MT_Revamp_Target = '277856'
+SET @MT_Revamp_Mods = 'MOD_Header_Transactional|MOD_Header_Transact_Member|MOD_Header_Transact_PMember|MOD_Header_Transact_Cobrand|MOD_Payment_Alert_Hero|MOD_Payment_Alert_Details|MOD_Payment_Alert_Steps|MOD_Appointment_Hero|MOD_Appointment_Details|MOD_Transactional_Checklist|MOD_Grooming_Banner|MOD_Delivery_Status|MOD_Pickup_Status|MOD_Order_Details|MOD_Prescription_Details|MOD_Footer_Transactional'
+SET @MT_Modules_SFMC_Path = 'Content Builder\05 Reusable Components\Templates\Reusable Membership and Transactional Modules'
+SET @INS_Target = '278928'
+SET @INS_Mods = 'Insurance_Pet|Insurance_Generic'
+SET @INS_Modules_SFMC_Path = 'Content Builder\05 Reusable Components\Templates\Reusable Insurance Mods'
+
+/* VALIDATION LOGIC */
+SET @SQLValDE = '10729_CP_Records_Validation'
+
+set @DisplayStart = 1
+set @cnt = RequestParameter('cnt')
+set @cnt = iif(empty(@cnt),@DisplayStart, @cnt)
+SET @Mod_Edit_Flag = 'TRUE'
+
+IF @LayoutType == 'Hero' THEN
+  SET @target_id_folder = @Hero_Target
+  SET @id_rows = BuildRowSetFromString(@Hero_Mods, '|')
+  SET @SFMC_Path = @Hero_SFMC_Path
+ELSEIF @LayoutType == 'Secondary' THEN
+  SET @target_id_folder = @Secondary_Target
+  SET @id_rows = BuildRowSetFromString(@Secondary_Mods, '|')
+  /* Carousel Specific Variables */
+  SET @carousel = 'TRUE'
+  SET @number_of_carousels = 4
+  SET @carousel_1_slide_index = 3
+  SET @carousel_1_arrow_width = '12px'
+  SET @carousel_1_arrow_height = '33px'
+  SET @carousel_2_slide_index = 3
+  SET @carousel_2_arrow_width = '12px'
+  SET @carousel_2_arrow_height = '33px'
+  SET @carousel_3_slide_index = 3
+  SET @carousel_3_arrow_width = '12px'
+  SET @carousel_3_arrow_height = '33px'
+  SET @carousel_4_slide_index = 3
+  SET @carousel_4_arrow_width = '12px'
+  SET @carousel_4_arrow_height = '33px'
+  SET @SKU = '2694907,1445731,3213124,3213247'
+  SET @SFMC_Path = @Secondary_SFMC_Path
+ELSEIF @LayoutType == 'Membership' THEN
+  SET @target_id_folder = @Membership_Target
+  SET @id_rows = BuildRowSetFromString(@Membership_Mods, '|')
+  /* Carousel Specific Variables */
+  SET @carousel = 'TRUE'
+  SET @number_of_carousels = 1
+  SET @carousel_1_slide_index = 4
+  SET @carousel_1_arrow_width = '12px'
+  SET @SFMC_Path = @Membership_SFMC_Path
+  SET @carousel_1_arrow_height = '33px'
+ELSEIF @LayoutType == 'PetcoPay' THEN
+  SET @target_id_folder = @PetcoPay_Target
+  SET @id_rows = BuildRowSetFromString(@PetcoPay_Mods, '|')
+  SET @SFMC_Path = @PetcoPay_SFMC_Path     
+ELSEIF @LayoutType == 'Banner' THEN
+  SET @target_id_folder = @Banner_Target
+  SET @id_rows = BuildRowSetFromString(@Banner_Mods, '|')
+  SET @SFMC_Path = @Banner_SFMC_Path
+ELSEIF @LayoutType == 'Subheader' THEN
+  SET @target_id_folder = @Subheader_Target
+  SET @id_rows = BuildRowSetFromString(@Subheader_Mods, '|')
+  SET @SFMC_Path = @Subheader_SFMC_Path
+ELSEIF @LayoutType == 'RD - Hero' THEN
+  SET @target_id_folder = @RD_Hero_Target
+  SET @id_rows = BuildRowSetFromString(@RD_Hero_Mods, '|')
+  SET @SFMC_Path = @RD_SFMC_Path
+ELSEIF @LayoutType == 'RD - Secondary' THEN
+  SET @target_id_folder = @RD_Secondary_Target
+  SET @id_rows = BuildRowSetFromString(@RD_Secondary_Mods, '|')
+  SET @SFMC_Path = @RD_SFMC_Path
+ELSEIF @LayoutType == 'RD - Subheader' THEN
+  SET @target_id_folder = @RD_Subheader_Target
+  SET @id_rows = BuildRowSetFromString(@RD_Subheader_Mods, '|')
+  SET @SFMC_Path = @RD_SFMC_Path
+ELSEIF @LayoutType == 'BOPUS - Hero' THEN
+  SET @target_id_folder = @BOPUS_Hero_Target
+  SET @id_rows = BuildRowSetFromString(@BOPUS_Hero_Mods, '|')
+  SET @SFMC_Path = @BOPUS_SFMC_Path
+ELSEIF @LayoutType == 'BOPUS - Secondary' THEN
+  SET @target_id_folder = @BOPUS_Secondary_Target
+  SET @id_rows = BuildRowSetFromString(@BOPUS_Secondary_Mods, '|')
+  SET @SFMC_Path = @BOPUS_SFMC_Path
+ELSEIF @LayoutType == 'BOPUS - Banner' THEN
+  SET @target_id_folder = @BOPUS_Banner_Target
+  SET @id_rows = BuildRowSetFromString(@BOPUS_Banner_Mods, '|')
+  SET @SFMC_Path = @BOPUS_SFMC_Path
+ELSEIF @LayoutType == 'BOPUS - Subheader' THEN
+  SET @target_id_folder = @BOPUS_Subheader_Target
+  SET @id_rows = BuildRowSetFromString(@BOPUS_Subheader_Mods, '|')
+  SET @SFMC_Path = @BOPUS_SFMC_Path
+ELSEIF @LayoutType == 'SDD - Hero' THEN
+  SET @target_id_folder = @SDD_Hero_Target
+  SET @id_rows = BuildRowSetFromString(@SDD_Hero_Mods, '|')
+  SET @SFMC_Path = @SDD_SFMC_Path
+ELSEIF @LayoutType == 'SDD - Secondary' THEN
+  SET @target_id_folder = @SDD_Secondary_Target
+  SET @id_rows = BuildRowSetFromString(@SDD_Secondary_Mods, '|')
+  SET @SFMC_Path = @SDD_SFMC_Path
+ELSEIF @LayoutType == 'SDD - Banner' THEN
+  SET @target_id_folder = @SDD_Banner_Target
+  SET @SFMC_Path = @SDD_SFMC_Path
+  SET @id_rows = BuildRowSetFromString(@SDD_Banner_Mods, '|')
+ELSEIF @LayoutType == 'SDD - Subheader' THEN
+  SET @target_id_folder = @SDD_Subheader_Target
+  SET @id_rows = BuildRowSetFromString(@SDD_Subheader_Mods, '|')
+  SET @SFMC_Path = @SDD_SFMC_Path
+ELSEIF @LayoutType == 'Vet Banners' THEN
+  SET @target_id_folder = @Vet_Banner_Target
+  SET @id_rows = BuildRowSetFromString(@Vet_Banner_Mods, '|')
+  SET @SFMC_Path = @Vet_Banner_SFMC_Path
+ELSEIF @LayoutType == 'Holiday Banners 2021' THEN
+  SET @target_id_folder = @Holiday_Banner_Target
+  SET @id_rows = BuildRowSetFromString(@Holiday_Banner_Mods, '|')
+  SET @SFMC_Path = @Holiday_Banner_SFMC_Path
+ELSEIF @LayoutType == 'Holiday Modules 2022' THEN
+  SET @target_id_folder = @Holiday_Banner_2022_Target
+  SET @id_rows = BuildRowSetFromString(@Holiday_Banner_2022_Mods, '|')
+  SET @SFMC_Path = @Holiday_Banner_2022_SFMC_Path
+ELSEIF @LayoutType == 'Unified Membership Core' THEN
+  SET @target_id_folder = @UM_Core_Target
+  SET @id_rows = BuildRowSetFromString(@UM_Core_Mods, '|')
+  SET @SFMC_Path = @UM_Modules_SFMC_Path
+  SET @Mod_Edit_Flag = 'FALSE'
+ELSEIF @LayoutType == 'Unified Membership Premier' THEN
+  SET @target_id_folder = @UM_Premier_Target
+  SET @id_rows = BuildRowSetFromString(@UM_Premier_Mods, '|')
+  SET @SFMC_Path = @UM_Modules_SFMC_Path
+  SET @Mod_Edit_Flag = 'FALSE'
+ELSEIF @LayoutType == 'Unified Membership Generic' THEN
+  SET @target_id_folder = @UM_Generic_Target
+  SET @id_rows = BuildRowSetFromString(@UM_Generic_Mods, '|')
+  SET @SFMC_Path = @UM_Modules_SFMC_Path
+  SET @Mod_Edit_Flag = 'FALSE'
+ELSEIF @LayoutType == 'Membership Transactional Revamp' THEN
+  SET @target_id_folder = @MT_Revamp_Target
+  SET @id_rows = BuildRowSetFromString(@MT_Revamp_Mods, '|')
+  SET @SFMC_Path = @MT_Modules_SFMC_Path
+ELSEIF @LayoutType == 'Insurance Modules' THEN
+  SET @target_id_folder = @INS_Target
+  SET @id_rows = BuildRowSetFromString(@INS_Mods, '|')
+  SET @SFMC_Path = @INS_Modules_SFMC_Path
+ELSE
+  SET @target_id_folder = @Hero_Target
+  SET @id_rows = BuildRowSetFromString(@Hero_Mods, '|')
+  SET @SFMC_Path = @Hero_SFMC_Path
+ENDIF
+
+set @cnt = IIF(RowCount(@id_rows) < @cnt OR @cnt < 1, RowCount(@id_rows), @cnt)
+set @next_value = Add(@cnt,1)
+set @prev_value = Subtract(@cnt,1)
+set @TemplateName = FIELD(ROW(@id_rows, @cnt), 1)
+set @url = 'https://fe34157075640575771d76.pub.s10.sfmc-content.com/v3eiyotqm54'
+set @next_record = CONCAT(@url, '?cnt=', @next_value,'#')
+set @previous_record = CONCAT(@url,'?cnt=',@prev_value,'#')
+]%%
+
+<!-- PREVIEW PAGE -->
+%%=Concat(@jsopeningTag," runat='client'>")=%%
+function setIframeHeight(iframe) {
+console.log('reset - IFRAME Execute');
+if (iframe) {
+var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
+if (iframeWin.document.body) {
+iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
+}
+}
+};
+function setIframeContent() {
+var iframe_1 = $("#iframe_1").contents().find("body");
+         console.log('Start iframe replace');
+         console.log(iframe_1);
+         var iframehtml_1 = $("#iframehtml_1").html();
+         console.log(iframehtml_1);
+         iframe_1.html(iframehtml_1);
+         setIframeHeight(document.getElementById('iframe_1'));
+};
+%%=v(@jsclosingTag)=%%
+<style>
+  .mobile-view {
+    width: 350px !important;
+    max-width: 350px !important;
+  }
+
+  .desktop-view {
+    width: 621px !important;
+    max-width: 621px !important;
+  }
+  .subject-line-view {
+    width:100% !important;
+    max-width:90% !important;
+  }
+
+  .container {
+    margin-top: 45px;
+  }
+</style>
+<!-- Load Screen - Start -->
+<style type="text/css">
+  #loading {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: block;
+    opacity: 0.7;
+    background-color: #fff;
+    z-index: 99;
+    text-align: center;
+  }
+
+  #loading-image {
+    position: absolute;
+    top: 100px;
+    left: 45%;
+    z-index: 100;
+  }
+
+  .toggle-btn {
+    position: fixed;
+    top: 50%;
+    width: 110px;
+    border: 2px solid blue;
+    text-align: center;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    font-family: 'Montserrat', Arial, helvetica, sans-serif;
+    font-weight: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 16px;
+    color: #00a3e0;
+    border: 2px solid #00a3e0;
+    z-index: 100000;
+  }
+
+  .toggle-btn a {
+    color: #00a3e0;
+    text-decoration: none !important;
+  }
+
+  .next-btn {
+    right: 15%;
+  }
+
+  .prev-btn {
+    left: 15%;
+  }
+
+  .toggle-btn:hover {
+    background-color: #00a3e0;
+    color: #ffffff;
+  }
+
+  .toggle-btn a:hover {
+    background-color: #00a3e0;
+    color: #ffffff;
+    text-decoration: none !important;
+  }
+
+  .dropdown-menu {
+    max-height: 500px !important;
+    overflow: auto !important;
+  }
+</style>
+<div id="loading">
+  <img id="loading-image" src="http://image.e.petco.com/lib/fe34157075640575771d76/m/1/3e0e8dd8-5660-46c6-bf2a-39017fc83ca4.gif" alt="Loading..." />
+</div>
+<!-- Load Screen - End -->
+
+<!-- NAV Header - Start -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top justify-content-between py-0">
+  <a class="navbar-brand py-0" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T',@LayoutType)=%%">
+    <img src="%%=v(@CP_logo)=%%" alt="Petco Logo" class="d-inline-block align-middle pt-2" width="182"> %%=v(@JAM_Project)=%%</a>
+    <ul class="nav justify-content-end">
+      <div class="btn-group btn-group-sm" role="group">
+        <div class="btn-group btn-group-sm" role="group">
+          <button class="dropdown-toggle btn btn-secondary btn-outline-primary btn-sm" data-toggle="dropdown"> %%=v(@LayoutType)=%% Mods </button>
+          <div class="dropdown-menu">
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Hero')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 1"> Hero </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Secondary')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 2"> Secondary </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Banner')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 3"> Banner </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Subheader')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 4"> Subheader </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Membership')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 2"> Membership </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','PetcoPay')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 2"> PetcoPay </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','RD - Hero')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 5"> RD - Hero </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','RD - Secondary')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 6"> RD - Secondary </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','RD - Subheader')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 7"> RD - Subheader </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','BOPUS - Hero')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 8"> BOPUS - Hero </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','BOPUS - Secondary')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 9"> BOPUS - Secondary </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','BOPUS - Banner')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 10"> BOPUS - Banner </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','BOPUS - Subheader')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 11"> BOPUS - Subheader </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','SDD - Hero')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 12"> SDD - Hero </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','SDD - Secondary')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 13"> SDD - Secondary </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','SDD - Banner')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 14"> SDD - Banner </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','SDD - Subheader')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 15"> SDD - Subheader </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Vet Banners')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 16"> Vet Banners </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Holiday Banners 2021')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 17"> Holiday Banners 2021 </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Holiday Modules 2022')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 18"> Holiday Modules 2022 </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Unified Membership Core')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 19"> Unified Membership Core </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Unified Membership Premier')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 20"> Unified Membership Premier </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Unified Membership Generic')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 21"> Unified Membership Generic </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Membership Transactional Revamp')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 22"> Membership & Transactional Revamp </a>
+            <a class="nav-link dropdown-item" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',@PreviewType,'cnt', @cnt,'T','Insurance Modules')=%%" data-toggle="tooltip" data-html="true"
+            title="Type 22"> Insurance Modules </a>
+          </div>
+        </div>
+        <a class="nav-link btn btn-secondary btn-outline-primary btn-sm" role="button" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',@ViewMode,'P',IIF(@PreviewType == 'A','S','A'),'cnt', @cnt,'T',@LayoutType)=%%" data-toggle="tooltip" data-html="true"
+        title="All or Specific View"> %%=IIF(@PreviewType == 'A','<i class="fas fa-search"></i> View Specific Mods','<i class="fas fa-search-plus"></i> View All Mods')=%%</a>
+        <a class="nav-link btn btn-secondary btn-outline-primary btn-sm" role="button" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',IIF(@ViewMode == 'M','D','M'),'P',@PreviewType,'cnt', @cnt,'T',@LayoutType)=%%" data-toggle="tooltip" data-html="true"
+        title="Desktop or Mobile View"> %%=IIF(@ViewMode == 'D','<i class="fas fa-mobile-alt"></i> Switch to Mobile','<i class="fas fa-desktop"></i> Switch to Desktop')=%%</a>
+        <a class="nav-link btn btn-secondary btn-outline-primary btn-sm" role="button" href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',IIF(@Debug == 'True','False','True'),'V',@ViewMode,'P',@PreviewType,'cnt',@cnt,'T',@LayoutType)=%%" data-toggle="tooltip" data-html="true"
+        title="Debug Mode On/Off">%%=IIF(@Debug == 'True','<i class="far fa-file-alt"></i> Disable Data View','<i class="far fa-file"></i> Enable Data View')=%%</a>
+        <a class="nav-link btn btn-secondary btn-outline-primary btn-sm" role="button" data-toggle="tooltip" data-html="true" onclick="setIframeHeight(document.getElementById('iframe_1'));" 
+        title="Refresh"><i class="far fa-refresh"></i>Refresh</a>
+        <a class="nav-link btn  btn-secondary btn-outline-primary btn-sm" role="button" href="%%=CloudPagesURL(@CloudPage_ID)=%%" data-toggle="tooltip" data-html="true" title="Logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </ul>
+    </div>
+  </nav>
+  <!-- NAV Header - End -->
+  <div class="container">
+    <div class="row" style="border-top:1px solid #000">
+      <div class="col d-none" id="iframehtml_1">
+
+        %%[
+        IF ROWCOUNT(@id_rows) < 1 THEN
+        OUTPUTLINE(CONCAT('No Data Available'))
+        ELSE
+
+        /* EMAIL SETTINGS */
+        SET @master_id_folder = '265514'
+        SET @img_id_folder = '267517'
+
+        /* DEFINE & RESET */
+        SET @today = Now()
+        /* SET ALL PROJECT SPECIFIC VARIABLES HERE */
+
+/* header type options
+- promo-marketing
+- transactional
+- ops
+- e-comm
+*/
+SET @header_bg_color = '#ffffff'
+SET @header_type = 'promo-marketing'
+SET @header_border = 'TRUE'
+SET @show_wave = 'FALSE'
+SET @navy = '#00205B'
+SET @red = '#FB4341'
+SET @pink = '#F8ABD1'
+SET @orange = '#F39A0C'
+SET @yellow = '#FFD405'
+SET @blue = '#6EDCFA'
+SET @green = '#75F5B1'
+
+/* SET ALL LOCAL CSS HERE
+
+To pull in dropdown CSS
+ContentBlockbyKey(CONCAT(@target_id_folder, "_", "dropdown_css"))
+
+*/
+SET @dropdown_qty = 2
+
+/* REQUIRED */
+/* Tracking Attributes */
+set @EmailAttribute1 = AttributeValue("__AdditionalEmailAttribute1")
+set @EmailAttribute2 = AttributeValue("__AdditionalEmailAttribute2")
+/* set @CampaignName = 'TypeCampaignNameHere' */
+
+/* Variables */
+SET @regex = "(?<=src=['""])(http[s]?://.*?)['""]" /* Regex Variable for Images */
+
+/* Okay if they don't exist in sending DE */
+SET @FIRST_NAME = AttributeValue("FIRST_NAME")
+SET @DQE_FIRST_NAME = AttributeValue("DQE_FIRST_NAME")
+]%%
+
+<!-- HTML GOES HERE -->
+%%=ContentBlockbyKey("Logic_ALL_Personalization")=%%
+%%[
+/* EMAIL DATA */
+SET @subject_line = CONCAT(IIF(@Cust_FirstName == "", "S", CONCAT(@Cust_FirstName, ", s")),'ubject line')
+
+/* Page Title / Preheader */
+SET @PreTitle = 'Preheader'
+
+]%%
+%%=ContentBlockbyKey(CONCAT("265514_MASTER_LU"))=%%
+%%=ContentBlockbyKey(CONCAT("265514_MASTER_images"))=%%
+%%=ContentBlockbyKey(CONCAT("265514_local_LEGAL"))=%%
+<!-- CUSTOM WRAPPER - Landing Page issue for etmc error -->
+%%=ContentBlockbyKey(CONCAT("266988_CP_Wrapper_Start"))=%%
+%%=Concat(@jsopeningTag," runat='client'>")=%%
+function showHTML() {
+  var x = document.getElementById("getHTML").previousElementSibling.innerHTML; 
+  document.getElementById("demo").innerHTML = x;
+  
+  var list = document.getElementById("demo");
+  list.removeChild(list.childNodes[1]);
+  
+  var placetooutput = document.getElementById("output");
+  placetooutput.value = list.innerHTML.replace(/<tbody>/g,'').replace(/<\/tbody>/g,'').replace(/href=""/g,'href="%%=RedirectTo(@link)=%%"')
+
+  document.getElementById("statusMessage").innerHTML = 'HTML updated.';
+}
+
+function copyHTML() {
+  var fieldToCopy = document.getElementById("output");
+  fieldToCopy.select();
+  fieldToCopy.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+
+  document.getElementById("statusMessage").innerHTML = 'Copied.';
+}
+
+showHTML();
+document.getElementById("statusMessage").innerHTML = 'Mod Loaded';
+%%=v(@jsclosingTag)=%%
+%%[
+/* LANDING PAGE ONLY - Custom Wrappers Start because etmc error on cloud pages */
+/* ContentBlockbyKey(CONCAT("266988_MASTER_Wrapper_Start")) */
+SET @Cust_FirstName = 'John'
+SET @Layout_Count = RowCount(@id_rows)
+IF @PreviewType == 'A' THEN
+  FOR @template_counter = 1 to @Layout_Count DO
+    SET @Current_Template = FIELD(ROW(@id_rows, @template_counter), 1)]%%
+      <div style="padding:30px 0;">
+        <h1 style="text-align:center;">%%=v(@Current_Template)=%%</h1>
+        %%=ContentBlockbyKey(CONCAT(@target_id_folder,"_",@Current_Template))=%%
+      </div>
+  %%[NEXT @template_counter
+ELSE]%%
+<div %%=IIF(@Mod_Edit_Flag == 'TRUE', 'contenteditable', '')=%% style="padding:30px 0;">
+  <h1 style="text-align:center;">%%=v(@TemplateName)=%%</h1>
+  %%[IF @Mod_Edit_Flag == 'TRUE' THEN ELSE]%%
+  <table class="full-width" role="presentation" width="620" border="0" cellpadding="0" cellspacing="0">
+    <tr bgcolor="%%=v(@red)=%%">
+      <td align="center" width="100%" style="font-size:16px; color:#fffffe; font-family:'PetcoCircularTT-Regular',Arial,Helvetica,sans-serif; font-weight:normal; padding:10px 20px; line-height:1.2em;">
+        This module has a fixed Impression Region. Please copy the code from the SFMC Location indicated above.
+      </td>
+    </tr>
+  </table>
+  <br /><br />
+  %%[ENDIF]%%
+  %%=ContentBlockbyKey(CONCAT(@target_id_folder,"_",@TemplateName))=%%
+</div>
+%%[IF @Mod_Edit_Flag == 'TRUE' THEN]%%
+<button id="getHTML" onclick="showHTML()" style="color: #00a3e0;background: #FFFFFF;appearance: none;box-shadow: none;border: 2px solid #00a3e0;border-radius: 5px;font-family: 'Montserrat', Arial, Helvetica, sans-serif;font-weight: bold;margin: 0 0 20px;font-size: 16px;cursor: pointer;padding: 3px 10px;width: 150px;">
+  Update HTML
+</button>
+<button id="copyHTML" onclick="copyHTML()" style="color: #00a3e0;background: #FFFFFF;appearance: none;box-shadow: none;border: 2px solid #00a3e0;border-radius: 5px;font-family: 'Montserrat', Arial, Helvetica, sans-serif;font-weight: bold;margin: 0 0 20px;font-size: 16px;cursor: pointer;padding: 3px 10px;width: 200px;">
+  Copy to Clipboard
+</button>
+<span id="statusMessage" style="display:inline-block; color:#087500; padding:0 10px;"></span>
+<p id="demo" style="display:none"></p>
+<div style="width: 100%;margin: 0 auto;height: 200px">
+  <textarea id="output" style="width: 100%;height: 200px;"></textarea>
+</div>
+%%[ENDIF
+ENDIF]%%
+
+%%=ContentBlockbyKey(CONCAT("265514_MASTER_Wrapper_End"))=%%
+
+%%[ENDIF]%%
+</div>
+%%[IF @prev_value >= 1 AND @PreviewType == 'S' THEN]%%
+<div class="toggle-btn prev-btn %%=IIF(@sl == 'hide', 'd-none', '')=%%"><a href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',IIF(@ViewMode == 'M','M','D'),'P',@PreviewType,'cnt', @prev_value,'T',@LayoutType)=%%" target="_self">PREVIOUS</a></div>
+%%[ENDIF
+IF @next_value <= rowcount(@id_rows) AND @PreviewType == 'S' THEN]%%
+<div class="toggle-btn next-btn %%=IIF(@sl == 'hide', 'd-none', '')=%%"><a href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD,'D',@Debug,'V',IIF(@ViewMode == 'M','M','D'),'P',@PreviewType,'cnt', @next_value,'T',@LayoutType)=%%" target="_self">NEXT</a></div>
+%%[ENDIF]%%
+</div>
+<div class="row">
+  <div class="col"></div>
+  <div class="%%=IIF(@ViewMode == 'M','mobile-view','desktop-view')=%% %%=IIF(@sl == 'hide', 'subject-line-view', '')=%%">
+    <nav class="navbar navbar-light %%=IIF(@sl == 'hide', 'd-none', '')=%%" style="background-color: #e3f2fd;">
+      <div class="col-12 navbar-text">
+        <strong> Currently Viewing: </strong>%%=v(@LayoutType)=%% Mods
+        %%[IF @PreviewType == 'A' THEN]%%
+        <br> <strong>Previewing all %%=v(@LayoutType)=%% Mods</strong>
+        %%[ELSE]%%
+        <br> <strong>Preview #%%=v(@cnt)=%% out of %%=rowcount(@id_rows)=%%</strong>
+        <br> <strong>Template:</strong> %%=v(@TemplateName)=%%
+        %%[ENDIF]%%
+        <br> <strong>SFMC Location:</strong> %%=v(@SFMC_Path)=%%
+      </div>
+      %%[IF @PreviewType == 'A' THEN ELSE]%%
+      <div class="col-12">
+        <form action="#" method="post">
+          <div class="form-row align-items-center">
+            <div class="col-auto">
+              <label class="" for="inlineFormInput">Skip to Preview #: </label>
+              <input type="text" name="cnt" class="form-control" id="inlineFormInput" value="%%=v(@cnt)=%%">
+              <input type="hidden" name="USR" value="%%=v(@USR)=%%">
+              <input type="hidden" name="PWD" value="%%=v(@PWD)=%%">
+              <input type="hidden" name="D" value="%%=v(@Debug)=%%">
+              <input type="hidden" name="V" value="%%=v(@ViewMode)=%%">
+              <input type="hidden" name="T" value="%%=v(@LayoutType)=%%">
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary" style="margin-top:2em;">Skip</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      %%[ENDIF]%%
+    </nav>
+    <iframe class="iframe" id="iframe_1" width="100%" frameborder="0" scrolling="no"></iframe>
+    %%=Concat(@jsopeningTag," runat='client'>")=%%
+      window.addEventListener('load', function() {
+        var iframe_1 = $("#iframe_1").contents().find("body");
+        console.log('Start iframe replace');
+        console.log(iframe_1);
+        var iframehtml_1 = $("#iframehtml_1").html();
+        console.log(iframehtml_1);
+        iframe_1.html(iframehtml_1);
+
+        console.log('resize iframe - run');
+        setIframeHeight(document.getElementById('iframe_1')+330);
+      });
+  %%=v(@jsclosingTag)=%%
+</div>
+<div class="col"></div>
+</div>
+
+<!-- Load Flag - Start -->
+%%=Concat(@jsopeningTag," runat='client'>")=%%
+window.onload = function() {
+  setIframeContent();
+  $('#loading').hide();
+  console.log('loadedflag');
+  setTimeout(function(){
+    setIframeHeight(document.getElementById('iframe_1'));
+    console.log('iframerefresh');
+  }, 1000);
+};
+%%=v(@jsclosingTag)=%%
+<!-- Load Flag - End -->
