@@ -1,0 +1,56 @@
+%%[
+SET @regex = "(?<=src=['""])(http[s]?://.*?)['""]" /* Regex Variable for Images */
+SET @img_id_folder = '267517'
+SET @CP_logo = RegExMatch(ContentImagebyKey(CONCAT(@img_id_folder, "_CP-logo-v2.png")), @regEx, 1, "IgnoreCase")
+SET @CP_logo_white = RegExMatch(ContentImagebyKey(CONCAT(@img_id_folder, "_CP-logo-white-v2.png")), @regEx, 1, "IgnoreCase")
+
+SET @JAM_Contact = 'patrick@jamdirect.ca'
+SET @JAM_Project = 'Petco - YML Generator'
+
+SET @CloudPage_ID = '132'
+SET @target_id_folder = '269148'
+]%%
+<script runat="server" language="javascript">
+Platform.Load("Core","1");  //Required to load SSJS library
+try
+{
+// TRY CATCH START - USED TO DEBUG CLOUDPAGE ERRORS
+</script>
+
+<!-- Content to Try -->
+%%=ContentBlockbyKey(CONCAT(@target_id_folder, "_YML_PreviewTool"))=%%
+
+<script runat="server" language="javascript">
+// WHEN CATCHING AN ERROR
+} catch(err) {
+  //CAPTURE
+  Variable.SetValue("errorMessage", err.message + err.description);
+
+  //PREPARE TO LOG
+  var message = err.message
+  var description = err.description
+
+  Variable.SetValue("@E_Message", Stringify(message));
+  Variable.SetValue("@E_Description", Stringify(description));
+</script>
+
+%%[
+/* Log any Page Errors*/
+SET @Ref = random(1111111, 9999999)
+InsertData('10444 - CloudPage - Error Logs','Page',@JAM_Project,'E_Message',@E_Message ,'E_Description',@E_Description ,'CaptureDate', NOW(), 'Ref', @Ref)
+]%%
+
+<h2>
+  There was an error with this page. Please contact <a href="mailto:patrick@jamdirect.ca">patrick@jamdirect.ca</a> with reference number# %%=v(@Ref)=%% for %%=v(@JAM_Project)=%%.
+</h2>
+<hr>
+<p>
+  %%=v(@E_Description)=%%
+</p>
+<hr>
+<p>
+  %%=v(@E_Message)=%%
+</p>
+<script runat="server" language="javascript">
+}
+</script>

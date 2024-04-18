@@ -1,0 +1,15 @@
+%%=ContentBlockbyKey(CONCAT(@target_id_folder, "_YML_SSJS"))=%%
+<div class="hidden">
+  <textarea id="folder-data">%%=v(@folder_data)=%%</textarea>
+</div>
+<header class="header">
+  <div class="logo-heading-container">
+    <a href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD)=%%"><img class="logo" src="%%=v(@CP_logo_white)=%%" alt="Petco"></a>
+    <a href="%%=CloudPagesURL(@CloudPage_ID,'USR',@USR,'PWD',@PWD)=%%"><h1 class="main-title">%%=v(@JAM_Project)=%%</h1></a>
+  </div>
+  <a class="logout-button" role="button" href="%%=CloudPagesURL(@CloudPage_ID)=%%" title="Logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</header>
+<div id="workspace">
+  <yml-generator />
+</div>
+%%=ContentBlockbyKey(CONCAT(@target_id_folder, "_YML_JS"))=%%

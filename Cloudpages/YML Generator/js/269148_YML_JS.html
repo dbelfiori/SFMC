@@ -1,0 +1,250 @@
+%%=Concat(@jsopeningTag," runat='client'>")=%%
+window.addEventListener('load', () => {
+  const vueApp = Vue.createApp({});
+  const folderDataTextArea = document.querySelector('#folder-data');
+  const folderData = JSON.parse(folderDataTextArea.value).sort((folder1, folder2) => {
+    if(folder1.Name.toUpperCase() < folder2.Name.toUpperCase()) {
+      return -1;
+    }
+    else if(folder1.Name.toUpperCase() > folder2.Name.toUpperCase()) {
+      return 1;
+    }
+    return 0;
+  });
+  const ymlGeneratorTemplate = `
+    <div class="yml-generator">
+      <div class="options-container">
+        <h2 class="options-container__heading">Shared Folders and Subject Line</h2>
+        <p>Note: Shared Folders and Subject Line are set to "false" and "subjectline" by default. These are the default settings for Petco and they shouldn't need to be changed.</p>
+        <div class="options-container__list">
+          <div class="options-container__option">
+            <label for="shared-folders-option">Shared Folders:</label>
+            <input v-model="sharedFolder" type="text" id="shared-folders-option" name="shared-folders-option" />
+          </div>
+          <div class="options-container__option">
+            <label for="subject-line-option">Subject Line:</label>
+            <input v-model="subjectLine" type="text" id="subject-line-option" name="subject-line-option" />
+          </div>
+        </div>
+      </div>
+      <div class="folders-container">
+        <h2 class="folders-container__heading">Select a Folder</h2>
+        <div class="folders-container__header">
+          <form @submit="searchFolders($event)" class="folders-search">
+            <div class="folders-search__form-body">
+              <label for="folders-search__search-input">Search:</label>
+              <input v-model="searchTerm" type="text" id="folders-search-input" name="search-term" placeholder="Enter a term to search by..." />
+            </div>
+            <div class="folders-search__submit-container">
+              <button @click="clearSearch()" class="folders-search__clear app-button" type="button"><i class="fas fa-sync"></i>Reset Search</button>
+              <button class="folders-search__submit app-button" type="submit"><i class="fas fa-search"></i>Search</button>
+            </div>
+          </form>
+          <div class="folders-container__selected">
+            <h3>Selected Folder:</h3>
+            <div v-if="selectedFolder" class="folders-container__selected-folder">
+              <p class="success-text">Folder Updated</p>
+              <div class="folders-container__folder">
+                <p class="folders-container__folder-heading">Name: {{ selectedFolder.Name }}</p>
+                <p>ID: {{ selectedFolder.ID }}</p>
+                <p>Folder Path: {{ getFolderPath(selectedFolder) }}</p>
+              </div>
+            </div>
+            <p v-else class="warning-text">Please choose a folder below.</p>
+          </div>
+        </div>
+        <h3>Total folders: {{ folderData.length }}</h3>
+        <div v-if="folderData.length > 0" class="folders-picker">
+          <ul v-for="(folder, index) in rootFolders" v-bind:key="index" class="folders-picker__folder-container">
+            <folder :origData="origData" :folderData="folderData" :currFolder="folder" :addToSelected="addToSelected" :selectedFolder="selectedFolder"></folder>
+          </ul>
+        </div>
+      </div>
+      <div class="output-container">
+        <h2 class="output-container__heading">Output YML</h2>
+        <div v-if="selectedFolder && sharedFolder && subjectLine" class="output-container__yml-area">
+          <div class="output-container__button-container">
+            <button @click="downloadYML()" class="output-container__download-button app-button"><i class="fas fa-download"></i>Download YML</button>
+            <button @click="copyYML()" @mouseout="resetButtonText()" class="output-container__copy-button app-button"><i class="fas fa-copy"></i>{{ copyButtonText }}</button>
+          </div>
+          <p class="output-container__disclaimer"><span class="bold-text">Note:</span> If downloading YML file the leading "." may be removed from the file name. Please make sure the YML file is named as follows: <span class="bold-text">.gitlab-ci.yml</span></p>
+          <pre class="output-container__yml-output">variables:
+  ACCOUNT: petco-marketing
+  TARGET_FOLDER_ID: {{ selectedFolder.ID }}
+  SUBJECTLINE: {{ subjectLine }}
+  SHARED_FOLDER: "{{ sharedFolder }}"
+
+stages:
+  - deploy
+  - overwrite
+
+Validate and Deploy:
+  image: git.ad.jamdirect.ca:4567/devops/sfmc-connector:latest
+  stage: deploy
+  allow_failure: true
+  only:
+    - master
+  tags:
+    - k8
+  script:
+    - python -m sf_rest.run $ACCOUNT $TARGET_FOLDER_ID $SUBJECTLINE --repo $CI_PROJECT_ID --shared $SHARED_FOLDER --preflight
+
+OVERWRITE:
+  image: git.ad.jamdirect.ca:4567/devops/sfmc-connector:latest
+  stage: overwrite
+  only:
+    - master
+  when: manual
+  tags:
+    - k8
+  script:
+    - python -m sf_rest.run $ACCOUNT $TARGET_FOLDER_ID $SUBJECTLINE --repo $CI_PROJECT_ID --shared $SHARED_FOLDER --overwrite --preflight</pre>
+        </div>
+        <p v-else class="warning-text">Please fill out the required fields above.</p>
+      </div>
+    </div>
+  `;
+
+  vueApp.component('folder', {
+    props: {
+      origData: Object,
+      folderData: Object,
+      currFolder: Object,
+      selectedFolder: Object,
+      addToSelected: Function,
+    },
+    data: () => ({
+      childFolders: [],
+      open: false,
+    }),
+    methods: {
+      selectFolder(currFolder) {
+        this.open = !this.open;
+      },
+      checkEquals(o1, o2) {
+        return Object.keys(o1).length === Object.keys(o2).length && Object.keys(o1).every(p => o1[p] === o2[p]);
+      },
+      updateChildFolders() {
+        const startingArray = [...this.folderData];
+        const filteredArray = startingArray.filter(folder => (folder.ParentFolder && folder.ParentFolder.ID === this.currFolder.ID));
+        if(!this.checkEquals(this.childFolders, filteredArray)) {
+          this.childFolders = filteredArray;
+          if(this.currFolder.Name == 'Content Builder') this.open = true;
+        }
+      }
+    },
+    template: `
+      <li class="folders-picker__folder">
+        <template v-if="open">
+          <span :class="selectedFolder && selectedFolder.ID === currFolder.ID ? 'folders-picker__selected-folder' : ''" @click="selectFolder(currFolder)"><i class="fas fa-folder-open"></i>{{ currFolder.Name }}</span><button class="folders-picker__select app-button" @click="addToSelected(currFolder)"><i class="far fa-check-circle"></i></button>
+        </template>
+        <template v-else>
+          <span :class="selectedFolder && selectedFolder.ID === currFolder.ID ? 'folders-picker__selected-folder' : ''" @click="selectFolder(currFolder)"><i class="fas fa-folder"></i>{{ currFolder.Name }}</span><button class="folders-picker__select app-button" @click="addToSelected(currFolder)"><i class="far fa-check-circle"></i></button>
+        </template>
+        <ul v-if="open" class="folders-picker__folder-container">
+          <template v-for="(folder, index) in childFolders" v-bind:key="index">
+            <folder :origData="origData" :folderData="folderData" :currFolder="folder" :addToSelected="addToSelected" :selectedFolder="selectedFolder"></folder>
+          </template>
+        </ul>
+      </li>
+    `,
+    mounted() {
+      this.updateChildFolders();
+    },
+    updated() {
+      this.updateChildFolders();
+    }
+  })
+
+  vueApp.component('yml-generator', {
+    data: () => ({
+      origData: folderData,
+      rootFolders: null,
+      folderData,
+      copyButtonText: 'Copy to Clipboard',
+      searchTerm: '',
+      sharedFolder: 'false',
+      subjectLine: 'subjectline',
+      selectedFolder: null,
+    }),
+    methods: {
+      getRelevantFolders(folderList) {
+        const newFolderList = [...folderList];
+        newFolderList.forEach(currFolder => {
+          let parentFolder = this.origData.filter(folder => (folder.ID === currFolder.ParentFolder.ID));
+          if(parentFolder.length) {
+            parentFolder = parentFolder[0];
+            if(!newFolderList.some(folder => (folder.ID === parentFolder.ID))) newFolderList.push(parentFolder);
+          }
+        });
+        return newFolderList.length === folderList.length ? newFolderList : this.getRelevantFolders(newFolderList);
+      },
+      searchFolders(e) {
+        e.preventDefault();
+        if(this.searchTerm) {
+          const startingArray = [...this.origData];
+          const filteredArray = startingArray.filter(folder => (folder.Name.toLowerCase().includes(this.searchTerm.trim().toLowerCase()) || folder.ID.toString().includes(this.searchTerm.trim())));
+          this.folderData = this.getRelevantFolders(filteredArray);
+        }
+        else {
+          this.clearSearch();
+        }
+      },
+      clearSearch() {
+        this.searchTerm = '';
+        this.folderData = this.origData;
+      },
+      addToSelected(folderData) {
+        this.selectedFolder = folderData;
+      },
+      downloadYML() {
+        // Create Download Link
+        const downloadLink = document.createElement('a');
+        const ymlTemplate = document.querySelector('.output-container__yml-output').innerHTML;
+        downloadLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(ymlTemplate));
+        downloadLink.setAttribute('download', '.gitlab-ci.yml');
+        downloadLink.style.display = 'none';
+
+        // Simulate Click and Remove Element
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      },
+      copyYML() {
+        const ymlTemplate = document.querySelector('.output-container__yml-output').innerHTML;
+        this.copyButtonText = 'YML Copied'
+
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.textContent = ymlTemplate;
+        document.body.append(tempTextArea);
+        tempTextArea.select();
+        tempTextArea.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        document.body.removeChild(tempTextArea);
+      },
+      resetButtonText() {
+        this.copyButtonText = 'Copy to Clipboard'
+      },
+      getFolderPath(currFolder) {
+        if(!currFolder.ParentFolder.ID) {
+          return currFolder.Name;
+        }
+        else {
+          const startingArray = [...this.origData];
+          const filteredArray = startingArray.filter(folder => (folder.ID === currFolder.ParentFolder.ID));
+          if(filteredArray.length) return this.getFolderPath(filteredArray[0]) + '/' + currFolder.Name;
+        }
+      },
+    },
+    template: ymlGeneratorTemplate,
+    mounted() {
+      const startingArray = [...this.origData];
+      const filteredArray = startingArray.filter(folder => (!folder.ParentFolder.ID));
+      this.rootFolders = filteredArray;
+    }
+  });
+
+  vueApp.mount('#workspace');
+});
+
+%%=v(@jsclosingTag)=%%

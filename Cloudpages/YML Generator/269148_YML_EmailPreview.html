@@ -1,0 +1,14 @@
+<script runat="server" language="javascript">
+  var previewEmailID = Variable.GetValue("@preview_email");
+  var previewMasterID = Variable.GetValue("@preview_master_id");
+  var token = getToken('C9D916C9-9766-441E-8C57-905CC43620E6');
+  // var dev = true;
+  var renderedEmail = getRenderedEmail(token, previewEmailID, previewMasterID, '862C3A93-D95D-4FF5-8F71-57DF14A6DC36');
+
+  Variable.SetValue('@Rendered_Content', renderedEmail.content);
+  Variable.SetValue('@subject_line', renderedEmail.subjectLine);
+  Variable.SetValue('@PreTitle', renderedEmail.preTitle);
+</script>
+<p style="text-align:center; padding:0 1rem;"><span style="font-weight:bold;">Subject Line:</span> %%=v(@subject_line)=%%</p>
+<p style="text-align:center; padding:0 1rem;"><span style="font-weight:bold;">Pretitle:</span> %%=v(@PreTitle)=%%</p>
+%%=v(@Rendered_Content)=%%
