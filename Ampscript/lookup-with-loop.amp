@@ -1,0 +1,61 @@
+%%[
+/* 476369694 */
+SET @MasterID = MasterID
+SET @hasDog = FALSE
+SET @hasCat = FALSE
+set @rows = LookupRows("MasterEmailablePets","MasterID", @MasterID)
+set @rowCount = rowcount(@rows)
+
+IF @rowCount > 0 THEN
+    for @i = 1 to @rowCount do
+        set @row = row(@rows, @i)
+        SET @Pet_Type_Desc = field(@row,"Pet_Type_Desc")
+        IF @Pet_Type_Desc == 'Dog' THEN
+            SET @hasDog = TRUE
+        ENDIF
+        IF @Pet_Type_Desc == 'Cat' THEN
+            SET @hasCat = TRUE
+        ENDIF
+    NEXT @i
+ELSE
+    IF @INFERRED_PET_TYPE == 'DOG' THEN
+      SET @hasDog = TRUE
+    ENDIF
+    IF @INFERRED_PET_TYPE == 'CAT' THEN
+      SET @hasCat = TRUE
+    ENDIF
+ENDIF
+IF @hasCat == FALSE and @hasDog == FALSE THEN
+  SET @hasDog = TRUE
+  SET @testing_flag = 'This user doesn''t associate with dog or cat. Feeding dog offer as a fallback'
+ENDIF
+]%%
+<table class="full-width" align="center" width="620" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="padding: 0 0 0 0">
+      <table class="width-90" align="center" border="0" cellpadding="0" cellspacing="0" width="80%">
+        <tr>
+          <td>
+            <table class="full-width" align="center" width="100%" border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="font-family: 'PetcoCircularTT-Regular', Arial, Helvetica, Sans-serif; font-size: 18px; color: #00205b; line-height: 1em; text-align: left; font-weight: 300; mso-line-height-rule: exactly; padding: 0 0 0 0">
+                <!-- remove this for production use -->
+                %%[if not empty(@testing_flag) then]%%%%=v(@testing_flag)=%%<br><br>%%[endif]%%
+                <!-- /remove this for production use -->
+
+                %%[IF @INFERRED_PET_TYPE == 'Cat' THEN]%%
+                %%=ContentBlockbyKey('444155_lookup-by-pettype-cat')=%%
+                %%=ContentBlockbyKey('444155_lookup-by-pettype-dog')=%%
+                %%[ELSE]%%
+                %%=ContentBlockbyKey('444155_lookup-by-pettype-dog')=%%
+                %%=ContentBlockbyKey('444155_lookup-by-pettype-cat')=%%
+                %%[ENDIF]%%
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
