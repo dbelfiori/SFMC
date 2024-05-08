@@ -1,0 +1,31 @@
+%%[
+/* Both: 476369694 */
+SET @MasterID = MasterID
+SET @hasDog = FALSE
+SET @hasCat = FALSE
+set @rows = LookupRows("MasterEmailablePets","MasterID", @MasterID)
+set @rowCount = rowcount(@rows)
+
+IF @rowCount > 0 THEN
+    for @i = 1 to @rowCount do
+        set @row = row(@rows, @i)
+        SET @Pet_Type_Desc = field(@row,"Pet_Type_Desc")
+        IF @Pet_Type_Desc == 'Dog' THEN
+            SET @hasDog = TRUE
+        ENDIF
+        IF @Pet_Type_Desc == 'Cat' THEN
+            SET @hasCat = TRUE
+        ENDIF
+    NEXT @i
+ELSE
+    IF @INFERRED_PET_TYPE == 'DOG' THEN
+      SET @hasDog = TRUE
+    ENDIF
+    IF @INFERRED_PET_TYPE == 'CAT' THEN
+      SET @hasCat = TRUE
+    ENDIF
+ENDIF
+IF @hasCat == FALSE and @hasDog == FALSE THEN
+  SET @hasDog = TRUE
+ENDIF
+]%%
