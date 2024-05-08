@@ -1,0 +1,130 @@
+%%[
+SET @SubscriberKey = RequestParameter("SubscriberKey")
+SET @Email_Address = RequestParameter("Email_Address")
+SET @Selection = RequestParameter("Selection")
+SET @Traveling_together_EM = RequestParameter("Traveling_together_EM")
+SET @Partying_it_up_EM = RequestParameter("Partying_it_up_EM")
+SET @Hitting_the_water_EM = RequestParameter("Hitting_the_water_EM")
+SET @Hiking_the_trails_EM = RequestParameter("Hiking_the_trails_EM")
+SET @Playing_indoors_EM = RequestParameter("Playing_indoors_EM")
+SET @Getting_inspired_EM = RequestParameter("Getting_inspired_EM")
+SET @hasDog = RequestParameter("hasDog")
+SET @hasCat = RequestParameter("hasCat")
+
+
+IF (@hasCat == TRUE and @hasDog == TRUE) THEN
+    IF @Selection == 'Traveling together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/search?query=travel'
+    ELSEIF @Selection == 'Partying it up together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/search?query=toys'
+    ELSEIF @Selection == 'Hitting the water together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/dog/dog-apparel/dog-life-jackets-and-swimsuits'
+    ELSEIF @Selection == 'Hiking the trails together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/dog/travel-outdoor-supplies'
+    ELSEIF @Selection == 'Playing indoors in the AC together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/search?query=toys'
+    ELSEIF @Selection == 'Getting inspired at Petco' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/trending-shops'
+    ELSE
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/trending-shops'
+    ENDIF
+ELSEIF (@hasCat == TRUE and @hasDog == FALSE) THEN
+    IF @Selection == 'Traveling together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/cat/cat-containment'
+    ELSEIF @Selection == 'Partying it up together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/cat/cat-toys'
+    ELSEIF @Selection == 'Hitting the water together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/cat'
+    ELSEIF @Selection == 'Hiking the trails together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/cat'
+    ELSEIF @Selection == 'Playing indoors in the AC together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/cat/cat-toys'
+    ELSEIF @Selection == 'Getting inspired at Petco' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/trending-shops'
+    ELSE
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/trending-shops'
+    ENDIF
+ELSE
+    IF @Selection == 'Traveling together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/dog/travel-outdoor-supplies'
+    ELSEIF @Selection == 'Partying it up together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/dog/dog-toys'
+    ELSEIF @Selection == 'Hitting the water together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/dog/dog-apparel/dog-life-jackets-and-swimsuits'
+    ELSEIF @Selection == 'Hiking the trails together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/dog/travel-outdoor-supplies'
+    ELSEIF @Selection == 'Playing indoors in the AC together' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/dog/dog-toys'
+    ELSEIF @Selection == 'Getting inspired at Petco' THEN
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/trending-shops'
+    ELSE
+        SET @redirect_url = 'https://www.petco.com/shop/en/petcostore/category/trending-shops'
+    ENDIF
+ENDIF
+
+SET @DE_Lookup = '20240505_Summer_Kickoff_PollSelections_ALL'
+set @hasSubmitted = lookUp(@DE_Lookup, 'Selection', 'SubscriberKey', @SubscriberKey)
+
+set @Optionrows = LookupRows(@DE_Lookup,"SubscriberKey", @SubscriberKey)
+set @OptionRowCount = rowcount(@Optionrows)
+
+IF @OptionRowCount > 0 THEN
+    for @i = 1 to @OptionRowCount do
+        set @row = row(@Optionrows, @i)
+        SET @Traveling_together = field(@row,"Traveling_together")
+        SET @Partying_it_up = field(@row,"Partying_it_up")
+        SET @Hitting_the_water = field(@row,"Hitting_the_water")
+        SET @Hiking_the_trails = field(@row,"Hiking_the_trails")
+        SET @Playing_indoors = field(@row,"Playing_indoors")
+        SET @Getting_inspired = field(@row,"Getting_inspired")
+    NEXT @i
+ENDIF
+
+IF @Traveling_together != 'X' THEN
+    SET @Traveling_together = @Traveling_together_EM
+ENDIF
+IF @Partying_it_up != 'X' THEN
+    SET @Partying_it_up = @Partying_it_up_EM
+ENDIF
+IF @Hitting_the_water != 'X' THEN
+    SET @Hitting_the_water = @Hitting_the_water_EM
+ENDIF
+IF @Hiking_the_trails != 'X' THEN
+    SET @Hiking_the_trails = @Hiking_the_trails_EM
+ENDIF
+IF @Playing_indoors != 'X' THEN
+    SET @Playing_indoors = @Playing_indoors_EM
+ENDIF
+IF @Getting_inspired != 'X' THEN
+    SET @Getting_inspired = @Getting_inspired_EM
+ENDIF
+
+IF NOT EMPTY(@hasSubmitted) THEN 
+    UpdateData(@DE_Lookup,1,
+    'SubscriberKey', @SubscriberKey,
+    'Selection', @Selection,
+    'Traveling_together', @Traveling_together,
+    'Partying_it_up', @Partying_it_up,
+    'Hitting_the_water', @Hitting_the_water,
+    'Hiking_the_trails', @Hiking_the_trails,
+    'Playing_indoors', @Playing_indoors,
+    'Getting_inspired', @Getting_inspired
+    )
+    Redirect(@redirect_url)
+ELSE
+    InsertData(@DE_Lookup,
+        'SubscriberKey', @SubscriberKey,
+        'Email_Address', @Email_Address,
+        'Selection', @Selection,
+        'Traveling_together', @Traveling_together,
+        'Partying_it_up', @Partying_it_up,
+        'Hitting_the_water', @Hitting_the_water,
+        'Hiking_the_trails', @Hiking_the_trails,
+        'Playing_indoors', @Playing_indoors,
+        'Getting_inspired', @Getting_inspired
+    )
+    Redirect(@redirect_url)
+ENDIF
+]%%
+
+<p>Please wait while we directed you to Petco.com.</p>
