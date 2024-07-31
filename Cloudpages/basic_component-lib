@@ -1,0 +1,21 @@
+%%[
+Set @mod_id = 'modID-1,modID-2,modID-3'
+
+Set @id_rowset = BuildRowsetFromString(@mod_id,",")
+set @id_row_count = RowCount(@id_rowset)
+
+if @id_row_count > 0 then
+
+    for @i = 1 TO @id_row_count do
+    Set @row = Row(@id_rowset, @i)
+    Set @display_product = Field(@row,1)
+    ]%%
+
+    <div style="display: block;">%%=ContentBlockByKey(@display_product)=%%</div>
+<!-- escape inline ampscript %%= =%% with &#37;&#37;  -->
+<div style="display: block;"><textarea id="output" style="width: 100%; max-width: 620px; height: 200px; display: block; margin: 10px auto; ">
+&#37;&#37;[
+set @MOD_URL = '%%=v(@MOD_URL)=%%'
+]&#37;&#37;
+%%=TreatAsContent(ContentBlockByKey(@display_product))=%%</textarea></div>
+%%[ next @i endif ]%%
