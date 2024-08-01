@@ -4,7 +4,7 @@ SET @c_dev = RequestParameter("c_dev")
 SET @c_platform = RequestParameter("c_platform")
 
 IF @c_mod_category == '' then
-  set @c_mod_category = 'Hero Mods'
+  set @c_mod_category = 'Secondary Mods - 2 column'
 endif
 IF @c_dev == '' then
   set @c_dev = 'true'
@@ -19,6 +19,29 @@ set @scriptBegin = Concat('<','script','>')
 set @scriptEnd = Concat('</','script','>')
 ]%%
 
+%%[
+
+IF @c_mod_category == 'Hero Mods' THEN
+  Set @module_list = 'df85887d-c564-4c97-b1fb-72f244d0af0b'
+ELSEIF @c_mod_category == 'Secondary Mods - 1 column' THEN
+  Set @module_list = ''
+ELSEIF @c_mod_category == 'Secondary Mods - 2 column' THEN
+  Set @module_list = '8b7f3141-0627-4b3f-9094-b2407a569894,5454e9d5-e58f-4b38-86a2-436c90963f96'
+ELSEIF @c_mod_category == 'Secondary Mods - 3 column' THEN
+  Set @module_list = ''
+ELSEIF @c_mod_category == 'Holiday Modules 2022' THEN
+  Set @module_list = ''
+ELSEIF @c_mod_category == 'Holiday Modules 2023' THEN
+  Set @module_list = ''
+ELSEIF @c_mod_category == 'Unified Membership Core' THEN
+  Set @module_list = ''
+ELSEIF @c_mod_category == 'Unified Membership Premier' THEN
+  Set @module_list = ''
+ELSEIF @c_mod_category == 'Unified Membership Generic' THEN
+  Set @module_list = ''
+ENDIF
+
+]%%
 %%[IF @c_platform == 'mobile' THEN]%%
 <link href="https://mc-74lnyjsjy9b7kc-xh7qbyjtsm.pub.sfmc-content.com/uvmjjp1qqpm" rel="stylesheet">
 %%[ENDIF]%%
@@ -59,20 +82,20 @@ li.nav-item {
         </li>
         <li class="nav-item">
             %%[if @c_dev == 'true' THEN]%%
-            <a class="nav-link" href="%%=CloudPagesURL(639,'c_dev','false','c_platform',@c_platform)=%%">Hide Code</a>
+            <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev','false','c_platform',@c_platform)=%%">Hide Code</a>
             %%[else]%%
-            <a class="nav-link" href="%%=CloudPagesURL(639,'c_dev','true','c_platform',@c_platform)=%%">Show Code</a>
+            <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev','true','c_platform',@c_platform)=%%">Show Code</a>
             %%[endif]%%
         </li>
         <li class="nav-item">
         %%[if @c_platform == 'desktop' THEN]%%
-            <a class="nav-link" href="%%=CloudPagesURL(639,'c_dev',@c_dev,'c_platform','mobile')=%%">Switch to Mobile</a>
+            <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev',@c_dev,'c_platform','mobile')=%%">Switch to Mobile</a>
             %%[else]%%
-            <a class="nav-link" href="%%=CloudPagesURL(639,'c_dev',@c_dev,'c_platform','desktop')=%%">Switch to Desktop</a>
+            <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev',@c_dev,'c_platform','desktop')=%%">Switch to Desktop</a>
             %%[endif]%%
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Logout</a>
+          <a class="nav-link" href="https://fe34157075640575771d76.pub.s10.sfmc-content.com/f4reikh2pxq#">Logout</a>
         </li>
       </ul>
     </div>
@@ -85,9 +108,8 @@ li.nav-item {
 </div>
 
 %%[
-Set @product_id = 'df85887d-c564-4c97-b1fb-72f244d0af0b,8b7f3141-0627-4b3f-9094-b2407a569894,5454e9d5-e58f-4b38-86a2-436c90963f96'
 
-Set @id_rowset = BuildRowsetFromString(@product_id,",")
+Set @id_rowset = BuildRowsetFromString(@module_list,",")
 set @id_row_count = RowCount(@id_rowset)
 
 if @id_row_count > 0 then
@@ -98,7 +120,7 @@ if @id_row_count > 0 then
     ]%%
 
 <div id="EM_Body" style="display: block; width: 100%; max-width: %%=v(@platform_width)=%%; margin: 20px auto;">
-<div style="text-align: center;">%%=v(@display_product)=%%</div>
+<div style="text-align: center;"><h2 style="margin: 30px 0 0 0; padding: 10px 0 0 0;">%%=v(@display_product)=%%</h2></div>
 %%=ContentBlockByKey(@display_product)=%%
 <!-- escape inline ampscript %% = = %% with &#37;&#37;  -->
 %%[if @c_dev == 'true' THEN]%%
