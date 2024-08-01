@@ -1,4 +1,4 @@
-%%[
+%%[ /* https://mc-74lnyjsjy9b7kc-xh7qbyjtsm.pub.sfmc-content.com/ismihvje5tp */ 
 SET @c_mod_category = RequestParameter("c_mod_category")
 SET @c_dev = RequestParameter("c_dev")
 SET @c_platform = RequestParameter("c_platform")
