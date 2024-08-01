@@ -21,15 +21,7 @@ set @MOD_URL = '%%=v(@MOD_URL)=%%'
 %%[ next @i endif ]%%
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Copy Text from Textarea</title>
-</head>
-<body>
-    <textarea id="textarea-1">Text to copy from textarea 1</textarea>
+<textarea id="textarea-1">Text to copy from textarea 1</textarea>
     <button class="copy-btn" data-target="1">Copy Text 1</button>
 
     <textarea id="textarea-2">Text to copy from textarea 2</textarea>
@@ -37,6 +29,13 @@ set @MOD_URL = '%%=v(@MOD_URL)=%%'
 
     <textarea id="textarea-3">Text to copy from textarea 3</textarea>
     <button class="copy-btn" data-target="3">Copy Text 3</button>
+
+    <script runat="server">
+        Platform.Load("Core", "1");
+
+        var buttons = Platform.Function.ContentBlockByKey("copy-buttons");
+        Write(buttons);
+    </script>
 
     <script>
         document.querySelectorAll('.copy-btn').forEach(button => {
@@ -49,5 +48,3 @@ set @MOD_URL = '%%=v(@MOD_URL)=%%'
             });
         });
     </script>
-</body>
-</html>
