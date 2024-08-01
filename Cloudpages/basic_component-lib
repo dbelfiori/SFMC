@@ -1,7 +1,17 @@
 %%[
-Set @mod_id = 'modID-1,modID-2,modID-3'
+set @scriptBegin = Concat('<','script','>')
+set @scriptEnd = Concat('</','script','>')
+]%%
 
-Set @id_rowset = BuildRowsetFromString(@mod_id,",")
+<div style="display: block; width: 100%; max-width: 620px; background:#e3f2fd; padding: 20px; color:#555555; margin:50px auto ;">
+  <b>Currently Viewing:</b> Hero Mods<br>
+<b>SFMC Location:</b> Content Builder/07 Test/Dominic/Prototype/Hero Mods
+</div>
+
+%%[
+Set @product_id = 'df85887d-c564-4c97-b1fb-72f244d0af0b,8b7f3141-0627-4b3f-9094-b2407a569894,5454e9d5-e58f-4b38-86a2-436c90963f96'
+
+Set @id_rowset = BuildRowsetFromString(@product_id,",")
 set @id_row_count = RowCount(@id_rowset)
 
 if @id_row_count > 0 then
@@ -11,40 +21,23 @@ if @id_row_count > 0 then
     Set @display_product = Field(@row,1)
     ]%%
 
-    <div style="display: block;">%%=ContentBlockByKey(@display_product)=%%</div>
-<!-- escape inline ampscript %%= =%% with &#37;&#37;  -->
-<div style="display: block;"><textarea id="output" style="width: 100%; max-width: 620px; height: 200px; display: block; margin: 10px auto; ">
-&#37;&#37;[
-set @MOD_URL = '%%=v(@MOD_URL)=%%'
-]&#37;&#37;
-%%=TreatAsContent(ContentBlockByKey(@display_product))=%%</textarea></div>
+<div style="display: block; width: 100%; max-width: 660px; margin: 20px auto; border: 1px dashed #EFEFEF">
+<div style="text-align: center;">%%=v(@display_product)=%%</div>
+%%=ContentBlockByKey(@display_product)=%%
+<!-- escape inline ampscript %% = = %% with &#37;&#37;  -->
+<textarea id="textarea-%%=v(@i)=%%" style="width: 100%; max-width: 620px; height: 120px; display: block; margin: 10px auto; ">
+%%=TreatAsContent(ContentBlockByKey(@display_product))=%%</textarea>
+<button class="copy-btn" data-target="%%=v(@i)=%%" style="display: block;margin: 0 auto; margin-bottom: 10px;">Copy Code</button>
+</div>
 %%[ next @i endif ]%%
 
-
-<textarea id="textarea-1">Text to copy from textarea 1</textarea>
-    <button class="copy-btn" data-target="1">Copy Text 1</button>
-
-    <textarea id="textarea-2">Text to copy from textarea 2</textarea>
-    <button class="copy-btn" data-target="2">Copy Text 2</button>
-
-    <textarea id="textarea-3">Text to copy from textarea 3</textarea>
-    <button class="copy-btn" data-target="3">Copy Text 3</button>
-
-    <script runat="server">
-        Platform.Load("Core", "1");
-
-        var buttons = Platform.Function.ContentBlockByKey("copy-buttons");
-        Write(buttons);
-    </script>
-
-    <script>
-        document.querySelectorAll('.copy-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const targetNumber = button.getAttribute('data-target');
-                const textarea = document.getElementById(`textarea-${targetNumber}`);
-                textarea.select();
-                document.execCommand('copy');
-                alert(`Text copied from textarea-${targetNumber}`);
-            });
+%%=v(@scriptBegin)=%%
+    document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetNumber = button.getAttribute('data-target');
+            const textarea = document.getElementById(`textarea-${targetNumber}`);
+            textarea.select();
+            document.execCommand('copy');
         });
-    </script>
+    });
+%%=v(@scriptEnd)=%%
