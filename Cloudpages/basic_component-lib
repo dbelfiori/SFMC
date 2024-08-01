@@ -1,9 +1,85 @@
 %%[
+SET @c_mod_category = RequestParameter("c_mod_category")
+SET @c_dev = RequestParameter("c_dev")
+SET @c_platform = RequestParameter("c_platform")
+
+IF @c_mod_category == '' then
+  set @c_mod_category = 'Hero Mods'
+endif
+IF @c_dev == '' then
+  set @c_dev = 'true'
+endif
+IF OR @c_platform == 'mobile' then
+    SET @platform_width = '360px'
+else
+    SET @c_platform = 'desktop'
+    SET @platform_width = '620px'
+endif
 set @scriptBegin = Concat('<','script','>')
 set @scriptEnd = Concat('</','script','>')
 ]%%
 
-<div style="display: block; width: 100%; max-width: 620px; background:#e3f2fd; padding: 20px; color:#555555; margin:50px auto ;">
+%%[IF @c_platform == 'mobile' THEN]%%
+<link href="https://mc-74lnyjsjy9b7kc-xh7qbyjtsm.pub.sfmc-content.com/uvmjjp1qqpm" rel="stylesheet">
+%%[ENDIF]%%
+<style>
+body {margin-bottom: 50px !important;}
+li.nav-item {
+    border: 1px solid #cdcdcd;
+    margin-right: 2px;
+}
+</style>
+<nav class="navbar navbar-expand-lg bg-body-tertiary py-0">
+  <div class="container-fluid">
+    <a class="navbar-brand pb-0" href="%%=CloudPagesURL(639)=%%">
+      <img src="https://image.e.petco.com/lib/fe34157075640575771d76/m/4/52cf4ed5-3f48-493b-89ad-d07d69c45adb.png" alt="Petco Logo" width="180">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            %%=v(@c_mod_category)=%%
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Hero Mods')=%%">Hero Mods</a></li>
+            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 1 column')=%%">Secondary Mods - 1 column</a></li>
+            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 2 column')=%%">Secondary Mods - 2 column</a></li>
+            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 3 column')=%%">Secondary Mods - 3 column</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Holiday Modules 2022')=%%">Holiday Modules 2022</a></li>
+            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Holiday Modules 2023')=%%">Holiday Modules 2023</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Unified Membership Core')=%%">Unified Membership Core</a></li>
+            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Unified Membership Premier')=%%">Unified Membership Premier</a></li>
+            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Unified Membership Generic')=%%">Unified Membership Generic</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+            %%[if @c_dev == 'true' THEN]%%
+            <a class="nav-link" href="%%=CloudPagesURL(639,'c_dev','false','c_platform',@c_platform)=%%">Hide Code</a>
+            %%[else]%%
+            <a class="nav-link" href="%%=CloudPagesURL(639,'c_dev','true','c_platform',@c_platform)=%%">Show Code</a>
+            %%[endif]%%
+        </li>
+        <li class="nav-item">
+        %%[if @c_platform == 'desktop' THEN]%%
+            <a class="nav-link" href="%%=CloudPagesURL(639,'c_dev',@c_dev,'c_platform','mobile')=%%">Switch to Mobile</a>
+            %%[else]%%
+            <a class="nav-link" href="%%=CloudPagesURL(639,'c_dev',@c_dev,'c_platform','desktop')=%%">Switch to Desktop</a>
+            %%[endif]%%
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div style="display: block; width: 100%; max-width: 700px; background:#e3f2fd; padding: 20px; color:#555555; margin:50px auto ;">
   <b>Currently Viewing:</b> Hero Mods<br>
 <b>SFMC Location:</b> Content Builder/07 Test/Dominic/Prototype/Hero Mods
 </div>
@@ -21,13 +97,15 @@ if @id_row_count > 0 then
     Set @display_product = Field(@row,1)
     ]%%
 
-<div style="display: block; width: 100%; max-width: 660px; margin: 20px auto; border: 1px dashed #EFEFEF">
+<div id="EM_Body" style="display: block; width: 100%; max-width: %%=v(@platform_width)=%%; margin: 20px auto;">
 <div style="text-align: center;">%%=v(@display_product)=%%</div>
 %%=ContentBlockByKey(@display_product)=%%
 <!-- escape inline ampscript %% = = %% with &#37;&#37;  -->
-<textarea id="textarea-%%=v(@i)=%%" style="width: 100%; max-width: 620px; height: 120px; display: block; margin: 10px auto; ">
+%%[if @c_dev == 'true' THEN]%%
+<textarea id="textarea-%%=v(@i)=%%" style="width: 100%; max-width: %%=v(@platform_width)=%%; height: 120px; display: block; margin: 10px auto; ">
 %%=TreatAsContent(ContentBlockByKey(@display_product))=%%</textarea>
-<button class="copy-btn" data-target="%%=v(@i)=%%" style="display: block;margin: 0 auto; margin-bottom: 10px;">Copy Code</button>
+<button class="copy-btn" data-target="%%=v(@i)=%%" style="display: block;margin: 0 auto; margin-bottom: 20px;">Copy Code</button>
+%%[endif]%%
 </div>
 %%[ next @i endif ]%%
 
