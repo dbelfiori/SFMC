@@ -1,4 +1,4 @@
-%%[ /* https://mc-74lnyjsjy9b7kc-xh7qbyjtsm.pub.sfmc-content.com/ismihvje5tp */ 
+%%[
 SET @c_mod_category = RequestParameter("c_mod_category")
 SET @c_dev = RequestParameter("c_dev")
 SET @c_platform = RequestParameter("c_platform")
@@ -10,10 +10,10 @@ IF @c_dev == '' then
   set @c_dev = 'true'
 endif
 IF OR @c_platform == 'mobile' then
-    SET @platform_width = '360px'
+    SET @platform_mobile = 'margin: 0 auto; max-width:360px;'
 else
     SET @c_platform = 'desktop'
-    SET @platform_width = '620px'
+    SET @platform_mobile = ''
 endif
 set @scriptBegin = Concat('<','script','>')
 set @scriptEnd = Concat('</','script','>')
@@ -47,10 +47,10 @@ ENDIF
 %%[ENDIF]%%
 <style>
 body {margin-bottom: 50px !important;}
-li.nav-item {
-    border: 1px solid #cdcdcd;
-    margin-right: 2px;
-}
+li.nav-item {border: 1px solid #cdcdcd; margin-right: 2px;}
+textarea {width: 100%; max-width: 620px; margin: 10px auto 10px auto; display: block;}
+.col {border-bottom: 1px solid #ccc;}
+.btn-one-line-mob {border: 0px !important;}
 </style>
 <nav class="navbar navbar-expand-lg bg-body-tertiary py-0">
   <div class="container-fluid">
@@ -102,42 +102,43 @@ li.nav-item {
   </div>
 </nav>
 
-<div style="display: block; width: 100%; max-width: 700px; background:#e3f2fd; padding: 20px; color:#555555; margin:50px auto ;">
-  <b>Currently Viewing:</b> Hero Mods<br>
-<b>SFMC Location:</b> Content Builder/07 Test/Dominic/Prototype/Hero Mods
+<div style="display: block; width: 100%; max-width: 700px; background:#e3f2fd; padding: 20px; color:#555555; margin: 40px auto 10px auto;">
+  <b>Currently Viewing:</b> %%=v(@c_mod_category)=%%<br>
+<b>SFMC Location:</b> Restricted
 </div>
 
-%%[
-
-Set @id_rowset = BuildRowsetFromString(@module_list,",")
-set @id_row_count = RowCount(@id_rowset)
-
-if @id_row_count > 0 then
+<div class="container-fluid">
+  <div class="row">
+  %%[
+  Set @id_rowset = BuildRowsetFromString(@module_list,",")
+  set @id_row_count = RowCount(@id_rowset)
+  if @id_row_count > 0 then
 
     for @i = 1 TO @id_row_count do
     Set @row = Row(@id_rowset, @i)
     Set @display_product = Field(@row,1)
-    ]%%
-
-<div id="EM_Body" style="display: block; width: 100%; max-width: %%=v(@platform_width)=%%; margin: 20px auto;">
-<div style="text-align: center;"><h2 style="margin: 30px 0 0 0; padding: 10px 0 0 0;">%%=v(@display_product)=%%</h2></div>
-%%=ContentBlockByKey(@display_product)=%%
-<!-- escape inline ampscript %% = = %% with &#37;&#37;  -->
-%%[if @c_dev == 'true' THEN]%%
-<textarea id="textarea-%%=v(@i)=%%" style="width: 100%; max-width: %%=v(@platform_width)=%%; height: 120px; display: block; margin: 10px auto; ">
-%%=TreatAsContent(ContentBlockByKey(@display_product))=%%</textarea>
-<button class="copy-btn" data-target="%%=v(@i)=%%" style="display: block;margin: 0 auto; margin-bottom: 20px;">Copy Code</button>
-%%[endif]%%
-</div>
+  ]%%
+    <div class="col" style="%%=v(@platform_mobile)=%%">
+      <!--div style="text-align: center;">
+        <h2 style="margin: 30px 0 0 0; padding: 10px 0 0 0;">%%=v(@display_product)=%%</h2>
+      </div-->
+      %%=ContentBlockByKey(@display_product)=%%
+      <!-- escape inline ampscript %% = = %% with &#37;&#37;  -->
+      %%[if @c_dev == 'true' THEN]%%
+      <textarea id="textarea-%%=v(@i)=%%">%%=TreatAsContent(ContentBlockByKey(@display_product))=%%</textarea>
+      <button class="copy-btn" data-target="%%=v(@i)=%%" style="display: block;margin: 0 auto; margin-bottom: 20px;">Copy Code</button>
+  %%[endif]%%
+    </div>
 %%[ next @i endif ]%%
-
+  </div>
+</div>
 %%=v(@scriptBegin)=%%
-    document.querySelectorAll('.copy-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const targetNumber = button.getAttribute('data-target');
-            const textarea = document.getElementById(`textarea-${targetNumber}`);
-            textarea.select();
-            document.execCommand('copy');
-        });
+document.querySelectorAll('.copy-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const targetNumber = button.getAttribute('data-target');
+        const textarea = document.getElementById(`textarea-${targetNumber}`);
+        textarea.select();
+        document.execCommand('copy');
     });
+});
 %%=v(@scriptEnd)=%%
