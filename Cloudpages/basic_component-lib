@@ -19,6 +19,12 @@ set @scriptBegin = Concat('<','script','>')
 set @scriptEnd = Concat('</','script','>')
 ]%%
 
+%%[ IF EMPTY(@c_mod_category) THEN]%%
+<div class="container d-flex align-items-center justify-content-center min-vh-100"> 
+  You do not have permission to access this page. 
+</div> 
+%%[ELSE]%%
+
 %%[ /* &#37;&#37; */
 IF @c_mod_category == 'Hero Mods' THEN
   Set @module_list = '444155_hm1,444155_hm2,444155_hm3'
@@ -50,7 +56,7 @@ textarea {width: 100%; max-width: 620px; margin: 10px auto 10px auto; display: b
 <!-- Nav -->
 <nav class="navbar navbar-expand-lg bg-body-tertiary py-0">
     <div class="container-fluid">
-      <a class="navbar-brand pb-0" href="%%=CloudPagesURL(639)=%%">
+      <a class="navbar-brand pb-0" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 2 column')=%%">
         <img src="https://image.e.petco.com/lib/fe34157075640575771d76/m/4/52cf4ed5-3f48-493b-89ad-d07d69c45adb.png" alt="Petco Logo" width="180">
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,9 +92,9 @@ textarea {width: 100%; max-width: 620px; margin: 10px auto 10px auto; display: b
               <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev',@c_dev,'c_platform','desktop')=%%">Switch to Desktop</a>
               %%[endif]%%
           </li>
-          <!--li class="nav-item">
-            <a class="nav-link" href="https://fe34157075640575771d76.pub.s10.sfmc-content.com/f4reikh2pxq#">Logout</a>
-          </li-->
+          <li class="nav-item">
+            <a class="nav-link" href="%%=CloudPagesURL(639)=%%">Logout</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -136,3 +142,4 @@ document.querySelectorAll('.copy-btn').forEach(button => {
     });
 });
 %%=v(@scriptEnd)=%%
+%%[ENDIF]%%
