@@ -9,39 +9,34 @@ endif
 IF @c_dev == '' then
   set @c_dev = 'true'
 endif
-IF OR @c_platform == 'mobile' then
+IF @c_platform == 'mobile' then
     SET @platform_mobile = 'margin: 0 auto; max-width:360px;'
 else
     SET @c_platform = 'desktop'
-    SET @platform_mobile = ''
+    SET @platform_mobile = 'margin: 0 auto; max-width:620px;'
 endif
 set @scriptBegin = Concat('<','script','>')
 set @scriptEnd = Concat('</','script','>')
 ]%%
 
-%%[
-
+%%[ /* &#37;&#37; */
 IF @c_mod_category == 'Hero Mods' THEN
-  Set @module_list = 'df85887d-c564-4c97-b1fb-72f244d0af0b'
+  Set @module_list = '444155_hm1,444155_hm2,444155_hm3'
 ELSEIF @c_mod_category == 'Secondary Mods - 1 column' THEN
-  Set @module_list = ''
+  Set @module_list = '444155_sm1-border'
 ELSEIF @c_mod_category == 'Secondary Mods - 2 column' THEN
-  Set @module_list = '8b7f3141-0627-4b3f-9094-b2407a569894,5454e9d5-e58f-4b38-86a2-436c90963f96'
+  Set @module_list = '444155_sm2-alt-offers1,444155_sm2-alt-offers2,444155_sm2-grid,444155_sm2-product-grid-border,444155_sm2-product-cards,444155_sm2-cta-list'
 ELSEIF @c_mod_category == 'Secondary Mods - 3 column' THEN
   Set @module_list = ''
-ELSEIF @c_mod_category == 'Holiday Modules 2022' THEN
-  Set @module_list = ''
-ELSEIF @c_mod_category == 'Holiday Modules 2023' THEN
-  Set @module_list = ''
-ELSEIF @c_mod_category == 'Unified Membership Core' THEN
-  Set @module_list = ''
-ELSEIF @c_mod_category == 'Unified Membership Premier' THEN
-  Set @module_list = ''
-ELSEIF @c_mod_category == 'Unified Membership Generic' THEN
+ELSEIF @c_mod_category == 'Banners' THEN
+  Set @module_list = '444155_bm1-petco-tip-blue,444155_bm1-petco-tip-white,444155_bm1-petco-tip-green,444155_bm1-petco-tip-yellow'
+ELSEIF @c_mod_category == 'Holiday Modules 2024' THEN
   Set @module_list = ''
 ENDIF
 
 ]%%
+
+<!-- CSS Overwrite -->
 %%[IF @c_platform == 'mobile' THEN]%%
 <link href="https://mc-74lnyjsjy9b7kc-xh7qbyjtsm.pub.sfmc-content.com/uvmjjp1qqpm" rel="stylesheet">
 %%[ENDIF]%%
@@ -49,59 +44,57 @@ ENDIF
 body {margin-bottom: 50px !important;}
 li.nav-item {border: 1px solid #cdcdcd; margin-right: 2px;}
 textarea {width: 100%; max-width: 620px; margin: 10px auto 10px auto; display: block;}
-.col {border-bottom: 1px solid #ccc;}
 .btn-one-line-mob {border: 0px !important;}
 </style>
-<nav class="navbar navbar-expand-lg bg-body-tertiary py-0">
-  <div class="container-fluid">
-    <a class="navbar-brand pb-0" href="%%=CloudPagesURL(639)=%%">
-      <img src="https://image.e.petco.com/lib/fe34157075640575771d76/m/4/52cf4ed5-3f48-493b-89ad-d07d69c45adb.png" alt="Petco Logo" width="180">
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            %%=v(@c_mod_category)=%%
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Hero Mods')=%%">Hero Mods</a></li>
-            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 1 column')=%%">Secondary Mods - 1 column</a></li>
-            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 2 column')=%%">Secondary Mods - 2 column</a></li>
-            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 3 column')=%%">Secondary Mods - 3 column</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Holiday Modules 2022')=%%">Holiday Modules 2022</a></li>
-            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Holiday Modules 2023')=%%">Holiday Modules 2023</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Unified Membership Core')=%%">Unified Membership Core</a></li>
-            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Unified Membership Premier')=%%">Unified Membership Premier</a></li>
-            <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Unified Membership Generic')=%%">Unified Membership Generic</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-            %%[if @c_dev == 'true' THEN]%%
-            <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev','false','c_platform',@c_platform)=%%">Hide Code</a>
-            %%[else]%%
-            <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev','true','c_platform',@c_platform)=%%">Show Code</a>
-            %%[endif]%%
-        </li>
-        <li class="nav-item">
-        %%[if @c_platform == 'desktop' THEN]%%
-            <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev',@c_dev,'c_platform','mobile')=%%">Switch to Mobile</a>
-            %%[else]%%
-            <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev',@c_dev,'c_platform','desktop')=%%">Switch to Desktop</a>
-            %%[endif]%%
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="https://fe34157075640575771d76.pub.s10.sfmc-content.com/f4reikh2pxq#">Logout</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
 
+<!-- Nav -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary py-0">
+    <div class="container-fluid">
+      <a class="navbar-brand pb-0" href="%%=CloudPagesURL(639)=%%">
+        <img src="https://image.e.petco.com/lib/fe34157075640575771d76/m/4/52cf4ed5-3f48-493b-89ad-d07d69c45adb.png" alt="Petco Logo" width="180">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              %%=v(@c_mod_category)=%%
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Hero Mods')=%%">Hero Mods</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 1 column')=%%">Secondary Mods - 1 column</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 2 column')=%%">Secondary Mods - 2 column</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 3 column')=%%">Secondary Mods - 3 column</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Banners')=%%">Banners</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Holiday Modules 2024')=%%">Holiday Modules 2024</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+              %%[if @c_dev == 'true' THEN]%%
+              <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev','false','c_platform',@c_platform)=%%">Hide Code</a>
+              %%[else]%%
+              <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev','true','c_platform',@c_platform)=%%">Show Code</a>
+              %%[endif]%%
+          </li>
+          <li class="nav-item">
+          %%[if @c_platform == 'desktop' THEN]%%
+              <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev',@c_dev,'c_platform','mobile')=%%">Switch to Mobile</a>
+              %%[else]%%
+              <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev',@c_dev,'c_platform','desktop')=%%">Switch to Desktop</a>
+              %%[endif]%%
+          </li>
+          <!--li class="nav-item">
+            <a class="nav-link" href="https://fe34157075640575771d76.pub.s10.sfmc-content.com/f4reikh2pxq#">Logout</a>
+          </li-->
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<!-- Category Location -->
 <div style="display: block; width: 100%; max-width: 700px; background:#e3f2fd; padding: 20px; color:#555555; margin: 40px auto 10px auto;">
   <b>Currently Viewing:</b> %%=v(@c_mod_category)=%%<br>
 <b>SFMC Location:</b> Restricted
@@ -118,10 +111,10 @@ textarea {width: 100%; max-width: 620px; margin: 10px auto 10px auto; display: b
     Set @row = Row(@id_rowset, @i)
     Set @display_product = Field(@row,1)
   ]%%
-    <div class="col" style="%%=v(@platform_mobile)=%%">
-      <!--div style="text-align: center;">
-        <h2 style="margin: 30px 0 0 0; padding: 10px 0 0 0;">%%=v(@display_product)=%%</h2>
-      </div-->
+    <div style="%%=v(@platform_mobile)=%%">
+      <div style="text-align: center;">
+        <h5 style="margin: 30px 0 0 0; padding: 10px 0 0 0;">%%=v(@display_product)=%%</h5>
+      </div>
       %%=ContentBlockByKey(@display_product)=%%
       <!-- escape inline ampscript %% = = %% with &#37;&#37;  -->
       %%[if @c_dev == 'true' THEN]%%
@@ -132,6 +125,7 @@ textarea {width: 100%; max-width: 620px; margin: 10px auto 10px auto; display: b
 %%[ next @i endif ]%%
   </div>
 </div>
+<!-- Script -->
 %%=v(@scriptBegin)=%%
 document.querySelectorAll('.copy-btn').forEach(button => {
     button.addEventListener('click', () => {
