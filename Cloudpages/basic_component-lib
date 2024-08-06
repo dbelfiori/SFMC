@@ -49,7 +49,7 @@ ENDIF
 <style>
 body {margin-bottom: 50px !important;}
 li.nav-item {border: 1px solid #cdcdcd; margin-right: 2px;}
-textarea {width: 100%; max-width: 620px; margin: 10px auto 10px auto; display: block;}
+textarea {width: 100%; height: 80px; max-width: 620px; margin: 10px auto 10px auto; display: block;}
 .btn-one-line-mob {border: 0px !important;}
 </style>
 
