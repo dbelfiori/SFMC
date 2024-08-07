@@ -1,36 +1,40 @@
-<body>
-    <style>
-        .content-div { display: none; }
-        #content1 { display: block; } /* Show content1 by default */
-    </style>
-    %%[
-    SET @ContentBlocks = "ContentBlock-1,ContentBlock-2,ContentBlock-3"
-    ]%%
+<style>
+    .content-div { display: none; }
+    #content1 { display: block; } /* Show content1 by default */
+    #buttonRow button {margin: 10px 0; width: 30px;border: 1px solid #ccc;}
+</style>
+%%[
+  Set @id_rowset = BuildRowsetFromString(@module_list,",")
+  set @id_row_count = RowCount(@id_rowset)
+  if @id_row_count > 0 then
 
-    <div class="button-row" id="buttonRow"></div>
-    <div id="content1" class="content-div">Content for Button 1</div>
-    <div id="content2" class="content-div">Content for Button 2</div>
-    <div id="content3" class="content-div">Content for Button 3</div>
+    for @i = 1 TO @id_row_count do
+    Set @row = Row(@id_rowset, @i)
+    Set @display_product = Field(@row,1)
+  ]%%
+    <div id="content%%=v(@i)=%%" class="content-div">%%=ContentBlockByKey(@display_product)=%%</div>
 
-    <script runat="server">
-        Platform.Load("Core", "1");
-        var ContentBlocks = Variable.GetValue("@ContentBlocks");
-    </script>
+%%[ next @i endif ]%%
+<div class="button-row" id="buttonRow"></div>
 
-    <script>
-        var ContentBlocks = "ContentBlock-1,ContentBlock-2,ContentBlock-3";
-        var labelsArray = ContentBlocks.split(',');
+<script runat="server">
+    Platform.Load("Core", "1");
+    var module_list = Variable.GetValue("@module_list");
+</script>
 
-        var buttonRow = document.getElementById('buttonRow');
+%%=v(@scriptBegin)=%%
+    var module_list = "<script runat='server'>Write(module_list)</script>";
+    var labelsArray = module_list.split(',');
 
-        labelsArray.forEach((label, index) => {
-            var button = document.createElement('button');
-            button.textContent = index + 1;
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.content-div').forEach(div => div.style.display = 'none');
-                document.getElementById(`content${index + 1}`).style.display = 'block';
-            });
-            buttonRow.appendChild(button);
+    var buttonRow = document.getElementById('buttonRow');
+
+    labelsArray.forEach((label, index) => {
+        var button = document.createElement('button');
+        button.textContent = index + 1;
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.content-div').forEach(div => div.style.display = 'none');
+            document.getElementById(`content${index + 1}`).style.display = 'block';
         });
-    </script>
-</body>
+        buttonRow.appendChild(button);
+    });
+    %%=v(@scriptEnd)=%%
