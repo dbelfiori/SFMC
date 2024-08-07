@@ -1,17 +1,26 @@
 <body>
+    %%[
+    SET @buttonLabels = "Button 1,Button 2,Button 3"
+    ]%%
+
     <div class="button-row" id="buttonRow"></div>
     <div id="content1" class="content-div">Content for Button 1</div>
     <div id="content2" class="content-div">Content for Button 2</div>
     <div id="content3" class="content-div">Content for Button 3</div>
 
-    <script>
-        const buttonLabels = "Button 1,Button 2,Button 3";
-        const labelsArray = buttonLabels.split(',');
+    <script runat="server">
+        Platform.Load("Core", "1");
+        var buttonLabels = Variable.GetValue("@buttonLabels");
+    </script>
 
-        const buttonRow = document.getElementById('buttonRow');
+    <script>
+        var buttonLabels = "<script runat='server'>Write(buttonLabels)</script>";
+        var labelsArray = buttonLabels.split(',');
+
+        var buttonRow = document.getElementById('buttonRow');
 
         labelsArray.forEach((label, index) => {
-            const button = document.createElement('button');
+            var button = document.createElement('button');
             button.textContent = label;
             button.addEventListener('click', () => {
                 document.querySelectorAll('.content-div').forEach(div => div.style.display = 'none');
