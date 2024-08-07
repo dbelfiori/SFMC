@@ -1,6 +1,10 @@
 <body>
+    <style>
+        .content-div { display: none; }
+        #content1 { display: block; } /* Show content1 by default */
+    </style>
     %%[
-    SET @buttonLabels = "Button 1,Button 2,Button 3"
+    SET @ContentBlocks = "ContentBlock-1,ContentBlock-2,ContentBlock-3"
     ]%%
 
     <div class="button-row" id="buttonRow"></div>
@@ -10,18 +14,18 @@
 
     <script runat="server">
         Platform.Load("Core", "1");
-        var buttonLabels = Variable.GetValue("@buttonLabels");
+        var ContentBlocks = Variable.GetValue("@ContentBlocks");
     </script>
 
     <script>
-        var buttonLabels = "<script runat='server'>Write(buttonLabels)</script>";
-        var labelsArray = buttonLabels.split(',');
+        var ContentBlocks = "ContentBlock-1,ContentBlock-2,ContentBlock-3";
+        var labelsArray = ContentBlocks.split(',');
 
         var buttonRow = document.getElementById('buttonRow');
 
         labelsArray.forEach((label, index) => {
             var button = document.createElement('button');
-            button.textContent = label;
+            button.textContent = index + 1;
             button.addEventListener('click', () => {
                 document.querySelectorAll('.content-div').forEach(div => div.style.display = 'none');
                 document.getElementById(`content${index + 1}`).style.display = 'block';
