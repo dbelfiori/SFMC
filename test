@@ -1,0 +1,60 @@
+<script runat="server">
+        Platform.Load("core", "1");
+
+        function countTags(htmlInput) {
+            var tags = ['a', 'body', 'head', 'html', 'img', 'span', 'table', 'td', 'title', 'tr'];
+            var result = [];
+
+            tags.forEach(function(tag) {
+                var openTags = 0;
+                var closedTags = 0;
+
+                if (tag === 'img') {
+                    var imgTags = htmlInput.match(/<img[^>]*>/g) || [];
+                    openTags = imgTags.length;
+                    closedTags = imgTags.filter(function(tag) {
+                        return tag.endsWith('/>') || tag.endsWith('">');
+                    }).length;
+                } else {
+                    openTags = (htmlInput.match(new RegExp('<' + tag + '(\\s|>)', 'g')) || []).length;
+                    closedTags = (htmlInput.match(new RegExp('</' + tag + '>', 'g')) || []).length;
+                }
+
+                result.push({
+                    tagName: tag,
+                    openTags: openTags,
+                    closedTags: closedTags
+                });
+            });
+
+            return result;
+        }
+
+        function renderTable(result) {
+            var tableBody = '';
+            result.forEach(function(row) {
+                var rowClass = '';
+                if (row.openTags === 0 && row.closedTags === 0) {
+                    rowClass = 'no-tags';
+                } else if (row.openTags === 0) {
+                    rowClass = 'no-open-tags';
+                }
+
+                tableBody += '<tr class="' + rowClass + '">';
+                tableBody += '<td>' + row.tagName + '</td>';
+                tableBody += '<td>' + row.openTags + '</td>';
+                tableBody += '<td>' + row.closedTags + '</td>';
+                tableBody += '</tr>';
+            });
+
+            return tableBody;
+        }
+
+        var htmlInput = Request.GetFormField("htmlInput");
+        if (htmlInput) {
+            var result = countTags(htmlInput);
+            var tableBody = renderTable(result);
+            Write('<script>document.getElementById("resultTable").style.display = "table";');
+            Write('document.getElementById("resultTable").getElementsByTagName("tbody")[0].innerHTML = \'' + tableBody + '\';</script>');
+        }
+    </script>
