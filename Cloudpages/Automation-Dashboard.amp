@@ -1,70 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Automation Status Dashboard</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-        }
-    </style>
-<script runat="server">
-    var prox = new Script.Util.WSProxy();
-    var cols = ["Name", "Status", "LastRunTime"];
-    var filter = {
-        Property: "Status",
-        SimpleOperator: "equals",
-        Value: "7" // Example filter to get automations with status 'Error'
-    };
-    var data = prox.retrieve("Automation", cols, filter);
+%%[
+    VAR @rows, @row, @rowCount, @i, @automationName, @status, @lastRunTime
 
-    // Process the retrieved data
-    var rows = data.Results;
-</script>
+    /* Retrieve Automation Data */
+    SET @rows = RetrieveSalesforceObjects('Automation', 'Name, Status, LastRunTime', 'Status', '=', 'Active')
 
-</head>
-<body>
-    <h1>Automation Status Dashboard</h1>
-    <table>
-        <tr>
-            <th>Automation Name</th>
-            <th>Status</th>
-            <th>Last Run Time</th>
-            <th>Failed</th>
-        </tr>
-        %%[ 
-        var @automations, @automation, @rows, @row, @name, @status, @lastRunTime, @failed
-        set @automations = CreateObject("RetrieveRequest")
-        SetObjectProperty(@automations, "ObjectType", "Automation")
-        AddObjectArrayItem(@automations, "Properties", "Name")
-        AddObjectArrayItem(@automations, "Properties", "Status")
-        AddObjectArrayItem(@automations, "Properties", "LastRunTime")
-        set @rows = InvokeRetrieve(@automations)
-        for @i = 1 to RowCount(@rows) do
-            set @row = Row(@rows, @i)
-            set @name = Field(@row, "Name")
-            set @status = Field(@row, "Status")
-            set @lastRunTime = Field(@row, "LastRunTime")
-            if @status == 7 then
-                set @failed = "Yes"
-            else
-                set @failed = "No"
-            endif
-        ]%%
-        <tr>
-            <td>%%=v(@name)=%%</td>
-            <td>%%=v(@status)=%%</td>
-            <td>%%=v(@lastRunTime)=%%</td>
-            <td>%%=v(@failed)=%%</td>
-        </tr>
-        %%[ next @i ]%%
-    </table>
-</body>
-</html>
+    SET @rowCount = RowCount(@rows)
+
+    IF @rowCount > 0 THEN
+        FOR @i = 1 TO @rowCount DO
+            SET @row = Row(@rows, @i)
+            SET @automationName = Field(@row, 'Name')
+            SET @status = Field(@row, 'Status')
+            SET @lastRunTime = Field(@row, 'LastRunTime')
+
+            /* Display Automation Data */
+            OUTPUT(CONCAT('<p>Automation Name: ', @automationName, '</p>'))
+            OUTPUT(CONCAT('<p>Status: ', @status, '</p>'))
+            OUTPUT(CONCAT('<p>Last Run Time: ', @lastRunTime, '</p>'))
+        NEXT @i
+    ELSE
+        OUTPUT(CONCAT('<p>No active automations found.</p>'))
+    ENDIF
+]%%
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .automation {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px 0;
+    }
+</style>
+
