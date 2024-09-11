@@ -4,6 +4,10 @@
     /* Retrieve Automation Data */
     SET @rows = RetrieveSalesforceObjects('Automation', 'Name, Status, LastRunTime', 'Status', '=', 'Active')
 
+    IF EMPTY(@rows) THEN
+        RaiseError('No rows returned', true)
+    ENDIF
+
     SET @rowCount = RowCount(@rows)
 
     IF @rowCount > 0 THEN
@@ -14,9 +18,9 @@
             SET @lastRunTime = Field(@row, 'LastRunTime')
 
             /* Display Automation Data */
-            OUTPUT(CONCAT('<p>Automation Name: ', @automationName, '</p>'))
+            OUTPUT(CONCAT('<div class="automation"><p>Automation Name: ', @automationName, '</p>'))
             OUTPUT(CONCAT('<p>Status: ', @status, '</p>'))
-            OUTPUT(CONCAT('<p>Last Run Time: ', @lastRunTime, '</p>'))
+            OUTPUT(CONCAT('<p>Last Run Time: ', @lastRunTime, '</p></div>'))
         NEXT @i
     ELSE
         OUTPUT(CONCAT('<p>No active automations found.</p>'))
