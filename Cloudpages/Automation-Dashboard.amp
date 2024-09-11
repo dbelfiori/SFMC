@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Automation Status Dashboard</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Automation Status Dashboard</h1>
+    <table>
+        <tr>
+            <th>Automation Name</th>
+            <th>Status</th>
+            <th>Last Run Time</th>
+            <th>Failed</th>
+        </tr>
+        %%[ 
+        var @automations, @automation, @rows, @row, @name, @status, @lastRunTime, @failed
+        set @automations = CreateObject("RetrieveRequest")
+        SetObjectProperty(@automations, "ObjectType", "Automation")
+        AddObjectArrayItem(@automations, "Properties", "Name")
+        AddObjectArrayItem(@automations, "Properties", "Status")
+        AddObjectArrayItem(@automations, "Properties", "LastRunTime")
+        set @rows = InvokeRetrieve(@automations)
+        for @i = 1 to RowCount(@rows) do
+            set @row = Row(@rows, @i)
+            set @name = Field(@row, "Name")
+            set @status = Field(@row, "Status")
+            set @lastRunTime = Field(@row, "LastRunTime")
+            if @status == 7 then
+                set @failed = "Yes"
+            else
+                set @failed = "No"
+            endif
+        ]%%
+        <tr>
+            <td>%%=v(@name)=%%</td>
+            <td>%%=v(@status)=%%</td>
+            <td>%%=v(@lastRunTime)=%%</td>
+            <td>%%=v(@failed)=%%</td>
+        </tr>
+        %%[ next @i ]%%
+    </table>
+</body>
+</html>
