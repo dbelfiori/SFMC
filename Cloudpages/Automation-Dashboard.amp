@@ -15,6 +15,20 @@
             text-align: left;
         }
     </style>
+<script runat="server">
+    var prox = new Script.Util.WSProxy();
+    var cols = ["Name", "Status", "LastRunTime"];
+    var filter = {
+        Property: "Status",
+        SimpleOperator: "equals",
+        Value: "7" // Example filter to get automations with status 'Error'
+    };
+    var data = prox.retrieve("Automation", cols, filter);
+
+    // Process the retrieved data
+    var rows = data.Results;
+</script>
+
 </head>
 <body>
     <h1>Automation Status Dashboard</h1>
