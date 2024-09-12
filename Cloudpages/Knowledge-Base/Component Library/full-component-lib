@@ -1,1 +1,418 @@
-test
+%%[
+SET @c_mod_category = RequestParameter("c_mod_category")
+SET @c_dev = RequestParameter("c_dev")
+SET @c_platform = RequestParameter("c_platform")
+
+IF @c_dev == '' then
+  set @c_dev = 'true'
+endif
+IF @c_platform == 'mobile' then
+    SET @platform_mobile = 'margin: 0 auto; max-width:360px;'
+else
+    SET @c_platform = 'desktop'
+    SET @platform_mobile = 'margin: 0 auto; max-width:640px;'
+endif
+
+set @scriptBegin = Concat('<','script','>')
+set @scriptEnd = Concat('</','script','>')
+
+]%%
+
+<!-- -->
+%%[ set @d_mod_category = Concat('&','#','89',;,'&','#','111',;,'&','#','117',;,'&','#','32',;,'&','#','100',;,'&','#','111',;,'&','#','32',;,'&','#','110',;,'&','#','111',;,'&','#','116',;,'&','#','32',;,'&','#','104',;,'&','#','97',;,'&','#','118',;,'&','#','101',;,'&','#','32',;,'&','#','112',;,'&','#','101',;,'&','#','114',;,'&','#','109',;,'&','#','105',;,'&','#','115',;,'&','#','115',;,'&','#','105',;,'&','#','111',;,'&','#','110',;,'&','#','32',;,'&','#','116',;,'&','#','111',;,'&','#','32',;,'&','#','97',;,'&','#','99',;,'&','#','99',;,'&','#','101',;,'&','#','115',;,'&','#','115',;,'&','#','32',;,'&','#','116',;,'&','#','104',;,'&','#','105',;,'&','#','115',;,'&','#','32',;,'&','#','112',;,'&','#','97',;,'&','#','103',;,'&','#','101',;,'&','#','46;') IF @c_platform == 'mobile' THEN]%% -->
+<link href="https://mc-74lnyjsjy9b7kc-xh7qbyjtsm.pub.sfmc-content.com/uvmjjp1qqpm" rel="stylesheet">
+%%[ENDIF]%%
+<style>
+body {margin-bottom: 50px !important;}
+li.nav-item {border: 1px solid #cdcdcd; margin-right: 2px;}
+textarea {width: 100%; height: 90px; max-width: 620px; margin: 10px 0; display: block; font-size:14px; line-height:1em;}
+.btn-one-line-mob {border: 0px !important;}
+.toggle-hidden1,.toggle-hidden2,.toggle-hidden3 { display: none; }
+#toggle-content-a1,#toggle-content-b1,#toggle-content-c1 { display: block; }
+#buttonRow1 button {margin: 10px 0; width: 30px;border: 1px solid #ccc;}
+  
+/* Validater */
+  button.badge.bg-light {
+    border-radius: 0;
+    animation: pulse 3s;
+  }
+  @keyframes pulse {
+    %%[IF @c_mod_category == 'Secondary Mods - 2 column' THEN]%%
+    0% {
+    border-color: #616161;
+    }
+    %%[ENDIF]%%
+  }
+  .offcanvas-body table {
+    width: 100%;
+    max-width: 660px;
+    border-collapse: collapse;
+    border: 2px solid #000 !important;
+    margin-top: 20px;
+    display: none;
+}
+.offcanvas-body table tr {background-color: transparent !important;}
+.offcanvas-body th, .offcanvas-body td {
+    border: 2px solid #000 !important;
+    padding: 0 8px !important;
+}
+.offcanvas-body td {color: #000 !important;}
+.offcanvas-body .not-matching-tags {
+    background-color: #ffcccc !important;
+}
+.offcanvas-body .no-tags {
+    background-color: #f7f188 !important;
+}
+.offcanvas-body .matching-tags {
+    background-color: #ffffff !important;
+}
+.offcanvas-body td:first-child {
+    text-align: right !important;
+}
+.offcanvas-body td:nth-child(2), .offcanvas-body td:nth-child(3) {
+    text-align: right !important;
+}
+.offcanvas-body #htmlInput {
+    width: 100% !important;
+    height: 130px !important;
+    font-size: 14px;
+}
+</style>
+<!-- -->
+%%[ IF EMPTY(@c_mod_category) THEN]%%
+<div class="container d-flex align-items-center justify-content-center min-vh-100">%%=v(@d_mod_category)=%%</div> 
+%%[ELSE]%%
+
+<!-- -->
+%%[ /*
+&#37;&#37;
+*/
+IF @c_mod_category == 'Hero Mods' THEN
+  Set @module_list = '444155_hm1,444155_hm2,444155_hm3,444155_hm4'
+  
+ELSEIF @c_mod_category == 'Secondary Mods - 1 column' THEN
+  Set @module_list = '444155_sm1-numbered-category-list,444155_sm1-coupon-1,444155_sm1-border,444155_sm1-copy-block'
+  
+ELSEIF @c_mod_category == 'Secondary Mods - 2 column' THEN
+  Set @module_list = '444155_sm2-alt-offers1,444155_sm2-alt-offers2,444155_sm2-product-cards1,444155_sm2-product-grid-border,444155_sm2-grid,444155_sm2-cta-list'
+  
+ELSEIF @c_mod_category == 'Secondary Mods - 3 column' THEN
+  Set @module_list = '444155_sm3-delivery-options'
+  
+ELSEIF @c_mod_category == 'Secondary Mods - 4 column' THEN
+  Set @module_list = '444155_sm4-product-offers1,444155_sm4-product-dynamic'
+
+ELSEIF @c_mod_category == 'Banners' THEN
+  Set @module_list = '444155_bm2-standard'
+
+  ELSEIF @c_mod_category == 'Petco Tip - Banners' THEN
+  Set @module_list = '444155_bm1-petco-tip-blue,444155_bm1-petco-tip-white,444155_bm1-petco-tip-green,444155_bm1-petco-tip-yellow,444155_bm2-petco-tip-blue'
+  
+ELSEIF @c_mod_category == 'Same-Day Delivery' THEN
+  Set @module_list = '444155_free-sdd-navy,444155_free-sdd-blue'
+  
+ENDIF
+
+]%%
+<!-- -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary py-0">
+    <div class="container-fluid">
+      <a class="navbar-brand pb-0" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 2 column')=%%">
+        <img src="https://image.e.petco.com/lib/fe34157075640575771d76/m/4/52cf4ed5-3f48-493b-89ad-d07d69c45adb.png" alt="Petco Logo" width="180">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              %%=v(@c_mod_category)=%%
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Hero Mods')=%%">Hero Mods</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 1 column')=%%">Secondary Mods - 1 column</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 2 column')=%%">Secondary Mods - 2 column</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 3 column')=%%">Secondary Mods - 3 column</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Secondary Mods - 4 column')=%%">Secondary Mods - 4 column</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Banners')=%%">Banners</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Petco Tip - Banners')=%%">Petco Tip - Banners</a></li>
+              <li><a class="dropdown-item" href="%%=CloudPagesURL(639,'c_mod_category','Same-Day Delivery')=%%">Same-Day Delivery</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+              %%[if @c_dev == 'true' THEN]%%
+              <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev','false','c_platform',@c_platform)=%%">Hide Code</a>
+              %%[else]%%
+              <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev','true','c_platform',@c_platform)=%%">Show Code</a>
+              %%[endif]%%
+          </li>
+          <li class="nav-item">
+          %%[if @c_platform == 'desktop' THEN]%%
+              <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev',@c_dev,'c_platform','mobile')=%%">Switch to Mobile</a>
+              %%[else]%%
+              <a class="nav-link" href="%%=CloudPagesURL(639,'c_mod_category',@c_mod_category,'c_dev',@c_dev,'c_platform','desktop')=%%">Switch to Desktop</a>
+              %%[endif]%%
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="%%=CloudPagesURL(639)=%%">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+<!-- -->
+<!-- -->
+<div class="container-fluid">
+  <div class="row">
+    <div><button class="badge bg-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" style="color:#656565; border:1px solid #cccccc; margin: 0 2px;">
+    Tag Counter 
+      </button></div>
+  </div>
+</div>
+<!-- -->
+<!-- -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">HTML Tag Counter</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div>
+    <p>Paste the contents of an HTML or XHTML file&nbsp;here:</p>
+      <textarea id="htmlInput" rows="10" cols="50" placeholder="Paste your HTML code here"></textarea>
+    <button onclick="countTags()">Count Tags</button>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>Tag Name</th>
+                <th>Open</th>
+                <th>Closed</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+<!-- -->
+
+<div style="display: block; width: 100%; max-width: 700px; background:#e3f2fd; padding: 20px; color:#555555; margin: 10px auto 10px auto;">
+  <b>Currently Viewing:</b> %%=v(@c_mod_category)=%%<br>
+  <!--b>SFMC Location:</b> Restricted -->
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+  <!-- Toggle Content 1 -->
+  %%[if not empty(@toggle_content1) THEN]%%
+<div style="%%=v(@platform_mobile)=%%">
+  %%[
+  Set @id_rowset = BuildRowsetFromString(@toggle_content1,",")
+  set @id_row_count = RowCount(@id_rowset)
+  if @id_row_count > 0 then
+  
+    for @i = 1 TO @id_row_count do
+    Set @row = Row(@id_rowset, @i)
+    Set @display_content = Field(@row,1)
+  ]%%
+    <div id="toggle-content-a%%=v(@i)=%%" class="toggle-hidden1" style="%%=v(@platform_mobile)=%%">
+      <div style="text-align: center">
+        <h5 style="margin: 30px 0 0 0; padding: 10px 0 0 0">%%=replace(@display_content, "444155_", "")=%%</h5>
+      </div>
+      <div>%%=ContentBlockByKey(@display_content)=%%</div>
+      %%[if @c_dev == 'true' THEN]%%
+      <div>
+        <textarea id="textarea-%%=v(@i)=%%">%%=TreatAsContent(ContentBlockByKey(@display_content))=%%</textarea>
+        <button class="copy-btn" data-target="%%=v(@i)=%%" style="display: block; margin: 0 auto; margin-bottom: 20px">Copy Code</button>
+      </div>
+      %%[endif]%%
+    </div>
+  %%[ next @i endif ]%%
+    <div class="button-row" id="buttonRow1" ></div>
+  </div>
+  %%[endif]%%
+  <script runat="server">
+    Platform.Load("Core", "1");
+    var toggle_content1 = Variable.GetValue("@toggle_content1");
+  </script>
+  
+  <!-- /Toggle Content 1 -->
+  <!-- Toggle Content 2 -->
+  %%[if not empty(@toggle_content2) then]%%
+<div style="%%=v(@platform_mobile)=%%">
+  %%[
+  Set @id_rowset = BuildRowsetFromString(@toggle_content2,",")
+  set @id_row_count = RowCount(@id_rowset)
+  if @id_row_count > 0 then
+  
+    for @i = 1 TO @id_row_count do
+    Set @row = Row(@id_rowset, @i)
+    Set @display_content = Field(@row,1)
+  ]%%
+    <div id="toggle-content-b%%=v(@i)=%%" class="toggle-hidden2" style="%%=v(@platform_mobile)=%%">
+      <div style="text-align: center">
+        <h5 style="margin: 30px 0 0 0; padding: 10px 0 0 0">%%=replace(@display_content, "444155_", "")=%%</h5>
+      </div>
+      <div>%%=ContentBlockByKey(@display_content)=%%</div>
+      %%[if @c_dev == 'true' THEN]%%
+      <div>
+        <textarea id="textarea-%%=v(@i)=%%">%%=TreatAsContent(ContentBlockByKey(@display_content))=%%</textarea>
+        <button class="copy-btn" data-target="%%=v(@i)=%%" style="display: block; margin: 0 auto; margin-bottom: 20px">Copy Code</button>
+      </div>
+      %%[endif]%%
+    </div>
+  %%[ next @i endif ]%%
+    <div class="button-row" id="buttonRow2" ></div>
+  </div>
+%%[endif]%%
+  <script runat="server">
+    Platform.Load("Core", "1");
+    var toggle_content2 = Variable.GetValue("@toggle_content2");
+  </script>
+
+  <!-- /Toggle Content 2 -->
+  <!-- Toggle Content 3 -->
+  %%[if not empty(@toggle_content3) then]%%
+<div style="%%=v(@platform_mobile)=%%">
+%%[
+Set @id_rowset = BuildRowsetFromString(@toggle_content3,",")
+set @id_row_count = RowCount(@id_rowset)
+if @id_row_count > 0 then
+
+  for @i = 1 TO @id_row_count do
+  Set @row = Row(@id_rowset, @i)
+  Set @display_content = Field(@row,1)
+]%%
+  <div id="toggle-content-c%%=v(@i)=%%" class="toggle-hidden3" style="%%=v(@platform_mobile)=%%">
+    <div style="text-align: center">
+      <h5 style="margin: 30px 0 0 0; padding: 10px 0 0 0">%%=replace(@display_content, "444155_", "")=%%</h5>
+    </div>
+    <div>%%=ContentBlockByKey(@display_content)=%%</div>
+    %%[if @c_dev == 'true' THEN]%%
+    <div>
+      <textarea id="textarea-%%=v(@i)=%%">%%=TreatAsContent(ContentBlockByKey(@display_content))=%%</textarea>
+      <button class="copy-btn" data-target="%%=v(@i)=%%" style="display: block; margin: 0 auto; margin-bottom: 20px">Copy Code</button>
+    </div>
+    %%[endif]%%
+  </div>
+%%[ next @i endif ]%%
+  <div class="button-row" id="buttonRow3" ></div>
+</div>
+%%[endif]%%
+<script runat="server">
+  Platform.Load("Core", "1");
+  var toggle_content3 = Variable.GetValue("@toggle_content3");
+</script>
+  <!-- /Toggle Content 3 -->
+  
+  %%[
+  Set @id_rowset = BuildRowsetFromString(@module_list,",")
+  set @id_row_count = RowCount(@id_rowset)
+  if @id_row_count > 0 then
+
+    for @i = 1 TO @id_row_count do
+    Set @row = Row(@id_rowset, @i)
+    Set @display_product = Field(@row,1)
+  ]%%
+
+    <div style="%%=v(@platform_mobile)=%%">
+      <div style="text-align: center;">
+        <h5 style="margin: 30px 0 0 0; padding: 10px 0 0 0;">%%=replace(@display_product, "444155_", "")=%%</h5>
+      </div>
+      %%=ContentBlockByKey(@display_product)=%%
+      <!-- escape inline ampscript %% = = %% with &#37;&#37;  -->
+      %%[if @c_dev == 'true' THEN]%%
+      <textarea id="textarea-%%=v(@i)=%%">%%=TreatAsContent(ContentBlockByKey(@display_product))=%%</textarea>
+      <button class="copy-btn" data-target="%%=v(@i)=%%" style="display: block;margin: 0 auto; margin-bottom: 20px;">Copy Code</button>
+  %%[endif]%%
+    </div>
+    %%[ next @i endif ]%%
+  </div>
+</div>
+
+%%=v(@scriptBegin)=%%
+document.querySelectorAll('.copy-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const targetNumber = button.getAttribute('data-target');
+        const textarea = document.getElementById(`textarea-${targetNumber}`);
+        textarea.select();
+        document.execCommand('copy');
+    });
+});
+
+var toggle_content1 = "<script runat='server'>Write(toggle_content1)</script>";
+var labelsArray1 = toggle_content1.split(',');
+
+var buttonRow1 = document.getElementById('buttonRow1');
+
+labelsArray1.forEach((label, index) => {
+    var button1 = document.createElement('button');
+    button1.textContent = index + 1;
+    button1.addEventListener('click', () => {
+        document.querySelectorAll('.toggle-hidden1').forEach(div => div.style.display = 'none');
+        document.getElementById(`toggle-content-a${index + 1}`).style.display = 'block';
+    });
+    buttonRow1.appendChild(button1);
+});
+
+var toggle_content2 = "<script runat='server'>Write(toggle_content2)</script>";
+var labelsArray2 = toggle_content2.split(',');
+
+var buttonRow2 = document.getElementById('buttonRow2');
+
+labelsArray2.forEach((label, index) => {
+    var button2 = document.createElement('button');
+    button2.textContent = index + 1;
+    button2.addEventListener('click', () => {
+        document.querySelectorAll('.toggle-hidden2').forEach(div => div.style.display = 'none');
+        document.getElementById(`toggle-content-b${index + 1}`).style.display = 'block';
+    });
+    buttonRow2.appendChild(button2);
+});
+
+function countTags() {
+    const htmlInput = document.getElementById('htmlInput').value;
+    const tempElement = document.createElement('div');
+    tempElement.innerHTML = htmlInput;
+
+    const tags = ['a', 'body', 'head', 'html', 'img', 'span', 'table', 'td', 'title', 'tr'];
+    const resultTableBody = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
+    resultTableBody.innerHTML = ''; // Clear previous results
+
+    tags.forEach(tag => {
+        let openTags = 0;
+        let closedTags = 0;
+
+        if (tag === 'img') {
+            const imgTags = htmlInput.match(/<img[^>]*>/g) || [];
+            openTags = imgTags.length;
+            closedTags = imgTags.filter(tag => tag.endsWith('/>') || tag.endsWith('">') || tag.endsWith('" >')).length;
+        } else {
+            openTags = (htmlInput.match(new RegExp(`<${tag}(\\s|>)`, 'g')) || []).length;
+            closedTags = (htmlInput.match(new RegExp(`</${tag}>`, 'g')) || []).length;
+        }
+
+        const row = resultTableBody.insertRow();
+        if (openTags === 0 && closedTags === 0) {
+            row.classList.add('no-tags');
+        } else if (openTags != closedTags) {
+            row.classList.add('not-matching-tags');
+        } else {
+            row.classList.add('matching-tags');
+        }
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        const cell3 = row.insertCell(2);
+
+        cell1.textContent = tag;
+        cell2.textContent = openTags;
+        cell3.textContent = closedTags;
+    });
+
+    document.getElementById('resultTable').style.display = 'table';
+}
+%%=v(@scriptEnd)=%%
+%%[ENDIF]%%
