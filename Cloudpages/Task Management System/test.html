@@ -1,16 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Real-Time Update with AJAX</title>
-</head>
-<body>
-    <form id="myForm">
+<form id="myForm">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name">
         <button type="submit">Submit</button>
     </form>
     <div id="response"></div>
+    <div id="error"></div>
 
     <script>
         document.getElementById('myForm').addEventListener('submit', function(event) {
@@ -24,8 +18,9 @@
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
                         document.getElementById('response').innerHTML = xhr.responseText;
+                        document.getElementById('error').innerHTML = ''; // Clear any previous error messages
                     } else {
-                        console.error('AJAX Error: ' + xhr.statusText);
+                        document.getElementById('error').innerHTML = 'AJAX Error: ' + xhr.statusText;
                     }
                 }
             };
@@ -35,8 +30,6 @@
             xhr.send(encodedData);
         });
     </script>
-</body>
-</html>
 
 
 
