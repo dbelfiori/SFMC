@@ -1,7 +1,7 @@
 <style>
   table {border-color: #cfd0d2;}
   th,td {max-width: 60px; padding: 5px; text-align: center;}
-  </style>
+</style>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -64,6 +64,9 @@
               try {
                   var folderId = Request.GetQueryStringParameter("folderId"); // Get folder ID from form input
                   var automations = retrieveAllAutomations(folderId);
+                  automations.sort(function(a, b) {
+                      return new Date(b.LastRunTime) - new Date(a.LastRunTime);
+                  });
                   for (var i = 0; i < automations.length; i++) {
                       var statusMeaning = getStatusMeaning(automations[i].Status);
                       Write("<tr>");
