@@ -7,56 +7,116 @@
 </head>
 <body>
     <h1>Automation Details</h1>
-    %%[
-    var @automations = RetrieveAllAutomations()
-    function RetrieveAllAutomations() {
-        var automations = Platform.Function.ParseJSON('%%=v(@automations)=%%')
-        var rows = '';
-        for (var i = 0; i < automations.length; i++) {
-            rows += '<tr>';
-            rows += '<td>' + automations[i].Name + '</td>';
-            rows += '<td>' + automations[i].Description + '</td>';
-            rows += '<td>' + automations[i].CustomerKey + '</td>';
-            rows += '<td>' + automations[i].IsActive + '</td>';
-            rows += '<td>' + automations[i].CreatedDate + '</td>';
-            rows += '<td>' + automations[i].ModifiedDate + '</td>';
-            rows += '<td>' + automations[i].Status + '</td>';
-            rows += '<td>' + automations[i].ProgramID + '</td>';
-            rows += '<td>' + automations[i].CategoryID + '</td>';
-            rows += '<td>' + automations[i].LastRunTime + '</td>';
-            rows += '<td>' + automations[i].ScheduledTime + '</td>';
-            rows += '<td>' + automations[i].LastSaveDate + '</td>';
-            rows += '<td>' + automations[i].ModifiedBy + '</td>';
-            rows += '<td>' + automations[i].LastSavedBy + '</td>';
-            rows += '<td>' + automations[i].CreatedBy + '</td>';
-            rows += '<td>' + automations[i].AutomationType + '</td>';
-            rows += '<td>' + automations[i].RecurrenceID + '</td>';
-            rows += '</tr>';
-        }
-        return rows;
-    }
-    ]%%
     <table border="1">
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>CustomerKey</th>
-            <th>IsActive</th>
-            <th>CreatedDate</th>
-            <th>ModifiedDate</th>
-            <th>Status</th>
-            <th>ProgramID</th>
-            <th>CategoryID</th>
-            <th>LastRunTime</th>
-            <th>ScheduledTime</th>
-            <th>LastSaveDate</th>
-            <th>ModifiedBy</th>
-            <th>LastSavedBy</th>
-            <th>CreatedBy</th>
-            <th>AutomationType</th>
-            <th>RecurrenceID</th>
-        </tr>
-        %%=v(RetrieveAllAutomations())=%%
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>CustomerKey</th>
+                <th>IsActive</th>
+                <th>CreatedDate</th>
+                <th>ModifiedDate</th>
+                <th>Status</th>
+                <th>ProgramID</th>
+                <th>CategoryID</th>
+                <th>LastRunTime</th>
+                <th>ScheduledTime</th>
+                <th>LastSaveDate</th>
+                <th>ModifiedBy</th>
+                <th>LastSavedBy</th>
+                <th>CreatedBy</th>
+                <th>AutomationType</th>
+                <th>RecurrenceID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <script runat="server">
+                Platform.Load("Core", "1");
+                var api = new Script.Util.WSProxy();
+
+                try {
+                    var automations = retrieveAllAutomations();
+                    for (var i = 0; i < automations.length; i++) {
+                        Write("<tr>");
+                        Write("<td>" + automations[i].Name + "</td>");
+                        Write("<td>" + automations[i].Description + "</td>");
+                        Write("<td>" + automations[i].CustomerKey + "</td>");
+                        Write("<td>" + automations[i].IsActive + "</td>");
+                        Write("<td>" + automations[i].CreatedDate + "</td>");
+                        Write("<td>" + automations[i].ModifiedDate + "</td>");
+                        Write("<td>" + automations[i].Status + "</td>");
+                        Write("<td>" + automations[i].ProgramID + "</td>");
+                        Write("<td>" + automations[i].CategoryID + "</td>");
+                        Write("<td>" + automations[i].LastRunTime + "</td>");
+                        Write("<td>" + automations[i].ScheduledTime + "</td>");
+                        Write("<td>" + automations[i].LastSaveDate + "</td>");
+                        Write("<td>" + automations[i].ModifiedBy + "</td>");
+                        Write("<td>" + automations[i].LastSavedBy + "</td>");
+                        Write("<td>" + automations[i].CreatedBy + "</td>");
+                        Write("<td>" + automations[i].AutomationType + "</td>");
+                        Write("<td>" + automations[i].RecurrenceID + "</td>");
+                        Write("</tr>");
+                    }
+                } catch (err) {
+                    Write("<tr><td colspan='17'>Error: " + Stringify(err) + "</td></tr>");
+                }
+
+                function retrieveAllAutomations() {
+                    var out = [],
+                        moreData = true,
+                        reqID = data = null;
+
+                    var cols = [
+                        "Name",
+                        "Description",
+                        "CustomerKey",
+                        "IsActive",
+                        "CreatedDate",
+                        "ModifiedDate",
+                        "Status",
+                        "ProgramID",
+                        "CategoryID",
+                        "LastRunTime",
+                        "ScheduledTime",
+                        "LastSaveDate",
+                        "ModifiedBy",
+                        "LastSavedBy",
+                        "CreatedBy",
+                        "AutomationType",
+                        "RecurrenceID"
+                    ];
+
+                    var filter = {
+                        Property: 'Status',
+                        SimpleOperator: 'IN',
+                        Value: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    };
+
+                    var opts = {
+                        BatchSize: 300
+                    };
+
+                    var props = {
+                        QueryAllAccounts: false
+                    };
+
+                    while (moreData) {
+                        moreData = false;
+                        if (reqID) props.ContinueRequest = reqID;
+
+                        var data = api.retrieve("Automation", cols, filter, opts, props);
+                        if (data) {
+                            moreData = data.HasMoreRows;
+                            reqID = data.RequestID;
+                            for (var i = 0; i < data.Results.length; i++) {
+                                out.push(data.Results[i]);
+                            }
+                        }
+                    }
+                    return out;
+                }
+            </script>
+        </tbody>
     </table>
 </body>
 </html>
