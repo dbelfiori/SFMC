@@ -82,7 +82,8 @@
                   automations.sort(function(a, b) {
                       return new Date(b.LastRunTime) - new Date(a.LastRunTime);
                   });
-                  for (var i = 0; i < Math.min(automations.length,200); i++) {
+                  /* replace Math.min(automations.length,250) with automations.length if you want to return more than 250 records */
+                  for (var i = 0; i < Math.min(automations.length,250); i++) {
                       var statusMeaning = getStatusMeaning(automations[i].Status);
                       Write("<tr>");
                       Write("<td>" + automations[i].Name + "</td>");
