@@ -61,6 +61,15 @@
                   }
               }
 
+              function getUserName(userId) {
+                  var userFilter = { Property: "ID", SimpleOperator: "equals", Value: userId };
+                  var userResult = api.retrieve("AccountUser", ["UserID", "Name"], userFilter);
+                  if (userResult && userResult.Results && userResult.Results.length > 0) {
+                      return userResult.Results[0].Name;
+                  }
+                  return userId; // Return the numeric value if no match is found
+              }
+
               try {
                   var folderId = Request.GetQueryStringParameter("folderId"); // Get folder ID from form input
                   var automations = retrieveAllAutomations(folderId);
@@ -69,6 +78,9 @@
                   });
                   for (var i = 0; i < automations.length; i++) {
                       var statusMeaning = getStatusMeaning(automations[i].Status);
+                      var modifiedBy = getUserName(automations[i].ModifiedBy);
+                      var lastSavedBy = getUserName(automations[i].LastSavedBy);
+                      var createdBy = getUserName(automations[i].CreatedBy);
                       Write("<tr>");
                       Write("<td>" + automations[i].Name + "</td>");
                       Write("<td>" + automations[i].Description + "</td>");
@@ -82,9 +94,9 @@
                       Write("<td>" + automations[i].LastRunTime + "</td>");
                       Write("<td>" + automations[i].ScheduledTime + "</td>");
                       Write("<td>" + automations[i].LastSaveDate + "</td>");
-                      Write("<td>" + automations[i].ModifiedBy + "</td>");
-                      Write("<td>" + automations[i].LastSavedBy + "</td>");
-                      Write("<td>" + automations[i].CreatedBy + "</td>");
+                      Write("<td>" + modifiedBy + "</td>");
+                      Write("<td>" + lastSavedBy + "</td>");
+                      Write("<td>" + createdBy + "</td>");
                       Write("<td>" + automations[i].AutomationType + "</td>");
                       Write("<td>" + automations[i].RecurrenceID + "</td>");
                       Write("</tr>");
