@@ -44,14 +44,21 @@
                 if (activities && activities.Results && activities.Results.length > 0) {
                     var categoryId = activities.Results[0].CategoryID;
                     var folderPath = getFolderPath(categoryId);
-                    Write('<script>document.getElementById("folderPath").innerText = "' + folderPath + '";</script>');
+                    Variable.SetValue("@folderPath", folderPath);
                 } else {
-                    Write('<script>document.getElementById("folderPath").innerText = "Activity not found";</script>');
+                    Variable.SetValue("@folderPath", "Activity not found");
                 }
             }
         } catch (err) {
-            Write('<script>document.getElementById("folderPath").innerText = "Error: ' + Stringify(err) + '";</script>');
+            Variable.SetValue("@folderPath", "Error: " + String(err));
         }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var folderPath = "<!--=v(@folderPath)=-->";
+            document.getElementById("folderPath").innerText = folderPath;
+        });
     </script>
 </body>
 </html>
