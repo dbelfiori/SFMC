@@ -1,8 +1,18 @@
-<style>
-table {border-color: #cfd0d2;}
-th,td {padding: 5px; text-align: center;}
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automation Data</title>
+</head>
+<body>
     <h1>Automation Details</h1>
+    <form method="get">
+        <label for="folderId">Enter Folder ID:</label>
+        <input type="text" id="folderId" name="folderId">
+        <input type="submit" value="Submit">
+    </form>
+    
     <table border="1">
         <thead>
             <tr>
@@ -47,7 +57,7 @@ th,td {padding: 5px; text-align: center;}
                 }
 
                 try {
-                    var folderId = "YOUR_FOLDER_ID"; // Replace with your specific folder ID or leave empty for all
+                    var folderId = Request.GetQueryStringParameter("folderId"); // Get folder ID from form input
                     var automations = retrieveAllAutomations(folderId);
                     for (var i = 0; i < automations.length; i++) {
                         var statusMeaning = getStatusMeaning(automations[i].Status);
@@ -140,3 +150,5 @@ th,td {padding: 5px; text-align: center;}
             </script>
         </tbody>
     </table>
+</body>
+</html>
