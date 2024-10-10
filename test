@@ -40,7 +40,7 @@
             var activityName = Request.GetQueryStringParameter("activityName");
             if (activityName) {
                 var filter = { Property: "Name", SimpleOperator: "equals", Value: activityName };
-                var activities = api.retrieve("Activity", ["Name", "CategoryID"], filter);
+                var activities = api.retrieve("AutomationActivity", ["Name", "CategoryID"], filter);
                 if (activities && activities.Results && activities.Results.length > 0) {
                     var categoryId = activities.Results[0].CategoryID;
                     var folderPath = getFolderPath(categoryId);
