@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Automation Folder Path Lookup</title>
+    <title>Automation and Activity Folder Path Lookup</title>
 </head>
 <body>
-    <h1>Automation Folder Path Lookup</h1>
+    <h1>Folder Path Lookup</h1>
     <form method="get">
         <label for="automationName">Enter Automation Name:</label>
-        <input type="text" id="automationName" name="automationName" required>
-        <input type="submit" value="Lookup">
+        <input type="text" id="automationName" name="automationName">
+        <input type="submit" value="Lookup Automation">
+    </form>
+
+    <form method="get">
+        <label for="activityName">Enter Activity Name:</label>
+        <input type="text" id="activityName" name="activityName">
+        <input type="submit" value="Lookup Activity">
     </form>
 
     <h2>Folder Path: <span id="folderPath"></span></h2>
@@ -38,15 +44,26 @@
 
         try {
             var automationName = Request.GetQueryStringParameter("automationName");
+            var activityName = Request.GetQueryStringParameter("activityName");
             if (automationName) {
                 var filter = { Property: "Name", SimpleOperator: "equals", Value: automationName };
                 var automations = api.retrieve("Automation", ["Name", "CategoryID"], filter);
                 if (automations && automations.Results && automations.Results.length > 0) {
                     var categoryId = automations.Results[0].CategoryID;
                     var folderPath = getFolderPath(categoryId);
-                    Write('<script>document.getElementById("folderPath").innerText = "' + folderPath + '";</script>');
+                    Write('<script>document.getElementById("folderPath").innerText = "Automation Folder Path: ' + folderPath + '";</script>');
                 } else {
                     Write('<script>document.getElementById("folderPath").innerText = "Automation not found";</script>');
+                }
+            } else if (activityName) {
+                var filter = { Property: "Name", SimpleOperator: "equals", Value: activityName };
+                var activities = api.retrieve("Activity", ["Name", "CategoryID"], filter);
+                if (activities && activities.Results && activities.Results.length > 0) {
+                    var categoryId = activities.Results[0].CategoryID;
+                    var folderPath = getFolderPath(categoryId);
+                    Write('<script>document.getElementById("folderPath").innerText = "Activity Folder Path: ' + folderPath + '";</script>');
+                } else {
+                    Write('<script>document.getElementById("folderPath").innerText = "Activity not found";</script>');
                 }
             }
         } catch (err) {
