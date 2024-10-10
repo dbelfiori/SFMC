@@ -17,23 +17,23 @@
     <table border="1">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>CustomerKey</th>
-                <th>IsActive</th>
-                <th>CreatedDate</th>
-                <th>ModifiedDate</th>
-                <th>Status</th>
-                <th>ProgramID</th>
-                <th>CategoryID</th>
-                <th>LastRunTime</th>
-                <th>ScheduledTime</th>
-                <th>LastSaveDate</th>
-                <th>ModifiedBy</th>
-                <th>LastSavedBy</th>
-                <th>CreatedBy</th>
-                <th>AutomationType</th>
-                <th>RecurrenceID</th>
+                <th data-sort="Name">Name</th>
+                <th data-sort="Description">Description</th>
+                <th data-sort="CustomerKey">CustomerKey</th>
+                <th data-sort="IsActive">IsActive</th>
+                <th data-sort="CreatedDate">CreatedDate</th>
+                <th data-sort="ModifiedDate">ModifiedDate</th>
+                <th data-sort="Status">Status</th>
+                <th data-sort="ProgramID">ProgramID</th>
+                <th data-sort="CategoryID">CategoryID</th>
+                <th data-sort="LastRunTime">LastRunTime</th>
+                <th data-sort="ScheduledTime">ScheduledTime</th>
+                <th data-sort="LastSaveDate">LastSaveDate</th>
+                <th data-sort="ModifiedBy">ModifiedBy</th>
+                <th data-sort="LastSavedBy">LastSavedBy</th>
+                <th data-sort="CreatedBy">CreatedBy</th>
+                <th data-sort="AutomationType">AutomationType</th>
+                <th data-sort="RecurrenceID">RecurrenceID</th>
             </tr>
         </thead>
         <tbody id="automationData">
@@ -60,7 +60,7 @@
             }
         }
 
-        function retrieveAllAutomations(folderId) {
+        function retrieveAllAutomations(folderId, sortBy) {
             var out = [],
                 moreData = true,
                 reqID = data = null;
@@ -120,11 +120,19 @@
                     }
                 }
             }
+
+            if (sortBy) {
+                out.sort(function(a, b) {
+                    return new Date(b[sortBy]) - new Date(a[sortBy]);
+                });
+            }
+
             return out;
         }
 
         var folderId = Platform.Request.GetQueryStringParameter("folderId");
-        var automations = retrieveAllAutomations(folderId);
+        var sortBy = Platform.Request.GetQueryStringParameter("sortBy") || "ModifiedDate";
+        var automations = retrieveAllAutomations(folderId, sortBy);
         var responseHtml = '';
         
         for (var i = 0; i < automations.length; i++) {
@@ -162,6 +170,20 @@
                     url: window.location.pathname,
                     type: 'get',
                     data: { folderId: folderId },
+                    success: function(response) {
+                        var parsedResponse = $(response).find('#automationData').html();
+                        $('#automationData').html(parsedResponse);
+                    }
+                });
+            });
+
+            $('th').click(function() {
+                var sortBy = $(this).data('sort');
+                var folderId = $('#folderId').val();
+                $.ajax({
+                    url: window.location.pathname,
+                    type: 'get',
+                    data: { folderId: folderId, sortBy: sortBy },
                     success: function(response) {
                         var parsedResponse = $(response).find('#automationData').html();
                         $('#automationData').html(parsedResponse);
