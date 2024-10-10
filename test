@@ -82,7 +82,7 @@
                   automations.sort(function(a, b) {
                       return new Date(b.LastRunTime) - new Date(a.LastRunTime);
                   });
-                  for (var i = 0; i < automations.length; i++) {
+                  for (var i = 0; i < Math.min(automations.length,200); i++) {
                       var statusMeaning = getStatusMeaning(automations[i].Status);
                       Write("<tr>");
                       Write("<td>" + automations[i].Name + "</td>");
