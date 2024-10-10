@@ -13,10 +13,8 @@
 <body>
   <h1>Automation Details</h1>
   <form method="get">
-      <label for="folderId">Enter CategoryID:</label>
+      <label for="folderId">Enter Folder ID:</label>
       <input type="text" id="folderId" name="folderId">
-      <label for="nameSearch">Search by Name:</label>
-      <input type="text" id="nameSearch" name="nameSearch">
       <label for="statusFilter">Filter by Status:</label>
       <select id="statusFilter" name="statusFilter">
           <option value="">All</option>
@@ -77,15 +75,34 @@
                   }
               }
 
+              function getFolderPath(categoryID) {
+                  var folderPath = [];
+                  var currentCategoryID = categoryID;
+
+                  while (currentCategoryID) {
+                      var categoryResult = api.retrieve("DataFolder", ["Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: currentCategoryID });
+                      if (categoryResult && categoryResult.Results && categoryResult.Results.length > 0) {
+                          var category = categoryResult.Results[0];
+                          folderPath.unshift(category.Name);
+                          currentCategoryID = category["ParentFolder.ID"];
+                      } else {
+                          currentCategoryID = null;
+                      }
+                  }
+
+                  return folderPath.join(" > ");
+              }
+
               try {
                   var folderId = Request.GetQueryStringParameter("folderId"); // Get folder ID from form input
                   var statusFilter = Request.GetQueryStringParameter("statusFilter"); // Get status filter from dropdown
-                  var nameSearch = Request.GetQueryStringParameter("nameSearch"); // Get name search from text field
-                  var automations = retrieveAllAutomations(folderId, statusFilter, nameSearch);
+                  var folderPath = folderId ? getFolderPath(folderId) : "Root";
+                  Write('<!--#SET @folderPath=' + folderPath + '-->');
+                  var automations = retrieveAllAutomations(folderId, statusFilter);
                   automations.sort(function(a, b) {
                       return new Date(b.LastRunTime) - new Date(a.LastRunTime);
                   });
-                  for (var i = 0; i < Math.min(automations.length, 250); i++) {
+                  for (var i = 0; i < Math.min(automations.length,200); i++) {
                       var statusMeaning = getStatusMeaning(automations[i].Status);
                       Write("<tr>");
                       Write("<td>" + automations[i].Name + "</td>");
@@ -111,7 +128,7 @@
                   Write("<tr><td colspan='17'>Error: " + Stringify(err) + "</td></tr>");
               }
 
-              function retrieveAllAutomations(folderId, statusFilter, nameSearch) {
+              function retrieveAllAutomations(folderId, statusFilter) {
                   var out = [],
                       moreData = true,
                       reqID = data = null;
@@ -155,14 +172,6 @@
                           Property: 'Status',
                           SimpleOperator: 'equals',
                           Value: statusFilter
-                      };
-                  }
-
-                  if (nameSearch) {
-                      filter = {
-                          Property: 'Name',
-                          SimpleOperator: 'like',
-                          Value: "%" + nameSearch + "%"
                       };
                   }
 
