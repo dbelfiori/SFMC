@@ -11,20 +11,6 @@ set @scriptEnd = Concat('</','script','>')
   <form method="get">
       <label for="folderId">Enter Folder ID:</label>
       <input type="text" id="folderId" name="folderId">
-      <label for="statusFilter">Filter by Status:</label>
-      <select id="statusFilter" name="statusFilter">
-          <option value="">All</option>
-          <option value="-1">Not Run</option>
-          <option value="0">Building</option>
-          <option value="1">Ready</option>
-          <option value="2">Running</option>
-          <option value="3">Paused</option>
-          <option value="4">Deactivated</option>
-          <option value="5">Scheduled</option>
-          <option value="6">Error</option>
-          <option value="7">Building Error</option>
-          <option value="8">Completed</option>
-      </select>
       <input type="submit" value="Submit">
   </form>
   
@@ -90,10 +76,11 @@ set @scriptEnd = Concat('</','script','>')
   
               try {
                   var folderId = Request.GetQueryStringParameter("folderId"); // Get folder ID from form input
-                  var statusFilter = Request.GetQueryStringParameter("statusFilter"); // Get status filter from dropdown
-                  var folderPath = getFolderPath(folderId);
-                  Write('<h2>Folder Path: <span id="folderPath">' + folderPath + '</span></h2>');
-                  var automations = retrieveAllAutomations(folderId, statusFilter);
+                  if (folderId) {
+                    var folderPath = getFolderPath(folderId);
+                    Write('<h2>Folder Path: <span style="font-weight: 300;">' + folderPath + '</span></h2>');
+                  }
+                  var automations = retrieveAllAutomations(folderId);
                   automations.sort(function(a, b) {
                       return new Date(b.LastRunTime) - new Date(a.LastRunTime);
                   });
@@ -123,7 +110,7 @@ set @scriptEnd = Concat('</','script','>')
                   Write("<tr><td colspan='17'>Error: " + Stringify(err) + "</td></tr>");
               }
   
-              function retrieveAllAutomations(folderId, statusFilter) {
+              function retrieveAllAutomations(folderId) {
                   var out = [],
                       moreData = true,
                       reqID = data = null;
@@ -159,14 +146,6 @@ set @scriptEnd = Concat('</','script','>')
                           Property: 'CategoryID',
                           SimpleOperator: 'equals',
                           Value: folderId
-                      };
-                  }
-  
-                  if (statusFilter) {
-                      filter = {
-                          Property: 'Status',
-                          SimpleOperator: 'equals',
-                          Value: statusFilter
                       };
                   }
   
