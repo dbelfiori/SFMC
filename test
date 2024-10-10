@@ -38,14 +38,11 @@
 
         try {
             var activityName = Request.GetQueryStringParameter("activityName");
-            Write('<script>console.log("Activity Name: ' + activityName + '");</script>');
             if (activityName) {
                 var filter = { Property: "Name", SimpleOperator: "equals", Value: activityName };
                 var activities = api.retrieve("AutomationActivity", ["Name", "CategoryID"], filter);
-                Write('<script>console.log("Activities Retrieved: ' + Stringify(activities) + '");</script>');
                 if (activities && activities.Results && activities.Results.length > 0) {
                     var categoryId = activities.Results[0].CategoryID;
-                    Write('<script>console.log("CategoryID: ' + categoryId + '");</script>');
                     var folderPath = getFolderPath(categoryId);
                     Write('<script>document.getElementById("folderPath").innerText = "' + folderPath + '";</script>');
                 } else {
@@ -54,7 +51,6 @@
             }
         } catch (err) {
             Write('<script>document.getElementById("folderPath").innerText = "Error: ' + Stringify(err) + '";</script>');
-            Write('<script>console.log("Error: ' + Stringify(err) + '");</script>');
         }
     </script>
 </body>
