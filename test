@@ -41,7 +41,7 @@
             Write('<script>console.log("Activity Name: ' + activityName + '");</script>');
             if (activityName) {
                 var filter = { Property: "Name", SimpleOperator: "equals", Value: activityName };
-                var activities = api.retrieve("Activity", ["Name", "CategoryID"], filter);
+                var activities = api.retrieve("AutomationActivity", ["Name", "CategoryID"], filter);
                 Write('<script>console.log("Activities Retrieved: ' + Stringify(activities) + '");</script>');
                 if (activities && activities.Results && activities.Results.length > 0) {
                     var categoryId = activities.Results[0].CategoryID;
