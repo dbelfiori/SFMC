@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Automation Data</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <h1>Automation Details</h1>
-    <form method="get">
+    <form id="folderForm">
         <label for="folderId">Enter Folder ID:</label>
         <input type="text" id="folderId" name="folderId">
         <input type="submit" value="Submit">
@@ -35,120 +36,142 @@
                 <th>RecurrenceID</th>
             </tr>
         </thead>
-        <tbody>
-            <script runat="server">
-                Platform.Load("Core", "1");
-                var api = new Script.Util.WSProxy();
-
-                function getStatusMeaning(status) {
-                    switch (status) {
-                        case -1: return "Not Run";
-                        case 0: return "Building";
-                        case 1: return "Ready";
-                        case 2: return "Running";
-                        case 3: return "Paused";
-                        case 4: return "Deactivated";
-                        case 5: return "Scheduled";
-                        case 6: return "Error";
-                        case 7: return "Building Error";
-                        case 8: return "Completed";
-                        default: return "Unknown";
-                    }
-                }
-
-                try {
-                    var folderId = Request.GetQueryStringParameter("folderId"); // Get folder ID from form input
-                    var automations = retrieveAllAutomations(folderId);
-                    for (var i = 0; i < automations.length; i++) {
-                        var statusMeaning = getStatusMeaning(automations[i].Status);
-                        Write("<tr>");
-                        Write("<td>" + automations[i].Name + "</td>");
-                        Write("<td>" + automations[i].Description + "</td>");
-                        Write("<td>" + automations[i].CustomerKey + "</td>");
-                        Write("<td>" + automations[i].IsActive + "</td>");
-                        Write("<td>" + automations[i].CreatedDate + "</td>");
-                        Write("<td>" + automations[i].ModifiedDate + "</td>");
-                        Write("<td>" + statusMeaning + "</td>");
-                        Write("<td>" + automations[i].ProgramID + "</td>");
-                        Write("<td>" + automations[i].CategoryID + "</td>");
-                        Write("<td>" + automations[i].LastRunTime + "</td>");
-                        Write("<td>" + automations[i].ScheduledTime + "</td>");
-                        Write("<td>" + automations[i].LastSaveDate + "</td>");
-                        Write("<td>" + automations[i].ModifiedBy + "</td>");
-                        Write("<td>" + automations[i].LastSavedBy + "</td>");
-                        Write("<td>" + automations[i].CreatedBy + "</td>");
-                        Write("<td>" + automations[i].AutomationType + "</td>");
-                        Write("<td>" + automations[i].RecurrenceID + "</td>");
-                        Write("</tr>");
-                    }
-                } catch (err) {
-                    Write("<tr><td colspan='17'>Error: " + Stringify(err) + "</td></tr>");
-                }
-
-                function retrieveAllAutomations(folderId) {
-                    var out = [],
-                        moreData = true,
-                        reqID = data = null;
-
-                    var cols = [
-                        "Name",
-                        "Description",
-                        "CustomerKey",
-                        "IsActive",
-                        "CreatedDate",
-                        "ModifiedDate",
-                        "Status",
-                        "ProgramID",
-                        "CategoryID",
-                        "LastRunTime",
-                        "ScheduledTime",
-                        "LastSaveDate",
-                        "ModifiedBy",
-                        "LastSavedBy",
-                        "CreatedBy",
-                        "AutomationType",
-                        "RecurrenceID"
-                    ];
-
-                    var filter = {
-                        Property: 'Status',
-                        SimpleOperator: 'IN',
-                        Value: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-                    };
-
-                    if (folderId) {
-                        filter = {
-                            Property: 'CategoryID',
-                            SimpleOperator: 'equals',
-                            Value: folderId
-                        };
-                    }
-
-                    var opts = {
-                        BatchSize: 300
-                    };
-
-                    var props = {
-                        QueryAllAccounts: false
-                    };
-
-                    while (moreData) {
-                        moreData = false;
-                        if (reqID) props.ContinueRequest = reqID;
-
-                        var data = api.retrieve("Automation", cols, filter, opts, props);
-                        if (data) {
-                            moreData = data.HasMoreRows;
-                            reqID = data.RequestID;
-                            for (var i = 0; i < data.Results.length; i++) {
-                                out.push(data.Results[i]);
-                            }
-                        }
-                    }
-                    return out;
-                }
-            </script>
+        <tbody id="automationData">
         </tbody>
     </table>
+
+    <script runat="server">
+        Platform.Load("Core", "1");
+        var api = new Script.Util.WSProxy();
+
+        function getStatusMeaning(status) {
+            switch (status) {
+                case -1: return "Not Run";
+                case 0: return "Building";
+                case 1: return "Ready";
+                case 2: return "Running";
+                case 3: return "Paused";
+                case 4: return "Deactivated";
+                case 5: return "Scheduled";
+                case 6: return "Error";
+                case 7: return "Building Error";
+                case 8: return "Completed";
+                default: return "Unknown";
+            }
+        }
+
+        function retrieveAllAutomations(folderId) {
+            var out = [],
+                moreData = true,
+                reqID = data = null;
+
+            var cols = [
+                "Name",
+                "Description",
+                "CustomerKey",
+                "IsActive",
+                "CreatedDate",
+                "ModifiedDate",
+                "Status",
+                "ProgramID",
+                "CategoryID",
+                "LastRunTime",
+                "ScheduledTime",
+                "LastSaveDate",
+                "ModifiedBy",
+                "LastSavedBy",
+                "CreatedBy",
+                "AutomationType",
+                "RecurrenceID"
+            ];
+
+            var filter = {
+                Property: 'Status',
+                SimpleOperator: 'IN',
+                Value: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+            };
+
+            if (folderId) {
+                filter = {
+                    Property: 'CategoryID',
+                    SimpleOperator: 'equals',
+                    Value: folderId
+                };
+            }
+
+            var opts = {
+                BatchSize: 300
+            };
+
+            var props = {
+                QueryAllAccounts: false
+            };
+
+            while (moreData) {
+                moreData = false;
+                if (reqID) props.ContinueRequest = reqID;
+
+                var data = api.retrieve("Automation", cols, filter, opts, props);
+                if (data) {
+                    moreData = data.HasMoreRows;
+                    reqID = data.RequestID;
+                    for (var i = 0; i < data.Results.length; i++) {
+                        out.push(data.Results[i]);
+                    }
+                }
+            }
+            return out;
+        }
+
+        var folderId = Platform.Request.GetQueryStringParameter("folderId");
+        var automations = retrieveAllAutomations(folderId);
+        var responseHtml = '';
+        
+        for (var i = 0; i < automations.length; i++) {
+            var statusMeaning = getStatusMeaning(automations[i].Status);
+            responseHtml += "<tr>";
+            responseHtml += "<td>" + automations[i].Name + "</td>";
+            responseHtml += "<td>" + automations[i].Description + "</td>";
+            responseHtml += "<td>" + automations[i].CustomerKey + "</td>";
+            responseHtml += "<td>" + automations[i].IsActive + "</td>";
+            responseHtml += "<td>" + automations[i].CreatedDate + "</td>";
+            responseHtml += "<td>" + automations[i].ModifiedDate + "</td>";
+            responseHtml += "<td>" + statusMeaning + "</td>";
+            responseHtml += "<td>" + automations[i].ProgramID + "</td>";
+            responseHtml += "<td>" + automations[i].CategoryID + "</td>";
+            responseHtml += "<td>" + automations[i].LastRunTime + "</td>";
+            responseHtml += "<td>" + automations[i].ScheduledTime + "</td>";
+            responseHtml += "<td>" + automations[i].LastSaveDate + "</td>";
+            responseHtml += "<td>" + automations[i].ModifiedBy + "</td>";
+            responseHtml += "<td>" + automations[i].LastSavedBy + "</td>";
+            responseHtml += "<td>" + automations[i].CreatedBy + "</td>";
+            responseHtml += "<td>" + automations[i].AutomationType + "</td>";
+            responseHtml += "<td>" + automations[i].RecurrenceID + "</td>";
+            responseHtml += "</tr>";
+        }
+
+        Platform.Response.Write('<!--#SET @output=' + responseHtml + '-->');
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#folderForm').submit(function(event) {
+                event.preventDefault();
+                var folderId = $('#folderId').val();
+                $.ajax({
+                    url: window.location.pathname,
+                    type: 'get',
+                    data: { folderId: folderId },
+                    success: function(response) {
+                        var parsedResponse = $(response).find('#automationData').html();
+                        $('#automationData').html(parsedResponse);
+                    }
+                });
+            });
+        });
+    </script>
+
+    %%=v(@output)=%%
+
 </body>
 </html>
