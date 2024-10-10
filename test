@@ -1,177 +1,57 @@
-%%[
-set @scriptBegin = Concat('<','script','>')
-set @scriptEnd = Concat('</','script','>')
-]%%
-<style>
-    table {border-color: #cfd0d2;}
-    th,td {max-width: 60px; padding: 5px; text-align: center;}
-  </style>
-  
-  <h1>Automation Details</h1>
-  <form method="get">
-      <label for="folderId">Enter Folder ID:</label>
-      <input type="text" id="folderId" name="folderId">
-      <input type="submit" value="Submit">
-  </form>
-  
-  <table border="1">
-      <thead>
-          <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>CustomerKey</th>
-              <th>IsActive</th>
-              <th>CreatedDate</th>
-              <th>ModifiedDate</th>
-              <th>Status</th>
-              <th>ProgramID</th>
-              <th>CategoryID</th>
-              <th>LastRunTime</th>
-              <th>ScheduledTime</th>
-              <th>LastSaveDate</th>
-              <th>ModifiedBy</th>
-              <th>LastSavedBy</th>
-              <th>CreatedBy</th>
-              <th>AutomationType</th>
-              <th>RecurrenceID</th>
-          </tr>
-      </thead>
-      <tbody>
-          <script runat="server">
-              Platform.Load("Core", "1");
-              var api = new Script.Util.WSProxy();
-  
-              function getStatusMeaning(status) {
-                  switch (status) {
-                      case -1: return "Not Run";
-                      case 0: return "Building";
-                      case 1: return "Ready";
-                      case 2: return "Running";
-                      case 3: return "Paused";
-                      case 4: return "Deactivated";
-                      case 5: return "Scheduled";
-                      case 6: return "Error";
-                      case 7: return "Building Error";
-                      case 8: return "Completed";
-                      default: return "Unknown";
-                  }
-              }
-  
-              function getFolderPath(folderId) {
-                  var path = '';
-                  var folder = api.retrieve("DataFolder", ["ID", "Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: folderId });
-                  if (folder && folder.Results && folder.Results.length > 0) {
-                      var currentFolder = folder.Results[0];
-                      while (currentFolder) {
-                          path = currentFolder.Name + '/' + path;
-                          if (currentFolder.ParentFolder && currentFolder.ParentFolder.ID) {
-                              currentFolder = api.retrieve("DataFolder", ["ID", "Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: currentFolder.ParentFolder.ID }).Results[0];
-                          } else {
-                              currentFolder = null;
-                          }
-                      }
-                  }
-                  return path;
-              }
-  
-              try {
-                  var folderId = Request.GetQueryStringParameter("folderId"); // Get folder ID from form input
-                  if (folderId) {
-                    var folderPath = getFolderPath(folderId);
-                    Write('<h2>Folder Path: <span style="font-weight: 300;">' + folderPath + '</span></h2>');
-                  }
-                  var automations = retrieveAllAutomations(folderId);
-                  automations.sort(function(a, b) {
-                      return new Date(b.LastRunTime) - new Date(a.LastRunTime);
-                  });
-                  for (var i = 0; i < Math.min(automations.length, 200); i++) {
-                      var statusMeaning = getStatusMeaning(automations[i].Status);
-                      Write("<tr>");
-                      Write("<td>" + automations[i].Name + "</td>");
-                      Write("<td>" + automations[i].Description + "</td>");
-                      Write("<td>" + automations[i].CustomerKey + "</td>");
-                      Write("<td>" + automations[i].IsActive + "</td>");
-                      Write("<td>" + automations[i].CreatedDate + "</td>");
-                      Write("<td>" + automations[i].ModifiedDate + "</td>");
-                      Write("<td>" + statusMeaning + "</td>");
-                      Write("<td>" + automations[i].ProgramID + "</td>");
-                      Write("<td>" + automations[i].CategoryID + "</td>");
-                      Write("<td>" + automations[i].LastRunTime + "</td>");
-                      Write("<td>" + automations[i].ScheduledTime + "</td>");
-                      Write("<td>" + automations[i].LastSaveDate + "</td>");
-                      Write("<td>" + automations[i].ModifiedBy + "</td>");
-                      Write("<td>" + automations[i].LastSavedBy + "</td>");
-                      Write("<td>" + automations[i].CreatedBy + "</td>");
-                      Write("<td>" + automations[i].AutomationType + "</td>");
-                      Write("<td>" + automations[i].RecurrenceID + "</td>");
-                      Write("</tr>");
-                  }
-              } catch (err) {
-                  Write("<tr><td colspan='17'>Error: " + Stringify(err) + "</td></tr>");
-              }
-  
-              function retrieveAllAutomations(folderId) {
-                  var out = [],
-                      moreData = true,
-                      reqID = data = null;
-  
-                  var cols = [
-                      "Name",
-                      "Description",
-                      "CustomerKey",
-                      "IsActive",
-                      "CreatedDate",
-                      "ModifiedDate",
-                      "Status",
-                      "ProgramID",
-                      "CategoryID",
-                      "LastRunTime",
-                      "ScheduledTime",
-                      "LastSaveDate",
-                      "ModifiedBy",
-                      "LastSavedBy",
-                      "CreatedBy",
-                      "AutomationType",
-                      "RecurrenceID"
-                  ];
-  
-                  var filter = {
-                      Property: 'Status',
-                      SimpleOperator: 'IN',
-                      Value: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-                  };
-  
-                  if (folderId) {
-                      filter = {
-                          Property: 'CategoryID',
-                          SimpleOperator: 'equals',
-                          Value: folderId
-                      };
-                  }
-  
-                  var opts = {
-                      BatchSize: 300
-                  };
-  
-                  var props = {
-                      QueryAllAccounts: false
-                  };
-  
-                  while (moreData) {
-                      moreData = false;
-                      if (reqID) props.ContinueRequest = reqID;
-  
-                      var data = api.retrieve("Automation", cols, filter, opts, props);
-                      if (data) {
-                          moreData = data.HasMoreRows;
-                          reqID = data.RequestID;
-                          for (var i = 0; i < data.Results.length; i++) {
-                              out.push(data.Results[i]);
-                          }
-                      }
-                  }
-                  return out;
-              }
-          </script>
-      </tbody>
-  </table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automation Folder Path Lookup</title>
+</head>
+<body>
+    <h1>Automation Folder Path Lookup</h1>
+    <form method="get">
+        <label for="automationName">Enter Automation Name:</label>
+        <input type="text" id="automationName" name="automationName" required>
+        <input type="submit" value="Lookup">
+    </form>
+
+    <h2>Folder Path: <span id="folderPath"></span></h2>
+
+    <script runat="server">
+        Platform.Load("Core", "1");
+        var api = new Script.Util.WSProxy();
+
+        function getFolderPath(categoryId) {
+            var path = '';
+            var folder = api.retrieve("DataFolder", ["ID", "Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: categoryId });
+            if (folder && folder.Results && folder.Results.length > 0) {
+                var currentFolder = folder.Results[0];
+                while (currentFolder) {
+                    path = currentFolder.Name + '/' + path;
+                    if (currentFolder.ParentFolder && currentFolder.ParentFolder.ID) {
+                        currentFolder = api.retrieve("DataFolder", ["ID", "Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: currentFolder.ParentFolder.ID }).Results[0];
+                    } else {
+                        currentFolder = null;
+                    }
+                }
+            }
+            return path;
+        }
+
+        try {
+            var automationName = Request.GetQueryStringParameter("automationName");
+            if (automationName) {
+                var filter = { Property: "Name", SimpleOperator: "equals", Value: automationName };
+                var automations = api.retrieve("Automation", ["Name", "CategoryID"], filter);
+                if (automations && automations.Results && automations.Results.length > 0) {
+                    var categoryId = automations.Results[0].CategoryID;
+                    var folderPath = getFolderPath(categoryId);
+                    Write('<script>document.getElementById("folderPath").innerText = "' + folderPath + '";</script>');
+                } else {
+                    Write('<script>document.getElementById("folderPath").innerText = "Automation not found";</script>');
+                }
+            }
+        } catch (err) {
+            Write('<script>document.getElementById("folderPath").innerText = "Error: ' + Stringify(err) + '";</script>');
+        }
+    </script>
+</body>
+</html>
