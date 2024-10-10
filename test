@@ -75,29 +75,9 @@
                   }
               }
 
-              function getFolderPath(categoryID) {
-                  var folderPath = [];
-                  var currentCategoryID = categoryID;
-
-                  while (currentCategoryID) {
-                      var categoryResult = api.retrieve("DataFolder", ["Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: currentCategoryID });
-                      if (categoryResult && categoryResult.Results && categoryResult.Results.length > 0) {
-                          var category = categoryResult.Results[0];
-                          folderPath.unshift(category.Name);
-                          currentCategoryID = category["ParentFolder.ID"];
-                      } else {
-                          currentCategoryID = null;
-                      }
-                  }
-
-                  return folderPath.join(" > ");
-              }
-
               try {
                   var folderId = Request.GetQueryStringParameter("folderId"); // Get folder ID from form input
                   var statusFilter = Request.GetQueryStringParameter("statusFilter"); // Get status filter from dropdown
-                  var folderPath = folderId ? getFolderPath(folderId) : "Root";
-                  Write('<!--#SET @folderPath=' + folderPath + '-->');
                   var automations = retrieveAllAutomations(folderId, statusFilter);
                   automations.sort(function(a, b) {
                       return new Date(b.LastRunTime) - new Date(a.LastRunTime);
