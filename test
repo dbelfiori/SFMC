@@ -1,1 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automation Monitor</title>
+</head>
+<body>
+    <h1>Automation Status Monitor</h1>
+    %%[ 
 
+    var @automations, @automation, @count, @status, @runtime
+    set @automations = RetrieveSalesforceObjects("Automation","Id,Name,Status,LastRunTime","Status","notnull","LastRunTime","notnull")
+    set @count = rowcount(@automations)
+
+    for @i = 1 to @count do
+        set @automation = row(@automations, @i)
+        set @name = field(@automation, "Name")
+        set @status = field(@automation, "Status")
+        set @runtime = field(@automation, "LastRunTime")
+
+        /* Insert the status into the Data Extension */
+        InsertDE("AutomationStatus", "AutomationName", @name, "Status", @status, "LastRunTime", @runtime)
+
+    next @i
+
+    ]%%
+
+    <h2>Latest Automation Statuses</h2>
+    <table border="1">
+        <tr>
+            <th>Automation Name</th>
+            <th>Status</th>
+            <th>Last Run Time</th>
+        </tr>
+        %%[
+        var @statuses = LookupOrderedRows("AutomationStatus", 10, "LastRunTime desc", "AutomationName", "Status", "LastRunTime")
+        for @j = 1 to rowcount(@statuses) do
+            var @statusRow = row(@statuses, @j)
+            var @name = field(@statusRow, "AutomationName")
+            var @status = field(@statusRow, "Status")
+            var @runtime = field(@statusRow, "LastRunTime")
+        ]%%
+        <tr>
+            <td>%%=v(@name)=%%</td>
+            <td>%%=v(@status)=%%</td>
+            <td>%%=v(@runtime)=%%</td>
+        </tr>
+        %%[ next @j ]%%
+    </table>
+
+</body>
