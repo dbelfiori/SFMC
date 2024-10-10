@@ -15,6 +15,20 @@
   <form method="get">
       <label for="folderId">Enter Folder ID:</label>
       <input type="text" id="folderId" name="folderId">
+      <label for="statusFilter">Filter by Status:</label>
+      <select id="statusFilter" name="statusFilter">
+          <option value="">All</option>
+          <option value="-1">Not Run</option>
+          <option value="0">Building</option>
+          <option value="1">Ready</option>
+          <option value="2">Running</option>
+          <option value="3">Paused</option>
+          <option value="4">Deactivated</option>
+          <option value="5">Scheduled</option>
+          <option value="6">Error</option>
+          <option value="7">Building Error</option>
+          <option value="8">Completed</option>
+      </select>
       <input type="submit" value="Submit">
   </form>
   
@@ -61,26 +75,15 @@
                   }
               }
 
-              function getUserName(userId) {
-                  var userFilter = { Property: "ID", SimpleOperator: "equals", Value: userId };
-                  var userResult = api.retrieve("AccountUser", ["UserID", "Name"], userFilter);
-                  if (userResult && userResult.Results && userResult.Results.length > 0) {
-                      return userResult.Results[0].Name;
-                  }
-                  return userId; // Return the numeric value if no match is found
-              }
-
               try {
                   var folderId = Request.GetQueryStringParameter("folderId"); // Get folder ID from form input
-                  var automations = retrieveAllAutomations(folderId);
+                  var statusFilter = Request.GetQueryStringParameter("statusFilter"); // Get status filter from dropdown
+                  var automations = retrieveAllAutomations(folderId, statusFilter);
                   automations.sort(function(a, b) {
                       return new Date(b.LastRunTime) - new Date(a.LastRunTime);
                   });
                   for (var i = 0; i < automations.length; i++) {
                       var statusMeaning = getStatusMeaning(automations[i].Status);
-                      var modifiedBy = getUserName(automations[i].ModifiedBy);
-                      var lastSavedBy = getUserName(automations[i].LastSavedBy);
-                      var createdBy = getUserName(automations[i].CreatedBy);
                       Write("<tr>");
                       Write("<td>" + automations[i].Name + "</td>");
                       Write("<td>" + automations[i].Description + "</td>");
@@ -94,9 +97,9 @@
                       Write("<td>" + automations[i].LastRunTime + "</td>");
                       Write("<td>" + automations[i].ScheduledTime + "</td>");
                       Write("<td>" + automations[i].LastSaveDate + "</td>");
-                      Write("<td>" + modifiedBy + "</td>");
-                      Write("<td>" + lastSavedBy + "</td>");
-                      Write("<td>" + createdBy + "</td>");
+                      Write("<td>" + automations[i].ModifiedBy + "</td>");
+                      Write("<td>" + automations[i].LastSavedBy + "</td>");
+                      Write("<td>" + automations[i].CreatedBy + "</td>");
                       Write("<td>" + automations[i].AutomationType + "</td>");
                       Write("<td>" + automations[i].RecurrenceID + "</td>");
                       Write("</tr>");
@@ -105,7 +108,7 @@
                   Write("<tr><td colspan='17'>Error: " + Stringify(err) + "</td></tr>");
               }
 
-              function retrieveAllAutomations(folderId) {
+              function retrieveAllAutomations(folderId, statusFilter) {
                   var out = [],
                       moreData = true,
                       reqID = data = null;
@@ -141,6 +144,14 @@
                           Property: 'CategoryID',
                           SimpleOperator: 'equals',
                           Value: folderId
+                      };
+                  }
+
+                  if (statusFilter) {
+                      filter = {
+                          Property: 'Status',
+                          SimpleOperator: 'equals',
+                          Value: statusFilter
                       };
                   }
 
