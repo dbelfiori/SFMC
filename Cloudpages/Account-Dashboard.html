@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Tracking Dashboard</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9fb;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 25px;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        /* Grid Layout */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Card Styling */
+        .stat-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Colors for Each Card */
+        .sent-card { background-color: #4CAF50; color: #fff; }
+        .opened-card { background-color: #2196F3; color: #fff; }
+        .clicked-card { background-color: #FFC107; color: #fff; }
+        .bounced-card { background-color: #F44336; color: #fff; }
+        .unsubscribed-card { background-color: #9C27B0; color: #fff; }
+
+        /* Stat Text Styling */
+        .stat-card h2 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        .stat-card p {
+            margin: 5px 0 0;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        /* Icon Styling */
+        .stat-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+            padding: 10px 0;
+        }
+    </style>
+    <script runat="server" language="JavaScript" executioncontexttype="GET">
+        Platform.Load("Core", "1");
+        
+        var sendsTotal = 0;
+        var opensTotal = 0;
+        var clicksTotal = 0;
+        var bouncesTotal = 0;
+        var unsubscribesUnique = 0;
+
+        try {
+            var filter = { 
+                Property: "CustomerKey",
+                SimpleOperator: "equals",
+                Value: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxx"
+            };
+
+            var acctTracking = Account.Tracking.Retrieve(filter);
+
+            if (acctTracking && acctTracking.length > 0) {
+                for (var i = 0; i < acctTracking.length; i++) {
+                    sendsTotal += acctTracking[i].Sends.Total;
+                    bouncesTotal += acctTracking[i].Bounces.Total;
+                    clicksTotal += acctTracking[i].Clicks.Total;
+                    opensTotal += acctTracking[i].Opens.Total;
+                    unsubscribesUnique += acctTracking[i].Unsubscribes.Unique;
+                }
+            } else {
+                Write("No tracking information found for the specified CustomerKey.\n");
+            }
+        } catch (ex) {
+            Write("Error Message: " + ex.message + '\n');
+            Write("Error Description: " + ex.description + '\n');
+        }
+    </script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Account Tracking Dashboard</h1>
+        <div class="stats-grid">
+            <!-- Emails Sent -->
+            <div class="stat-card sent-card">
+                <div class="stat-icon">📤</div>
+                <h2><ctrl:var name="sendsTotal" /></h2>
+                <p>Emails Sent</p>
+            </div>
+
+            <!-- Emails Opened -->
+            <div class="stat-card opened-card">
+                <div class="stat-icon">📬</div>
+                <h2><ctrl:var name="opensTotal" /></h2>
+                <p>Emails Opened</p>
+            </div>
+
+            <!-- Links Clicked -->
+            <div class="stat-card clicked-card">
+                <div class="stat-icon">🔗</div>
+                <h2><ctrl:var name="clicksTotal" /></h2>
+                <p>Links Clicked</p>
+            </div>
+
+            <!-- Emails Bounced -->
+            <div class="stat-card bounced-card">
+                <div class="stat-icon">📩</div>
+                <h2><ctrl:var name="bouncesTotal" /></h2>
+                <p>Emails Bounced</p>
+            </div>
+
+            <!-- Unique Unsubscribes -->
+            <div class="stat-card unsubscribed-card">
+                <div class="stat-icon">🚫</div>
+                <h2><ctrl:var name="unsubscribesUnique" /></h2>
+                <p>Unique Unsubscribes</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Account Tracking Dashboard. All rights reserved.</p>
+    </footer>
+</body>
+</html>
