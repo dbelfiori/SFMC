@@ -143,3 +143,46 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 });
 %%=v(@scriptEnd)=%%
 %%[ENDIF]%%
+
+
+
+
+
+
+
+
+
+<form id="myForm">
+  <input type="text" name="name" placeholder="Enter your name">
+  <button type="submit">Submit</button>
+</form>
+
+<div id="contentBlock"></div>
+
+<script>
+  document.getElementById('myForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const formData = new FormData(this); // Serialize form data
+    const request = new XMLHttpRequest(); // Create an AJAX request
+
+    request.open('POST', '/your-server-endpoint', true); // Replace with your endpoint URL
+    
+    request.onload = function() {
+      if (request.status >= 200 && request.status < 400) {
+        // Success! Populate the Content Block
+        document.getElementById('contentBlock').innerHTML = request.responseText;
+      } else {
+        // Handle server errors
+        document.getElementById('contentBlock').innerHTML = 'An error occurred.';
+      }
+    };
+
+    request.onerror = function() {
+      // Handle connection errors
+      document.getElementById('contentBlock').innerHTML = 'An error occurred.';
+    };
+
+    request.send(formData); // Send the form data to the server
+  });
+</script>
