@@ -151,38 +151,45 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 
 
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic AMPscript Value Update</title>
+    <script>
+        async function updateContent() {
+            // Get the value entered in the input field
+            const ampscriptValue = document.getElementById('ampscriptValue').value;
 
-<form id="myForm">
-  <input type="text" name="name" placeholder="Enter your name">
-  <button type="submit">Submit</button>
-</form>
+            // Send the value to the server using AJAX
+            const response = await fetch('/pages/update-content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `value=${encodeURIComponent(ampscriptValue)}`
+            });
 
-<div id="contentBlock"></div>
+            // Retrieve the updated content from the server
+            const data = await response.text();
 
-<script>
-  document.getElementById('myForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the default form submission
-
-    const formData = new FormData(this); // Serialize form data
-    const request = new XMLHttpRequest(); // Create an AJAX request
-
-    request.open('POST', '/your-server-endpoint', true); // Replace with your endpoint URL
+            // Update the content block with the new value
+            document.getElementById('contentBlock').innerHTML = data;
+        }
+    </script>
+</head>
+<body>
+    <h1>Submit AMPscript Value</h1>
     
-    request.onload = function() {
-      if (request.status >= 200 && request.status < 400) {
-        // Success! Populate the Content Block
-        document.getElementById('contentBlock').innerHTML = request.responseText;
-      } else {
-        // Handle server errors
-        document.getElementById('contentBlock').innerHTML = 'An error occurred.';
-      }
-    };
-
-    request.onerror = function() {
-      // Handle connection errors
-      document.getElementById('contentBlock').innerHTML = 'An error occurred.';
-    };
-
-    request.send(formData); // Send the form data to the server
-  });
-</script>
+    <!-- Form to capture AMPscript value -->
+    <form onsubmit="event.preventDefault(); updateContent();">
+        <label for="ampscriptValue">Enter Value:</label>
+        <input type="text" id="ampscriptValue" name="ampscriptValue" required>
+        <button type="submit">Submit</button>
+    </form>
+    
+    <!-- Dynamic Content Block -->
+    <div id="contentBlock" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;">
+        Initial content will be replaced here.
+    </div>
+</body>
+</html>
