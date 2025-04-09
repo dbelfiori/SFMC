@@ -149,47 +149,35 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 
 
 
+var customerKey = "YOUR_DATA_EXTENSION_KEY";
+var de = DataExtension.Retrieve({ Property: "CustomerKey", SimpleOperator: "equals", Value: customerKey });
+var categoryId = de[0].CategoryID;
+var list = [];
+var path = function (id) {
+    if (id > 0) {
+        var results = Folder.Retrieve({ Property: "ID", SimpleOperator: "equals", Value: id });
+        list.push(results[0].Name);
+        return path(results[0].ParentFolder.ID);
+    } else {
+        return id;
+    }
+};
+path(categoryId);
+var result = list.reverse().join(" / ");
 
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dynamic AMPscript Value Update</title>
-    <script>
-        async function updateContent() {
-            // Get the value entered in the input field
-            const ampscriptValue = document.getElementById('ampscriptValue').value;
 
-            // Send the value to the server using AJAX
-            const response = await fetch('/pages/update-content', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `value=${encodeURIComponent(ampscriptValue)}`
-            });
 
-            // Retrieve the updated content from the server
-            const data = await response.text();
 
-            // Update the content block with the new value
-            document.getElementById('contentBlock').innerHTML = data;
-        }
-    </script>
-</head>
-<body>
-    <h1>Submit AMPscript Value</h1>
-    
-    <!-- Form to capture AMPscript value -->
-    <form onsubmit="event.preventDefault(); updateContent();">
-        <label for="ampscriptValue">Enter Value:</label>
-        <input type="text" id="ampscriptValue" name="ampscriptValue" required>
-        <button type="submit">Submit</button>
-    </form>
-    
-    <!-- Dynamic Content Block -->
-    <div id="contentBlock" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;">
-        Initial content will be replaced here.
-    </div>
-</body>
-</html>
+
+var api = new Script.Util.WSProxy();
+var customerKey = "YOUR_DATA_EXTENSION_KEY";
+var req = api.retrieve("DataExtension", ["Name", "CategoryID"], { Property: "CustomerKey", SimpleOperator: "equals", Value: customerKey });
+var list = [req.Results[0].Name];
+var id = req.Results[0].CategoryID;
+while (id > 0) {
+    var req = api.retrieve("DataFolder", ["Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: id });
+    list.push(req.Results[0].Name);
+    id = req.Results[0].ParentFolder.ID;
+}
+var result = list.reverse().join(" / ");
