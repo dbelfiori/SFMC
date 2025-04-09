@@ -147,25 +147,23 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 
 
 
-
 <script runat="server">
     Platform.Load("Core", "1.1.1");
-    var customerKey = "YOUR_DATA_EXTENSION_KEY"; // Replace with your Data Extension's External Key
 
-    // Initialize WSProxy
-    var proxy = new Script.Util.WSProxy();
+    // Replace with the specific CategoryID you want to look up
+    var categoryId = 123456; // Example CategoryID
 
-    // Retrieve the Data Extension
-    var dataExtension = proxy.retrieve("DataExtension", ["Name", "CategoryID"], {
-        Property: "CustomerKey",
-        SimpleOperator: "equals",
-        Value: customerKey
-    });
+    try {
+        // Retrieve the folder details based on the CategoryID
+        var folderDetails = Folder.Retrieve({ Property: "ID", SimpleOperator: "equals", Value: categoryId });
 
-    if (dataExtension && dataExtension.Results.length > 0) {
-        var categoryId = dataExtension.Results[0].CategoryID;
-        Write("<p>CategoryID: " + categoryId + "</p>");
-    } else {
-        Write("<p>Error: Data Extension not found.</p>");
+        if (folderDetails && folderDetails.length > 0) {
+            var folderName = folderDetails[0].Name;
+            Write("<p>Folder Name: " + folderName + "</p>");
+        } else {
+            Write("<p>Error: No folder found for the given CategoryID.</p>");
+        }
+    } catch (e) {
+        Write("<p>Error: " + e + "</p>");
     }
 </script>
