@@ -148,36 +148,24 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 
 
 
+<script runat="server">
+    Platform.Load("Core", "1.1.1");
+    var customerKey = "YOUR_DATA_EXTENSION_KEY"; // Replace with your Data Extension's External Key
 
-var customerKey = "YOUR_DATA_EXTENSION_KEY";
-var de = DataExtension.Retrieve({ Property: "CustomerKey", SimpleOperator: "equals", Value: customerKey });
-var categoryId = de[0].CategoryID;
-var list = [];
-var path = function (id) {
-    if (id > 0) {
-        var results = Folder.Retrieve({ Property: "ID", SimpleOperator: "equals", Value: id });
-        list.push(results[0].Name);
-        return path(results[0].ParentFolder.ID);
+    // Initialize WSProxy
+    var proxy = new Script.Util.WSProxy();
+
+    // Retrieve the Data Extension
+    var dataExtension = proxy.retrieve("DataExtension", ["Name", "CategoryID"], {
+        Property: "CustomerKey",
+        SimpleOperator: "equals",
+        Value: customerKey
+    });
+
+    if (dataExtension && dataExtension.Results.length > 0) {
+        var categoryId = dataExtension.Results[0].CategoryID;
+        Write("<p>CategoryID: " + categoryId + "</p>");
     } else {
-        return id;
+        Write("<p>Error: Data Extension not found.</p>");
     }
-};
-path(categoryId);
-var result = list.reverse().join(" / ");
-
-
-
-
-
-
-var api = new Script.Util.WSProxy();
-var customerKey = "YOUR_DATA_EXTENSION_KEY";
-var req = api.retrieve("DataExtension", ["Name", "CategoryID"], { Property: "CustomerKey", SimpleOperator: "equals", Value: customerKey });
-var list = [req.Results[0].Name];
-var id = req.Results[0].CategoryID;
-while (id > 0) {
-    var req = api.retrieve("DataFolder", ["Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: id });
-    list.push(req.Results[0].Name);
-    id = req.Results[0].ParentFolder.ID;
-}
-var result = list.reverse().join(" / ");
+</script>
