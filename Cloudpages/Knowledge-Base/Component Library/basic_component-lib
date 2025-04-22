@@ -143,33 +143,3 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 });
 %%=v(@scriptEnd)=%%
 %%[ENDIF]%%
-
-
-
-
-
-<label for="create_checkReminder">Checkbox:</label>
-<input type="checkbox" id="create_checkReminder">
-<input type="text" id="create_campaignCode">
-
-<script>
-  // Track whether 'R' was added
-  let rAdded = false;
-
-  document.getElementById("create_checkReminder").addEventListener("change", () => {
-    const checkBox = document.getElementById("create_checkReminder");
-    const text = document.getElementById("create_campaignCode");
-
-    if (checkBox.checked) {
-      if (!rAdded) {
-        text.value += "R"; // Add 'R' only if it hasn't already been added
-        rAdded = true; // Update tracker
-      }
-    } else {
-      if (rAdded) {
-        text.value = text.value.slice(0, -1); // Remove 'R'
-        rAdded = false; // Reset tracker
-      }
-    }
-  });
-</script>
