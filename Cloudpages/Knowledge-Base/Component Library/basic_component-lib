@@ -147,23 +147,29 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 
 
 
-<script runat="server">
-    Platform.Load("Core", "1.1.1");
 
-    // Replace with the specific CategoryID you want to look up
-    var categoryId = 123456; // Example CategoryID
+<label for="create_checkReminder">Checkbox:</label>
+<input type="checkbox" id="create_checkReminder">
+<input type="text" id="create_campaignCode">
 
-    try {
-        // Retrieve the folder details based on the CategoryID
-        var folderDetails = Folder.Retrieve({ Property: "ID", SimpleOperator: "equals", Value: categoryId });
+<script>
+  // Track whether 'R' was added
+  let rAdded = false;
 
-        if (folderDetails && folderDetails.length > 0) {
-            var folderName = folderDetails[0].Name;
-            Write("<p>Folder Name: " + folderName + "</p>");
-        } else {
-            Write("<p>Error: No folder found for the given CategoryID.</p>");
-        }
-    } catch (e) {
-        Write("<p>Error: " + e + "</p>");
+  document.getElementById("create_checkReminder").addEventListener("change", () => {
+    const checkBox = document.getElementById("create_checkReminder");
+    const text = document.getElementById("create_campaignCode");
+
+    if (checkBox.checked) {
+      if (!rAdded) {
+        text.value += "R"; // Add 'R' only if it hasn't already been added
+        rAdded = true; // Update tracker
+      }
+    } else {
+      if (rAdded) {
+        text.value = text.value.slice(0, -1); // Remove 'R'
+        rAdded = false; // Reset tracker
+      }
     }
+  });
 </script>
