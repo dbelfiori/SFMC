@@ -143,3 +143,81 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 });
 %%=v(@scriptEnd)=%%
 %%[ENDIF]%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Upload & Autofill Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+</head>
+<body>
+
+    <h2>Upload an Excel File</h2>
+    
+    <!-- File Upload Input -->
+    <input type="file" id="fileUpload" />
+    
+    <!-- Drag-and-Drop Area -->
+    <div id="dropArea" style="border:2px dashed #ccc; padding:20px; text-align:center;">
+        Drag and drop your Excel file here or click above to upload.
+    </div>
+    
+    <!-- Form with Autofill Fields -->
+    <form id="dataForm">
+        <label for="nameField">Name from A1:</label>
+        <input type="text" id="nameField" placeholder="Auto-filled from A1" />
+    </form>
+
+    <script>
+        document.getElementById('fileUpload').addEventListener('change', handleFile);
+        document.getElementById('dropArea').addEventListener('dragover', (e) => e.preventDefault());
+        document.getElementById('dropArea').addEventListener('drop', (e) => {
+            e.preventDefault();
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: "array" });
+                const sheetName = workbook.SheetNames[0]; 
+                const sheet = workbook.Sheets[sheetName];
+
+                // Target Cell A1
+                const cellAddress = "A1"; 
+                const cellValue = sheet[cellAddress] ? sheet[cellAddress].v : "No data found";
+
+                // Insert into Input Field
+                document.getElementById("nameField").value = cellValue;
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
+
+</body>
+</html>
