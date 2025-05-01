@@ -164,7 +164,6 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -189,18 +188,36 @@ document.querySelectorAll('.copy-btn').forEach(button => {
     <form id="dataForm">
         <label for="nameField">Name from A1:</label>
         <input type="text" id="nameField" placeholder="Auto-filled from A1" />
+
+        <label for="fieldB4">Data from B4:</label>
+        <input type="text" id="fieldB4" placeholder="Auto-filled from B4" />
+
+        <label for="fieldB8">Data from B8:</label>
+        <input type="text" id="fieldB8" placeholder="Auto-filled from B8" />
+
+        <label for="fieldC12">Data from C12:</label>
+        <input type="text" id="fieldC12" placeholder="Auto-filled from C12" />
     </form>
 
     <script>
-        document.getElementById('fileUpload').addEventListener('change', handleFile);
-        document.getElementById('dropArea').addEventListener('dragover', (e) => e.preventDefault());
-        document.getElementById('dropArea').addEventListener('drop', (e) => {
-            e.preventDefault();
-            handleFile(e.dataTransfer.files[0]);
+        document.addEventListener("DOMContentLoaded", () => {
+            const fileUpload = document.getElementById('fileUpload');
+            const dropArea = document.getElementById('dropArea');
+
+            fileUpload.addEventListener('change', (e) => handleFile(e.target.files[0]));
+            dropArea.addEventListener('dragover', (e) => e.preventDefault());
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                handleFile(e.dataTransfer.files[0]);
+            });
         });
 
         function handleFile(file) {
-            if (!file) return;
+            if (!file || !(file instanceof Blob)) {
+                console.error("Invalid file type. Ensure you're uploading an actual Excel file.");
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = (event) => {
                 const data = new Uint8Array(event.target.result);
@@ -208,12 +225,13 @@ document.querySelectorAll('.copy-btn').forEach(button => {
                 const sheetName = workbook.SheetNames[0]; 
                 const sheet = workbook.Sheets[sheetName];
 
-                // Target Cell A1
-                const cellAddress = "A1"; 
-                const cellValue = sheet[cellAddress] ? sheet[cellAddress].v : "No data found";
+                // Extract values from specific cells
+                const extractCellValue = (cellAddress) => sheet[cellAddress] ? sheet[cellAddress].v : "No data found";
 
-                // Insert into Input Field
-                document.getElementById("nameField").value = cellValue;
+                document.getElementById("nameField").value = extractCellValue("A1");
+                document.getElementById("fieldB4").value = extractCellValue("B4");
+                document.getElementById("fieldB8").value = extractCellValue("B8");
+                document.getElementById("fieldC12").value = extractCellValue("C12");
             };
             reader.readAsArrayBuffer(file);
         }
