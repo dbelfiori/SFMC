@@ -161,81 +161,55 @@ document.querySelectorAll('.copy-btn').forEach(button => {
 
 
 
+document.addEventListener("DOMContentLoaded", () => {
+    const fileUpload = document.getElementById('fileUpload');
+    const dropArea = document.getElementById('dropArea');
 
+    fileUpload.addEventListener('change', (e) => handleFile(e.target.files[0]));
+    dropArea.addEventListener('dragover', (e) => e.preventDefault());
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        handleFile(e.dataTransfer.files[0]);
+    });
+});
 
+function handleFile(file) {
+    if (!file || !(file instanceof Blob)) {
+        console.error("Invalid file type. Ensure you're uploading an actual Excel file.");
+        return;
+    }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel Upload & Autofill Form</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
-</head>
-<body>
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0]; 
+        const sheet = workbook.Sheets[sheetName];
 
-    <h2>Upload an Excel File</h2>
-    
-    <!-- File Upload Input -->
-    <input type="file" id="fileUpload" />
-    
-    <!-- Drag-and-Drop Area -->
-    <div id="dropArea" style="border:2px dashed #ccc; padding:20px; text-align:center;">
-        Drag and drop your Excel file here or click above to upload.
-    </div>
-    
-    <!-- Form with Autofill Fields -->
-    <form id="dataForm">
-        <label for="nameField">Name from A1:</label>
-        <input type="text" id="nameField" placeholder="Auto-filled from A1" />
+        // Extract values and apply transformations
+        const extractCellValue = (cellAddress, limit = null) => {
+            let value = sheet[cellAddress] ? sheet[cellAddress].v : "No data found";
 
-        <label for="fieldB4">Data from B4:</label>
-        <input type="text" id="fieldB4" placeholder="Auto-filled from B4" />
-
-        <label for="fieldB8">Data from B8:</label>
-        <input type="text" id="fieldB8" placeholder="Auto-filled from B8" />
-
-        <label for="fieldC12">Data from C12:</label>
-        <input type="text" id="fieldC12" placeholder="Auto-filled from C12" />
-    </form>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const fileUpload = document.getElementById('fileUpload');
-            const dropArea = document.getElementById('dropArea');
-
-            fileUpload.addEventListener('change', (e) => handleFile(e.target.files[0]));
-            dropArea.addEventListener('dragover', (e) => e.preventDefault());
-            dropArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                handleFile(e.dataTransfer.files[0]);
-            });
-        });
-
-        function handleFile(file) {
-            if (!file || !(file instanceof Blob)) {
-                console.error("Invalid file type. Ensure you're uploading an actual Excel file.");
-                return;
+            // Convert Excel serial date format to YYYYMMDD
+            if (typeof value === "number") {
+                const excelEpoch = new Date(1899, 11, 30); 
+                const convertedDate = new Date(excelEpoch.getTime() + value * 86400000);
+                const year = convertedDate.getFullYear();
+                const month = String(convertedDate.getMonth() + 1).padStart(2, "0");
+                const day = String(convertedDate.getDate()).padStart(2, "0");
+                value = `${year}${month}${day}`;
             }
 
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const data = new Uint8Array(event.target.result);
-                const workbook = XLSX.read(data, { type: "array" });
-                const sheetName = workbook.SheetNames[0]; 
-                const sheet = workbook.Sheets[sheetName];
+            // Limit characters if specified
+            return limit ? value.toString().substring(0, limit) : value;
+        };
 
-                // Extract values from specific cells
-                const extractCellValue = (cellAddress) => sheet[cellAddress] ? sheet[cellAddress].v : "No data found";
+        // Populate form fields
+        document.getElementById("nameField").value = extractCellValue("A1");
+        document.getElementById("fieldB4").value = extractCellValue("B4", 8); 
+        document.getElementById("fieldB8").value = extractCellValue("B8"); 
+        document.getElementById("fieldC12").value = extractCellValue("C12");
+    };
 
-                document.getElementById("nameField").value = extractCellValue("A1");
-                document.getElementById("fieldB4").value = extractCellValue("B4");
-                document.getElementById("fieldB8").value = extractCellValue("B8");
-                document.getElementById("fieldC12").value = extractCellValue("C12");
-            };
-            reader.readAsArrayBuffer(file);
-        }
-    </script>
-
-</body>
-</html>
+    reader.readAsArrayBuffer(file);
+}
