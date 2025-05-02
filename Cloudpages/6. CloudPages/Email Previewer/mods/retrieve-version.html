@@ -1,0 +1,16 @@
+%%[
+    SET @findEMVersion = RequestParameter('findEMVersion')
+]%%
+
+<div class="container-fluid">
+  <div class="row" style="padding-top: 20px;">
+    %%[
+    SET @fwContentRowSet = lookuprows("ent.MARKETING_FRAMEWORK_CONTENT", "Campaign_Code", @findEMVersion)
+    FOR @i = 1 TO RowCount(@fwContentRowSet) DO
+        SET @fwContentFields = Row(@fwContentRowSet, @i)
+        SET @display_version = Field(@fwContentFields, "Version")    
+    ]%%
+        %%=v(@display_version)=%%<br>
+    %%[ next @i endif ]%%
+    </div>
+</div>

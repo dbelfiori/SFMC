@@ -1,0 +1,87 @@
+%%[
+/* */
+SET @c_pageURL = '773'
+SET @target_folder_id = '359932'
+SET @master_folder_id = ''
+
+SET @c_page = RequestParameter('c_page')
+SET @c_category = RequestParameter('c_category')
+SET @V1_Disclaimer = RequestParameter('V1_Disclaimer')
+SET @V2_Disclaimer = RequestParameter('V2_Disclaimer')
+SET @V3_Disclaimer = RequestParameter('V3_Disclaimer')
+SET @create_newCampaign = 'N'
+SET @form_campaignCode = RequestParameter('form_campaignCode')
+SET @create_campaignCode = RequestParameter('create_campaignCode')
+SET @create_campaignVersion = RequestParameter('create_campaignVersion')
+SET @create_campaignName = RequestParameter('create_campaignName')
+SET @create_campaignDate = RequestParameter('create_campaignDate')
+SET @create_campaignProfile = RequestParameter('create_campaignProfile')
+SET @create_CampaignManager = RequestParameter('create_CampaignManager')
+SET @create_campaignLink = RequestParameter('create_campaignLink')
+SET @create_Period = RequestParameter('create_Period')
+
+IF EMPTY(@form_campaignCode) THEN
+    SET @form_campaignCode = @create_campaignCode
+ENDIF
+
+IF EMPTY(@c_category) THEN
+    SET @c_category = 'Lengthy Disclaimers'
+ENDIF
+
+/* */
+SET @scriptBegin = Concat('<','script','>')
+SET @scriptEnd = Concat('</','script','>')
+/* */
+
+SET @hasSubmitted = Lookup("DB_CampaignSummary", "CampaignCode", 'CampaignCode', @form_campaignCode)
+
+IF EMPTY(@hasSubmitted) AND NOT EMPTY(@create_campaignCode) AND NOT EMPTY(@create_CampaignVersion) THEN
+    InsertData("DB_CampaignSummary",
+        "CampaignCode", @create_campaignCode,
+        "Version", @create_CampaignVersion,
+        "CampaignName", @create_CampaignName,
+        "Profile", @create_campaignProfile,
+        "CampaignManager", @create_CampaignManager,
+        "DeployDate", @create_campaignDate,
+        "link", @create_campaignLink,
+        "Period", @create_Period
+    )
+ENDIF
+
+set @CMP_rows = LookupRows("DB_CampaignSummary","CampaignCode", @form_campaignCode)
+SET @CMP_rowcount = RowCount(@CMP_rows)
+
+IF @CMP_rowcount > 0 THEN
+    FOR @i = 1 to @CMP_rowcount do
+    SET @CMP_row = Row (@CMP_rows, @i)
+    SET @CampaignCode = Field(@CMP_row, "CampaignCode")
+    SET @Version = Field(@CMP_row, "Version")
+    SET @CampaignName = Field(@CMP_row, "CampaignName")
+    SET @Profile = Field(@CMP_row, "Profile")
+    SET @CampaignManager = Field(@CMP_row, "CampaignManager")
+    SET @DeployDate = Field(@CMP_row, "DeployDate")
+    SET @CampaignLink = Field(@CMP_row, "Link")
+    SET @Period = Field(@CMP_row, "Period")
+    NEXT @i
+ENDIF]%%
+
+%%[IF @c_platform == 'mobile' THEN]%%
+<link href="%%=CloudPagesURL('769')=%%" rel="stylesheet">
+%%[ELSE]%%
+<link href="%%=CloudPagesURL('772')=%%" rel="stylesheet">
+%%[ENDIF]%%
+
+%%[IF @c_page == 'Campaign Overview' THEN]%%
+    %%=ContentBlockByKey(Concat(@target_folder_id,'_','kpm-navigation'))=%%
+    %%=ContentBlockByKey(Concat(@target_folder_id,'_','campaign-overview'))=%%
+%%[ELSEIF @c_page == 'KPM Tools' AND @c_category == 'Lengthy Disclaimers' THEN]%%
+    %%=ContentBlockByKey(Concat(@target_folder_id,'_','kpm-navigation'))=%%
+    %%=ContentBlockByKey(Concat(@target_folder_id,'_','lengthy-disclaimer'))=%%
+%%[ELSEIF @c_page == 'KPM Tools' AND @c_category == 'Custom URLs' THEN]%%
+    %%=ContentBlockByKey(Concat(@target_folder_id,'_','kpm-navigation'))=%%
+    %%=ContentBlockByKey(Concat(@target_folder_id,'_','custom-urls'))=%%
+%%[ELSE SET @display_error_page = 'true']%%
+<div class="container d-flex align-items-center justify-content-center min-vh-100"> 
+  You do not have permission to access this page. 
+</div>
+%%[ENDIF]%%

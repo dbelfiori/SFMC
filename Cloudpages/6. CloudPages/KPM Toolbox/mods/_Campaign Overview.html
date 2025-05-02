@@ -1,0 +1,27 @@
+<div class="container">
+%%[IF NOT EMPTY(@form_campaignCode) THEN]%%
+    %%=ContentBlockByKey(Concat(@target_folder_id,'_','campaign-details'))=%%
+%%[ELSE]%%
+    %%=ContentBlockByKey(Concat(@target_folder_id,'_','campaign-info'))=%%
+%%[ENDIF]%%
+%%=v(@scriptBegin)=%%
+let reminderAdded = false;
+
+document.getElementById("create_checkReminder").addEventListener("change", () => {
+    const checkReminder = document.getElementById("create_checkReminder");
+    const updateCampaignCode = document.getElementById("create_campaignCode");
+
+    if (checkReminder.checked) {
+    if (!reminderAdded) {
+        updateCampaignCode.value += "R"; // Add 'R' only if it hasn't already been added
+        reminderAdded = true; // Update tracker
+    }
+    } else {
+    if (reminderAdded) {
+        updateCampaignCode.value = updateCampaignCode.value.slice(0, -1); // Remove 'R'
+        reminderAdded = false; // Reset tracker
+    }
+    }
+});
+%%=v(@scriptEnd)=%%
+</div>
