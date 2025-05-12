@@ -1,4 +1,4 @@
-const extractAllRightUntilEmpty = (keyword) => {
+const extractRightColumnUntilEmpty = (keyword) => {
   let results = [];
 
   for (const cellAddress in sheet) {
@@ -6,27 +6,29 @@ const extractAllRightUntilEmpty = (keyword) => {
       const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
       const rowNumber = parseInt(cellAddress.match(/\d+/)[0]); // Extract row number
 
-      let currentColumn = columnLetter;
-      let rowResults = [];
+      // Move to the right column
+      const rightColumnLetter = String.fromCharCode(
+        columnLetter.charCodeAt(0) + 1
+      );
+      let currentRow = rowNumber;
 
-      // Move right and collect values until an empty cell is encountered
+      // Collect values in the right column until an empty cell is encountered
       while (true) {
-        currentColumn = String.fromCharCode(currentColumn.charCodeAt(0) + 1);
-        const rightCellAddress = currentColumn + rowNumber;
+        const rightCellAddress = rightColumnLetter + currentRow;
 
         if (!sheet[rightCellAddress]?.v) break; // Stop if the right cell is empty
 
-        rowResults.push(sheet[rightCellAddress].v);
+        results.push(sheet[rightCellAddress].v);
+        currentRow++; // Move down one row
       }
 
-      if (rowResults.length > 0) {
-        results.push(rowResults.join(", "));
-      }
+      break; // Stop after processing the first occurrence of keyword
     }
   }
 
-  return results.length > 0 ? results.join(" | ") : "No valid data found";
+  return results.length > 0 ? results.join(", ") : "No valid data found";
 };
 
 // Example usage:
-document.getElementById("test1").value = extractAllRightUntilEmpty("Deep Link");
+document.getElementById("test1").value =
+  extractRightColumnUntilEmpty("Deep Link");
