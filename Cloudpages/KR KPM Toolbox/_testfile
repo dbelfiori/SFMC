@@ -1,6 +1,6 @@
 /** @format */
 
-const extractFilteredValuesBelow = (keyword) => {
+const extractAllValuesBelow = (keyword) => {
   let results = [];
 
   for (const cellAddress in sheet) {
@@ -11,10 +11,12 @@ const extractFilteredValuesBelow = (keyword) => {
       // Determine the cell below (increase row number by 1)
       const belowCellAddress = columnLetter + (rowNumber + 1);
 
-      // Get value and exclude unwanted values
-      const belowValue = sheet[belowCellAddress]?.v || "No data found";
-      if (belowValue !== "XXX" && belowValue !== "No data found") {
-        results.push({ address: belowCellAddress, value: belowValue });
+      // Store value if it exists
+      if (sheet[belowCellAddress]) {
+        results.push({
+          address: belowCellAddress,
+          value: sheet[belowCellAddress].v,
+        });
       }
     }
   }
@@ -25,5 +27,5 @@ const extractFilteredValuesBelow = (keyword) => {
 };
 
 // Example usage:
-const campaignNameFilteredValues = extractFilteredValuesBelow("campaign name:");
-console.log("Filtered values below:", campaignNameFilteredValues);
+const campaignNameBelowValues = extractAllValuesBelow("campaign name:");
+console.log("Values below:", campaignNameBelowValues);
