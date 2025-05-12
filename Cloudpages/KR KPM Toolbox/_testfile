@@ -1,0 +1,20 @@
+const extractCellValueToRight = (keyword) => {
+    for (const cellAddress in sheet) {
+        if (sheet[cellAddress]?.v === keyword) {
+            const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
+            const rowNumber = cellAddress.match(/\d+/)[0]; // Extract row number
+
+            // Convert column letter to next column (e.g., "B" -> "C")
+            const nextColumnLetter = String.fromCharCode(columnLetter.charCodeAt(0) + 1);
+            const rightCellAddress = nextColumnLetter + rowNumber;
+
+            return sheet[rightCellAddress]?.v || "No data found"; // Get the value from the right cell
+        }
+    }
+    return "Keyword not found";
+};
+
+// Example usage:
+const campaignNameValue = extractCellValueToRight("campaign name:");
+console.log("Value to the right:", campaignNameValue);
+
