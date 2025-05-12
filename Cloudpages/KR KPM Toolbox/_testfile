@@ -1,31 +1,19 @@
 /** @format */
 
-const extractAllValuesBelow = (keyword) => {
+const findCellsContainingAmpLinks = () => {
   let results = [];
 
   for (const cellAddress in sheet) {
-    if (sheet[cellAddress]?.v === keyword) {
-      const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
-      const rowNumber = parseInt(cellAddress.match(/\d+/)[0]); // Extract row number
-
-      // Determine the cell below (increase row number by 1)
-      const belowCellAddress = columnLetter + (rowNumber + 1);
-
-      // Store value if it exists
-      if (sheet[belowCellAddress]) {
-        results.push({
-          address: belowCellAddress,
-          value: sheet[belowCellAddress].v,
-        });
-      }
+    if (sheet[cellAddress]?.v.includes("://amp/")) {
+      results.push({ address: cellAddress, value: sheet[cellAddress].v });
     }
   }
 
   return results.length > 0
     ? results
-    : [{ address: null, value: "Keyword not found" }];
+    : [{ address: null, value: "No matching cells found" }];
 };
 
 // Example usage:
-const campaignNameBelowValues = extractAllValuesBelow("campaign name:");
-console.log("Values below:", campaignNameBelowValues);
+const ampCells = findCellsContainingAmpLinks();
+console.log("Cells containing '://amp/':", ampCells);
