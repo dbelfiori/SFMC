@@ -1,20 +1,31 @@
-const extractCellValueToRight = (keyword) => {
-    for (const cellAddress in sheet) {
-        if (sheet[cellAddress]?.v === keyword) {
-            const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
-            const rowNumber = cellAddress.match(/\d+/)[0]; // Extract row number
+/** @format */
 
-            // Convert column letter to next column (e.g., "B" -> "C")
-            const nextColumnLetter = String.fromCharCode(columnLetter.charCodeAt(0) + 1);
-            const rightCellAddress = nextColumnLetter + rowNumber;
+const extractAllValuesBelow = (keyword) => {
+  let results = [];
 
-            return sheet[rightCellAddress]?.v || "No data found"; // Get the value from the right cell
-        }
+  for (const cellAddress in sheet) {
+    if (sheet[cellAddress]?.v === keyword) {
+      const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
+      const rowNumber = parseInt(cellAddress.match(/\d+/)[0]); // Extract row number
+
+      // Determine the cell below (increase row number by 1)
+      const belowCellAddress = columnLetter + (rowNumber + 1);
+
+      // Store value if it exists
+      if (sheet[belowCellAddress]) {
+        results.push({
+          address: belowCellAddress,
+          value: sheet[belowCellAddress].v,
+        });
+      }
     }
-    return "Keyword not found";
+  }
+
+  return results.length > 0
+    ? results
+    : [{ address: null, value: "Keyword not found" }];
 };
 
 // Example usage:
-const campaignNameValue = extractCellValueToRight("campaign name:");
-console.log("Value to the right:", campaignNameValue);
-
+const campaignNameBelowValues = extractAllValuesBelow("campaign name:");
+console.log("Values below:", campaignNameBelowValues);
