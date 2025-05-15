@@ -1,34 +1,58 @@
-const extractRightColumnUntilEmpty = (keyword) => {
-  let results = [];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMPscript Dynamic Links (Hidden)</title>
+    <style>
+        .duplicate {
+            color: red;
+            font-weight: bold;
+        }
+        #ampLinks {
+            display: none; /* Hide AMPscript output */
+        }
+    </style>
+</head>
+<body>
 
-  for (const cellAddress in sheet) {
-    if (sheet[cellAddress]?.v === keyword) {
-      const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
-      const rowNumber = parseInt(cellAddress.match(/\d+/)[0]); // Extract row number
+    <!-- AMPscript Output, Hidden -->
+    <div id="ampLinks">
+        %%=Concat(lookupRows('YourDataExtension', 'ColumnName', 'Value'),'<br>')=%%
+    </div>
 
-      // Move to the right column
-      const rightColumnLetter = String.fromCharCode(
-        columnLetter.charCodeAt(0) + 1
-      );
-      let currentRow = rowNumber;
+    <div id="linkOutput"></div>
 
-      // Collect values in the right column until an empty cell is encountered
-      while (true) {
-        const rightCellAddress = rightColumnLetter + currentRow;
+    <script>
+        function displayLinks() {
+            let ampLinksDiv = document.getElementById("ampLinks");
+            let rawLinks = ampLinksDiv.innerHTML.trim(); // Get AMPscript-generated content
+            let linksArray = rawLinks.split("<br>").map(link => link.trim()); // Split by line break
+            let outputDiv = document.getElementById("linkOutput");
+            let seenLinks = new Map();
 
-        if (!sheet[rightCellAddress]?.v) break; // Stop if the right cell is empty
+            outputDiv.innerHTML = ""; // Clear previous entries
 
-        results.push(sheet[rightCellAddress].v);
-        currentRow++; // Move down one row
-      }
+            linksArray.forEach(link => {
+                if (link !== "") {
+                    let p = document.createElement("p");
 
-      break; // Stop after processing the first occurrence of keyword
-    }
-  }
+                    // Check for duplicates
+                    if (seenLinks.has(link)) {
+                        p.classList.add("duplicate");
+                    } else {
+                        seenLinks.set(link, true);
+                    }
 
-  return results.length > 0 ? results.join(", ") : "No valid data found";
-};
+                    p.textContent = link;
+                    outputDiv.appendChild(p);
+                }
+            });
+        }
 
-// Example usage:
-document.getElementById("test1").value =
-  extractRightColumnUntilEmpty("Deep Link");
+        // Run function on page load
+        window.onload = displayLinks;
+    </script>
+
+</body>
+</html>
