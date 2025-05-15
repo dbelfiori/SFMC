@@ -1,66 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Show Only Duplicate Links</title>
-    <style>
-        .duplicate {
-            color: red;
-            font-weight: bold;
-        }
-        #ampLinks {
-            display: none; /* Hide AMPscript output */
-        }
-    </style>
-</head>
-<body>
+/** @format */
 
-    <!-- AMPscript Output (Hidden) -->
-    <div id="ampLinks">
-        %%=Concat(lookupRows('YourDataExtension', 'ColumnName', 'Value'), ', ')=%%
-    </div>
+function displayLinks() {
+  let ampLinksDiv = document.getElementById("ampLinks");
+  let rawLinks = ampLinksDiv.innerHTML.trim(); // Get AMPscript output
 
-    <div id="linkOutput"></div>
+  let linksArray = rawLinks.split(" ").map((link) => link.trim()); // Use custom separator
+  let outputDiv = document.getElementById("linkOutput");
+  let linkCounts = new Map();
 
-    <script>
-        function displayLinks() {
-            let ampLinksDiv = document.getElementById("ampLinks");
-            let rawLinks = ampLinksDiv.innerHTML.trim(); // Get AMPscript-generated content
+  outputDiv.innerHTML = ""; // Clear previous entries
 
-            // Ensure JavaScript correctly interprets the output
-            let linksArray = rawLinks.split(", ").map(link => link.trim()); // Split by ", " separator
-            let outputDiv = document.getElementById("linkOutput");
-            let linkCounts = new Map();
+  // Count occurrences of each link
+  linksArray.forEach((link) => {
+    if (link !== "") {
+      linkCounts.set(link, (linkCounts.get(link) || 0) + 1);
+    }
+  });
 
-            outputDiv.innerHTML = ""; // Clear previous entries
+  // Display only duplicates
+  linkCounts.forEach((count, link) => {
+    if (count > 1) {
+      // Only show links that appear more than once
+      let p = document.createElement("p");
+      p.classList.add("duplicate");
+      p.textContent = link;
+      outputDiv.appendChild(p);
+    }
+  });
 
-            // Count occurrences of each link
-            linksArray.forEach(link => {
-                if (link !== "") {
-                    linkCounts.set(link, (linkCounts.get(link) || 0) + 1);
-                }
-            });
+  // If no duplicates exist, inform the user
+  if (outputDiv.innerHTML === "") {
+    outputDiv.innerHTML = "<p>No duplicates found.</p>";
+  }
+}
 
-            // Display only duplicates
-            linkCounts.forEach((count, link) => {
-                if (count > 1) { // Only show links that appear more than once
-                    let p = document.createElement("p");
-                    p.classList.add("duplicate");
-                    p.textContent = link;
-                    outputDiv.appendChild(p);
-                }
-            });
-
-            // If no duplicates exist, inform the user
-            if (outputDiv.innerHTML === "") {
-                outputDiv.innerHTML = "<p>No duplicates found.</p>";
-            }
-        }
-
-        // Run function on page load
-        window.onload = displayLinks;
-    </script>
-
-</body>
-</html>
+// Run function on page load
+window.onload = displayLinks;
