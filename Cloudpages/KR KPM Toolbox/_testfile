@@ -4,7 +4,8 @@ function displayLinks() {
   let ampLinksDiv = document.getElementById("ampLinks");
   let rawLinks = ampLinksDiv.innerHTML.trim(); // Get AMPscript output
 
-  let linksArray = rawLinks.split(" ").map((link) => link.trim()); // Use custom separator
+  // Normalize newline variations (Windows uses \r\n, Unix uses \n)
+  let linksArray = rawLinks.split(/\r?\n/).map((link) => link.trim()); // Split on newlines
   let outputDiv = document.getElementById("linkOutput");
   let linkCounts = new Map();
 
