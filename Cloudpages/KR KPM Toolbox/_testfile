@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMPscript Dynamic Links (Hidden)</title>
+    <title>Show Only Duplicates</title>
     <style>
         .duplicate {
             color: red;
@@ -16,7 +16,7 @@
 </head>
 <body>
 
-    <!-- AMPscript Output, Hidden -->
+    <!-- AMPscript Output (Hidden) -->
     <div id="ampLinks">
         %%=Concat(lookupRows('YourDataExtension', 'ColumnName', 'Value'),'<br>')=%%
     </div>
@@ -29,21 +29,22 @@
             let rawLinks = ampLinksDiv.innerHTML.trim(); // Get AMPscript-generated content
             let linksArray = rawLinks.split("<br>").map(link => link.trim()); // Split by line break
             let outputDiv = document.getElementById("linkOutput");
-            let seenLinks = new Map();
+            let linkCounts = new Map();
 
             outputDiv.innerHTML = ""; // Clear previous entries
 
+            // Count occurrences of each link
             linksArray.forEach(link => {
                 if (link !== "") {
+                    linkCounts.set(link, (linkCounts.get(link) || 0) + 1);
+                }
+            });
+
+            // Display only duplicates
+            linkCounts.forEach((count, link) => {
+                if (count > 1) { // Only show links that appear more than once
                     let p = document.createElement("p");
-
-                    // Check for duplicates
-                    if (seenLinks.has(link)) {
-                        p.classList.add("duplicate");
-                    } else {
-                        seenLinks.set(link, true);
-                    }
-
+                    p.classList.add("duplicate");
                     p.textContent = link;
                     outputDiv.appendChild(p);
                 }
