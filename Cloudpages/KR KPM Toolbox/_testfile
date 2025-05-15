@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Show Only Duplicates</title>
+    <title>Show Only Duplicate Links</title>
     <style>
         .duplicate {
             color: red;
@@ -18,7 +18,7 @@
 
     <!-- AMPscript Output (Hidden) -->
     <div id="ampLinks">
-        %%=Concat(lookupRows('YourDataExtension', 'ColumnName', 'Value'),'<br>')=%%
+        %%=Concat(lookupRows('YourDataExtension', 'ColumnName', 'Value'), ', ')=%%
     </div>
 
     <div id="linkOutput"></div>
@@ -27,7 +27,9 @@
         function displayLinks() {
             let ampLinksDiv = document.getElementById("ampLinks");
             let rawLinks = ampLinksDiv.innerHTML.trim(); // Get AMPscript-generated content
-            let linksArray = rawLinks.split("<br>").map(link => link.trim()); // Split by line break
+
+            // Ensure JavaScript correctly interprets the output
+            let linksArray = rawLinks.split(", ").map(link => link.trim()); // Split by ", " separator
             let outputDiv = document.getElementById("linkOutput");
             let linkCounts = new Map();
 
@@ -49,6 +51,11 @@
                     outputDiv.appendChild(p);
                 }
             });
+
+            // If no duplicates exist, inform the user
+            if (outputDiv.innerHTML === "") {
+                outputDiv.innerHTML = "<p>No duplicates found.</p>";
+            }
         }
 
         // Run function on page load
