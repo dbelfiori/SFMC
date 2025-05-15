@@ -1,13 +1,11 @@
-/** @format */
-
 function displayLinks() {
   let ampLinksDiv = document.getElementById("ampLinks");
   let rawLinks = ampLinksDiv.innerHTML.trim(); // Get AMPscript output
 
-  // Normalize newline variations (Windows uses \r\n, Unix uses \n)
-  let linksArray = rawLinks.split(/\r?\n/).map((link) => link.trim()); // Split on newlines
+  let linksArray = rawLinks.split(/\r?\n/).map((link) => link.trim()); // Split by newlines
   let outputDiv = document.getElementById("linkOutput");
   let linkCounts = new Map();
+  let duplicatesFound = false;
 
   outputDiv.innerHTML = ""; // Clear previous entries
 
@@ -18,19 +16,27 @@ function displayLinks() {
     }
   });
 
-  // Display only duplicates
+  // Create header if duplicates exist
   linkCounts.forEach((count, link) => {
     if (count > 1) {
-      // Only show links that appear more than once
+      if (!duplicatesFound) {
+        let header = document.createElement("p");
+        header.textContent = "Duplicates found:";
+        header.style.fontWeight = "bold"; // Style header
+        outputDiv.appendChild(header);
+        duplicatesFound = true;
+      }
+
       let p = document.createElement("p");
-      p.classList.add("duplicate");
       p.textContent = link;
+      p.style.color = "red"; // Set text color to red
+      p.style.fontWeight = "bold"; // Make text bold
       outputDiv.appendChild(p);
     }
   });
 
   // If no duplicates exist, inform the user
-  if (outputDiv.innerHTML === "") {
+  if (!duplicatesFound) {
     outputDiv.innerHTML = "<p>No duplicates found.</p>";
   }
 }
