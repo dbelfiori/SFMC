@@ -73,10 +73,31 @@ function handleFile(file) {
         ? results
         : [{ address: null, value: "Keyword not found" }];
     };
+    const extractFilteredValuesBelowMultiple = (keywords) => {
+      let results = [];
+  
+      for (const cellAddress in sheet) {
+          if (keywords.includes(sheet[cellAddress]?.v)) { // Check if value matches any keyword
+              const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
+              const rowNumber = parseInt(cellAddress.match(/\d+/)[0]); // Extract row number
+  
+              // Determine the cell below (increase row number by 1)
+              const belowCellAddress = columnLetter + (rowNumber + 1);
+  
+              // Get value and exclude unwanted values
+              const belowValue = sheet[belowCellAddress]?.v || "No data found";
+              if (!["XXX", "XXXXX", "KPM_CampaignName", "No data found"].includes(belowValue)) {
+                  results.push({ address: belowCellAddress, value: belowValue });
+              }
+          }
+      }
+  
+      return results.length > 0 ? results : [{ address: null, value: "Keyword not found" }];
+  };
   
     // Example usage:
     const campaignCodeFilteredValues = extractAllValuesBelow("Campaign Code: (30 Characters or Less)");
-    const campaignVersionFilteredValues = extractFilteredValuesBelow("Version Name:");
+    const campaignVersionFilteredValues = extractFilteredValuesBelowMultiple(["Version Name:", "Version Name"]);
     const campaignNameFilteredValues = extractFilteredValuesBelow("Campaign Name:");
     const campaignDateValues = extractAllValuesBelow("Email Name: (Autopopulated)");
     const campaignSenderProfile = extractAllValuesBelow("Sender Profile:");
