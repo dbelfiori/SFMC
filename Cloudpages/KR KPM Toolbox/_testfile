@@ -1,120 +1,17 @@
-%%=v(@scriptBegin)=%%
-document.addEventListener("DOMContentLoaded", () => {
-    const fileUpload = document.getElementById('fileUpload');
-    const dropArea = document.getElementById('dropArea');
+/** @format */
 
-    fileUpload.addEventListener('change', (e) => handleFile(e.target.files[0]));
-    dropArea.addEventListener('dragover', (e) => e.preventDefault());
-    dropArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        handleFile(e.dataTransfer.files[0]);
-    });
-});
-
-function handleFile(file) {
-    if (!file || !(file instanceof Blob)) {
-        console.error("Invalid file type. Ensure you're uploading an actual Excel file.");
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        const data = new Uint8Array(event.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheetName = workbook.SheetNames[0]; 
-        const sheet = workbook.Sheets[sheetName];
-
-        // Extract values from specific cells
-        const extractAllValuesBelow = (keyword) => {
-            let results = [];
-          
-            for (const cellAddress in sheet) {
-              if (sheet[cellAddress]?.v === keyword) {
-                const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
-                const rowNumber = parseInt(cellAddress.match(/\d+/)[0]); // Extract row number
-          
-                // Determine the cell below (increase row number by 1)
-                const belowCellAddress = columnLetter + (rowNumber + 1);
-          
-                // Store value if it exists
-                if (sheet[belowCellAddress]) {
-                  results.push({
-                    address: belowCellAddress,
-                    value: sheet[belowCellAddress].v,
-                  });
-                }
-              }
-            }
-          
-            return results
-        };
-        
-        /* Extract filtered values from specific cells */
-        const extractFilteredValuesBelow = (keyword) => {
-        let results = [];
-    
-        for (const cellAddress in sheet) {
-            if (sheet[cellAddress]?.v === keyword) {
-                const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
-                const rowNumber = parseInt(cellAddress.match(/\d+/)[0]); // Extract row number
-        
-                // Determine the cell below (increase row number by 1)
-                const belowCellAddress = columnLetter + (rowNumber + 1);
-        
-                // Get value and exclude unwanted values
-                const belowValue = sheet[belowCellAddress]?.v || "No data found";
-                if (belowValue !== "XXX" && belowValue !== "XXXXX" && belowValue !== 'KPM_CampaignName' && belowValue !== "No data found") {
-                results.push({ address: belowCellAddress, value: belowValue });
-                }
-            }
-        }
-    
-        return results.length > 0
-        ? results
-        : [{ address: null, value: "Keyword not found" }];
-    };
-    const extractFilteredValuesBelowMultiple = (keywords) => {
-      let results = [];
-  
-      for (const cellAddress in sheet) {
-          if (keywords.includes(sheet[cellAddress]?.v)) { // Check if value matches any keyword
-              const columnLetter = cellAddress.match(/[A-Z]+/)[0]; // Extract column letter
-              const rowNumber = parseInt(cellAddress.match(/\d+/)[0]); // Extract row number
-  
-              // Determine the cell below (increase row number by 1)
-              const belowCellAddress = columnLetter + (rowNumber + 1);
-  
-              // Get value and exclude unwanted values
-              const belowValue = sheet[belowCellAddress]?.v || "No data found";
-              if (!["XXX", "XXXXX", "KPM_CampaignName", "No data found"].includes(belowValue)) {
-                  results.push({ address: belowCellAddress, value: belowValue });
-              }
-          }
-      }
-  
-      return results.length > 0 ? results : [{ address: null, value: "Keyword not found" }];
-  };
-  
-    // Example usage:
-    const campaignCodeFilteredValues = extractAllValuesBelow("Campaign Code: (30 Characters or Less)");
-    const campaignVersionFilteredValues = extractFilteredValuesBelowMultiple(["Version Name:", "Version Name"]);
-    const campaignNameFilteredValues = extractFilteredValuesBelow("Campaign Name:");
-    const campaignDateValues = extractAllValuesBelow("Email Name: (Autopopulated)");
-    const campaignSenderProfile = extractAllValuesBelow("Sender Profile:");
-    const campaignProcess = extractAllValuesBelow("Process:");
-    const campaignLink = extractAllValuesBelow("URLs:");
-    const campaignManagerFilteredValues = extractFilteredValuesBelow("Kroger Campaign Manager:");
-
-    document.getElementById("create_campaignCode").value = campaignCodeFilteredValues[0]?.value;
-    document.getElementById("create_campaignVersion").value = campaignVersionFilteredValues.map((item) => item.value).join(", ");
-    document.getElementById("create_campaignName").value = campaignNameFilteredValues[0]?.value;
-    document.getElementById("create_campaignDate").value = campaignDateValues.map((item) => item.value).toString().substring(0, 8);
-    document.getElementById("create_campaignProfile").value = (campaignSenderProfile[0]?.value) + " | " + (campaignProcess[0]?.value);
-    document.getElementById("create_campaignLink").value = campaignLink.map((item) => item.value);
-    document.getElementById("create_CampaignManager").value = campaignManagerFilteredValues.map((item) => item.value).join(", ");
-    
-    /* fix 'campaign manager' and 'campaign profile' */
-    };
-    reader.readAsArrayBuffer(file);
+// Function to clean input fields
+function cleanInputFields() {
+  document.querySelectorAll(".form-control").forEach((input) => {
+    input.value = input.value.replace(/\t/g, "").trim();
+  });
 }
-%%=v(@scriptEnd)=%%
+
+// Monitor changes in the input fields
+document.querySelectorAll(".form-control").forEach((input) => {
+  const observer = new MutationObserver(() => {
+    cleanInputFields();
+  });
+
+  observer.observe(input, { attributes: true, childList: true, subtree: true });
+});
