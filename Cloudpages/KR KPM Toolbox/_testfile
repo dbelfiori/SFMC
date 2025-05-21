@@ -1,17 +1,27 @@
-/** @format */
+%%[
+SET @ids = "123,456,789,123,456,101"
+]%%
+<script>
+var ids = "%%=v(@ids)=%%"; // Pull AMPscript variable into JavaScript
+var idsArray = ids.split(","); // Convert to array
+var uniqueIds = [...new Set(idsArray)]; // Remove duplicates
+var deduplicatedString = uniqueIds.join(",");
 
-// Function to clean input fields
-function cleanInputFields() {
-  document.querySelectorAll(".form-control").forEach((input) => {
-    input.value = input.value.replace(/\t/g, "").trim();
-  });
-}
+console.log("Unique IDs:", deduplicatedString); // Debugging output
+</script>
 
-// Monitor changes in the input fields
-document.querySelectorAll(".form-control").forEach((input) => {
-  const observer = new MutationObserver(() => {
-    cleanInputFields();
-  });
 
-  observer.observe(input, { attributes: true, childList: true, subtree: true });
-});
+
+%%[
+SET @ids = "123,456,789,123,456,101"
+]%%
+<script runat="server">
+Platform.Load("Core", "1.1.1");
+
+var ids = Variable.GetValue("@ids"); // Retrieve AMPscript variable
+var idsArray = ids.split(",");
+var uniqueIds = Array.from(new Set(idsArray)); // Remove duplicates
+var deduplicatedString = uniqueIds.join(",");
+
+Write("<p>Unique IDs: " + deduplicatedString + "</p>");
+</script>
