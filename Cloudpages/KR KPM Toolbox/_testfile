@@ -1,27 +1,28 @@
 %%[
-SET @ids = "123,456,789,123,456,101"
+SET @customerIDs = "ABC123,DEF123,GHI123"
+SET @idArray = BuildRowSetFromString(@customerIDs, ",") /* Convert to RowSet */
+SET @totalIDs = RowCount(@idArray)
+
+IF @totalIDs > 0 THEN
+  FOR @i = 1 TO @totalIDs DO
+    SET @idRow = Row(@idArray, @i)
+    SET @customerID = Field(@idRow, "Value") /* Extract individual ID */
+
+    /* Lookup Rows */
+    SET @rows = LookupRows("YourDataExtensionName", "CustomerID", @customerID)
+    SET @rowCount = RowCount(@rows)
+
+    IF @rowCount > 0 THEN
+      FOR @j = 1 TO @rowCount DO
+        SET @row = Row(@rows, @j)
+        SET @Email = Field(@row, "EmailAddress")
+        OUTPUT(CONCAT("<p>Customer ", @customerID, " - Email: ", @Email, "</p>"))
+      NEXT @j
+    ELSE
+      OUTPUT(CONCAT("<p>No data found for ", @customerID, "</p>"))
+    ENDIF
+  NEXT @i
+ELSE
+  OUTPUT("<p>Error: No valid customer IDs provided.</p>")
+ENDIF
 ]%%
-<script>
-var ids = "%%=v(@ids)=%%"; // Pull AMPscript variable into JavaScript
-var idsArray = ids.split(","); // Convert to array
-var uniqueIds = [...new Set(idsArray)]; // Remove duplicates
-var deduplicatedString = uniqueIds.join(",");
-
-console.log("Unique IDs:", deduplicatedString); // Debugging output
-</script>
-
-
-
-%%[
-SET @ids = "123,456,789,123,456,101"
-]%%
-<script runat="server">
-Platform.Load("Core", "1.1.1");
-
-var ids = Variable.GetValue("@ids"); // Retrieve AMPscript variable
-var idsArray = ids.split(",");
-var uniqueIds = Array.from(new Set(idsArray)); // Remove duplicates
-var deduplicatedString = uniqueIds.join(",");
-
-Write("<p>Unique IDs: " + deduplicatedString + "</p>");
-</script>
