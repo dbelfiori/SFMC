@@ -1,144 +1,78 @@
-<style>
-#FoundCCID, #MissingCCID {font-size:12px;}
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabbed Navigation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+        }
+        nav {
+            width: 200px;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #333;
+            cursor: pointer;
+        }
+        .content {
+            display: none; /* Hide all content sections initially */
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .content.active {
+            display: block; /* Show only the active content */
+        }
+    </style>
+</head>
+<body>
 
-<h3 class="mt-4" style="font-size: 1.3rem; text-align: center;">CCID Validator</h3>
-<div class="container mt-4" style="max-width: 700px;">
-    <form action="%%=RequestParameter('PAGEURL')=%%" method="post">
-        <div class="mb-3">
-            <label class="form-label" for="form_campaignCode">Campaign Code<span style="color:red;">*</span></label>
-            <input id="form_campaignCode" class="form-control" type="text" name="form_campaignCode" required>
-        </div>
-        
-        <input name="submitted" type="hidden" value="true">
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
+    <nav>
+        <ul>
+            <li><a href="#" class="nav-link" data-target="home">Home</a></li>
+            <li><a href="#" class="nav-link" data-target="about">About</a></li>
+            <li><a href="#" class="nav-link" data-target="contact">Contact</a></li>
+        </ul>
+    </nav>
 
-%%[
-set @CMP_rows = LookupRows("DB_CampaignSummary","CampaignCode", @form_campaignCode)
-SET @CMP_rowcount = RowCount(@CMP_rows)
+    <section id="home" class="content active"> <!-- Default active section -->
+        <h2>Home</h2>
+        <p>Welcome to the homepage!</p>
+    </section>
+    <section id="about" class="content">
+        <h2>About Us</h2>
+        <p>Learn more about us here.</p>
+    </section>
+    <section id="contact" class="content">
+        <h2>Contact</h2>
+        <p>Get in touch with us!</p>
+    </section>
 
-IF @CMP_rowcount > 0 THEN
-    FOR @i = 1 to @CMP_rowcount do
-    SET @CMP_row = Row (@CMP_rows, @i)
-    SET @DeployDate = Field(@CMP_row, "DeployDate")
-    SET @CampaignCode = Field(@CMP_row, "CampaignCode")
-    SET @CampaignName = Field(@CMP_row, "CampaignName")
-    NEXT @i
-ENDIF
+    <script>
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default navigation
+                const targetId = this.dataset.target; // Get target content ID
+                
+                document.querySelectorAll('.content').forEach(content => {
+                    content.classList.remove('active'); // Hide all sections
+                });
 
-set @de_lookup = Concat(@DeployDate,"_",@CampaignCode,"_",@CampaignName,"_DATA_PROOF")
-set @CMP_rows = LookupRows(@de_lookup,"CAMPAIGN_CODE", @form_campaignCode)
-SET @CMP_rowcount = RowCount(@CMP_rows)
+                document.getElementById(targetId).classList.add('active'); // Show the clicked section
+            });
+        });
+    </script>
 
-IF @CMP_rowcount > 0 THEN
-FOR @i = 1 to @CMP_rowcount do
-SET @CMP_row = Row (@CMP_rows, @i)
-  SET @CCID_1 = Field(@CMP_row, "CCID_1")
-  SET @CCID_2 = Field(@CMP_row, "CCID_2")
-  SET @CCID_3 = Field(@CMP_row, "CCID_3")
-  SET @CCID_4 = Field(@CMP_row, "CCID_4")
-  SET @CCID_5 = Field(@CMP_row, "CCID_5")
-  SET @CCID_6 = Field(@CMP_row, "CCID_6")
-  SET @CCID_7 = Field(@CMP_row, "CCID_7")
-  SET @CCID_8 = Field(@CMP_row, "CCID_8")
-  SET @CCID_9 = Field(@CMP_row, "CCID_9")
-  SET @CCID_10 = Field(@CMP_row, "CCID_10")
-  SET @CCID_11 = Field(@CMP_row, "CCID_11")
-  SET @CCID_12 = Field(@CMP_row, "CCID_12")
-  SET @CCID_13 = Field(@CMP_row, "CCID_13")
-  SET @CCID_14 = Field(@CMP_row, "CCID_14")
-  SET @CCID_15 = Field(@CMP_row, "CCID_15")
-  SET @CCID_16 = Field(@CMP_row, "CCID_16")
-  SET @CCID_17 = Field(@CMP_row, "CCID_17")
-  SET @CCID_18 = Field(@CMP_row, "CCID_18")
-  SET @CCID_19 = Field(@CMP_row, "CCID_19")
-  SET @CCID_20 = Field(@CMP_row, "CCID_20")
-  SET @CCID_21 = Field(@CMP_row, "CCID_21")
-  SET @CCID_22 = Field(@CMP_row, "CCID_22")
-  SET @CCID_23 = Field(@CMP_row, "CCID_23")
-  SET @CCID_24 = Field(@CMP_row, "CCID_24")
-  SET @CCID_25 = Field(@CMP_row, "CCID_25")
-  SET @CCID_26 = Field(@CMP_row, "CCID_26")
-  SET @CCID_27 = Field(@CMP_row, "CCID_27")
-  SET @CCID_28 = Field(@CMP_row, "CCID_28")
-  SET @CCID_29 = Field(@CMP_row, "CCID_29")
-  SET @CCID_30 = Field(@CMP_row, "CCID_30")
-  SET @CCID_31 = Field(@CMP_row, "CCID_31")
-  SET @CCID_32 = Field(@CMP_row, "CCID_32")
-  SET @CCID_33 = Field(@CMP_row, "CCID_33")
-  SET @CCID_34 = Field(@CMP_row, "CCID_34")
-  SET @CCID_35 = Field(@CMP_row, "CCID_35")
-  SET @CCID_36 = Field(@CMP_row, "CCID_36")
-  SET @CCID_37 = Field(@CMP_row, "CCID_37")
-  SET @CCID_38 = Field(@CMP_row, "CCID_38")
-  SET @CCID_39 = Field(@CMP_row, "CCID_39")
-  SET @CCID_40 = Field(@CMP_row, "CCID_40")
-  
-  IF EMPTY(@final_CCID) THEN
-    SET @final_CCID = Concat(@CCID_1, ",", @CCID_2, ",", @CCID_3, ",", @CCID_4, ",", @CCID_5, ",", @CCID_6, ",", @CCID_7, ",", @CCID_8, ",", @CCID_9, ",", @CCID_10, ",", @CCID_11, ",", @CCID_12, ",", @CCID_13, ",", @CCID_14, ",", @CCID_15, ",", @CCID_16, ",", @CCID_17, ",", @CCID_18, ",", @CCID_19, ",", @CCID_20, ",", @CCID_21, ",", @CCID_22, ",", @CCID_23, ",", @CCID_24, ",", @CCID_25, ",", @CCID_26, ",", @CCID_27, ",", @CCID_28, ",", @CCID_29, ",", @CCID_30, ",", @CCID_31, ",", @CCID_32, ",", @CCID_33, ",", @CCID_34, ",", @CCID_35, ",", @CCID_36, ",", @CCID_37, ",", @CCID_38, ",", @CCID_39, ",", @CCID_40 )
-  ELSE
-    SET @final_CCID = Concat(@final_CCID, ",", @CCID_1, ",", @CCID_2, ",", @CCID_3, ",", @CCID_4, ",", @CCID_5, ",", @CCID_6, ",", @CCID_7, ",", @CCID_8, ",", @CCID_9, ",", @CCID_10, ",", @CCID_11, ",", @CCID_12, ",", @CCID_13, ",", @CCID_14, ",", @CCID_15, ",", @CCID_16, ",", @CCID_17, ",", @CCID_18, ",", @CCID_19, ",", @CCID_20, ",", @CCID_21, ",", @CCID_22, ",", @CCID_23, ",", @CCID_24, ",", @CCID_25, ",", @CCID_26, ",", @CCID_27, ",", @CCID_28, ",", @CCID_29, ",", @CCID_30, ",", @CCID_31, ",", @CCID_32, ",", @CCID_33, ",", @CCID_34, ",", @CCID_35, ",", @CCID_36, ",", @CCID_37, ",", @CCID_38, ",", @CCID_39, ",", @CCID_40)
-  ENDIF
-]%%
-
-%%[NEXT @i ENDIF
-
-SET @idArray = BuildRowSetFromString(@final_CCID, ",") /* Convert to RowSet */
-SET @totalIDs = RowCount(@idArray)
-
-IF @totalIDs > 0 THEN
-  FOR @i = 1 TO @totalIDs DO
-    SET @idRow = Row(@idArray, @i)
-    SET @validateCCID = Field(@idRow, "Value") /* Extract individual ID */
-
-    /* Lookup Rows */
-    SET @rows = LookupRows("KrogerBCCOfferMetadata", "CCID", @validateCCID)
-    SET @rowCount = RowCount(@rows)
-
-    IF @rowCount > 0 THEN
-      FOR @j = 1 TO @rowCount DO
-        SET @row = Row(@rows, @j)
-        SET @value1 = Field(@row, "Value")
-        IF EMPTY(@foundCCIDs) THEN
-        SET @foundCCIDs = Concat(@validateCCID)
-        ELSE
-        SET @foundCCIDs = Concat(@foundCCIDs,", ", @validateCCID)
-        ENDIF
-      NEXT @j
-    ELSE
-      IF EMPTY(@missingCCIDs) THEN
-      SET @missingCCIDs = Concat(@validateCCID)
-      ELSE
-      SET @missingCCIDs = Concat(@missingCCIDs,", ", @validateCCID)
-      ENDIF
-    ENDIF
-  NEXT @i
-ELSE
-  OUTPUT("<p>Error: No valid customer IDs provided.</p>")
-ENDIF
-
-]%%
-
-%%[IF RequestParameter("submitted") == 'true' THEN]%%
-<h3>Found CCID's</h3>
-<div id="FoundCCID"></div>
-
-<h3>Missing CCID's</h3>
-<div id="MissingCCID"></div>
-%%[ENDIF]%%
-
-%%=v(@scriptBegin)=%%
-var m_ids = "%%=v(@missingCCIDs)=%%"; 
-var f_ids = "%%=v(@foundCCIDs)=%%"; 
-var m_idsArray = m_ids.split(","); //
-var f_idsArray = f_ids.split(","); //
-var m_uniqueIds = [...new Set(m_idsArray)];
-var f_uniqueIds = [...new Set(f_idsArray)];
-var m_deduplicatedString = m_uniqueIds.join(",");
-var f_deduplicatedString = f_uniqueIds.join(",");
-
-document.getElementById("FoundCCID").innerHTML = f_deduplicatedString;
-document.getElementById("MissingCCID").innerHTML = m_deduplicatedString;
-%%=v(@scriptEnd)=%%
+</body>
+</html>
