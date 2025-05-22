@@ -3,76 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabbed Navigation</title>
+    <title>Scrollable Table with Alternating Row Colors</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
+        .scrollable-div {
+            width: 30%;
+            height: 400px; /* Set the desired height */
+            overflow: auto; /* Enables both horizontal and vertical scrolling */
+            border: 1px solid #ccc; /* Optional: adds a border */
+            box-shadow: 0 0 8px rgba(142, 211, 250, 0.35);
         }
-        nav {
-            width: 200px;
-            padding: 20px;
-            background: #f4f4f4;
+
+        table {
+            width: 800px; /* Makes sure the table extends beyond the div */
+            border-collapse: collapse;
         }
-        ul {
-            list-style: none;
-            padding: 0;
+
+        th, td {
+            border: 0 solid #ddd;
+            padding: 8px;
+            text-align: left;
         }
-        li {
-            margin: 10px 0;
+
+        th {
+            background-color: #0f52a2;
+            color:#ffffff;
         }
-        a {
-            text-decoration: none;
-            color: #333;
-            cursor: pointer;
+
+        /* Alternate row colors */
+        tr:nth-child(even) {
+            background-color: #ffffff;
         }
-        .content {
-            display: none; /* Hide all content sections initially */
-            flex-grow: 1;
-            padding: 20px;
-        }
-        .content.active {
-            display: block; /* Show only the active content */
+
+        tr:nth-child(odd) {
+            background-color: #f5f6fa;
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <ul>
-            <li><a href="#" class="nav-link" data-target="home">Home</a></li>
-            <li><a href="#" class="nav-link" data-target="about">About</a></li>
-            <li><a href="#" class="nav-link" data-target="contact">Contact</a></li>
-        </ul>
-    </nav>
-
-    <section id="home" class="content active"> <!-- Default active section -->
-        <h2>Home</h2>
-        <p>Welcome to the homepage!</p>
-    </section>
-    <section id="about" class="content">
-        <h2>About Us</h2>
-        <p>Learn more about us here.</p>
-    </section>
-    <section id="contact" class="content">
-        <h2>Contact</h2>
-        <p>Get in touch with us!</p>
-    </section>
-
-    <script>
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default navigation
-                const targetId = this.dataset.target; // Get target content ID
-                
-                document.querySelectorAll('.content').forEach(content => {
-                    content.classList.remove('active'); // Hide all sections
-                });
-
-                document.getElementById(targetId).classList.add('active'); // Show the clicked section
-            });
-        });
-    </script>
+    <h2>Scrollable Table with Alternating Row Colors</h2>
+    <div class="scrollable-div">
+        <table>
+            <tr>
+                <th>Header 1</th>
+                <th>Header 2</th>
+                <th>Header 3</th>
+                <th>Header 4</th>
+            </tr>
+            <tr>
+                <td>Data 1</td>
+                <td>Data 2</td>
+                <td>Data 3</td>
+                <td>Data 4</td>
+            </tr>
+            <tr>
+                <td>Data 5</td>
+                <td>Data 6</td>
+                <td>Data 7</td>
+                <td>Data 8</td>
+            </tr>
+            <tr>
+                <td>Data 9</td>
+                <td>Data 10</td>
+                <td>Data 11</td>
+                <td>Data 12</td>
+            </tr>
+        </table>
+    </div>
 
 </body>
 </html>
