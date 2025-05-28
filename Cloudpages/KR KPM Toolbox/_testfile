@@ -1,75 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scrollable Table with Alternating Row Colors</title>
-    <style>
-        .scrollable-div {
-            width: 30%;
-            height: 400px; /* Set the desired height */
-            overflow: auto; /* Enables both horizontal and vertical scrolling */
-            border: 1px solid #ccc; /* Optional: adds a border */
-            box-shadow: 0 0 8px rgba(142, 211, 250, 0.35);
+%%[
+    SET @deName = "1234_test"
+    ]%%
+    
+    <script runat="server">
+    Platform.Load("Core", "1.1.1");
+    
+    // Get the AMPscript variable
+    var deName = Variable.GetValue("@deName");
+    var deExists = false;
+    
+    try {
+        var deList = Platform.Function.GetList("DataExtension");
+        for (var i = 0; i < deList.length; i++) {
+            if (deList[i].Name == deName) {
+                deExists = true;
+                break;
+            }
         }
+    } catch (e) {
+        Write("Error checking Data Extension: " + String(e));
+    }
+    
+    if (deExists) {
+        Write("Success! The Data Extension '" + deName + "' exists.");
+    } else {
+        Write("Error: The Data Extension '" + deName + "' does not exist.");
+    }
+    </script>
 
-        table {
-            width: 800px; /* Makes sure the table extends beyond the div */
-            border-collapse: collapse;
+
+
+
+
+
+
+
+
+
+
+
+%%[
+    SET @deName = "1234_test"
+    ]%%
+    <script runat="server">
+    Platform.Load("Core", "1.1.1");
+    
+    // Get the AMPscript variable
+    var deName = Variable.GetValue("@deName");
+    var deExists = false;
+    var ftpFolder = "/Import/";
+    var fileName = "your-file.csv";
+    var fileExists = false;
+    
+    try {
+        var deList = Platform.Function.GetList("DataExtension");
+        for (var i = 0; i < deList.length; i++) {
+            if (deList[i].Name == deName) {
+                deExists = true;
+                break;
+            }
         }
-
-        th, td {
-            border: 0 solid #ddd;
-            padding: 8px;
-            text-align: left;
+    } catch (e) {
+        Write("Error checking Data Extension: " + String(e));
+    }
+    
+    if (!deExists) {
+        try {
+            var fileList = Platform.Function.List(ftpFolder);
+            for (var i = 0; i < fileList.length; i++) {
+                if (fileList[i].Name == fileName) {
+                    fileExists = true;
+                    break;
+                }
+            }
+        } catch (e) {
+            Write("Error checking FTP: " + String(e));
         }
-
-        th {
-            background-color: #0f52a2;
-            color:#ffffff;
-        }
-
-        /* Alternate row colors */
-        tr:nth-child(even) {
-            background-color: #ffffff;
-        }
-
-        tr:nth-child(odd) {
-            background-color: #f5f6fa;
-        }
-    </style>
-</head>
-<body>
-
-    <h2>Scrollable Table with Alternating Row Colors</h2>
-    <div class="scrollable-div">
-        <table>
-            <tr>
-                <th>Header 1</th>
-                <th>Header 2</th>
-                <th>Header 3</th>
-                <th>Header 4</th>
-            </tr>
-            <tr>
-                <td>Data 1</td>
-                <td>Data 2</td>
-                <td>Data 3</td>
-                <td>Data 4</td>
-            </tr>
-            <tr>
-                <td>Data 5</td>
-                <td>Data 6</td>
-                <td>Data 7</td>
-                <td>Data 8</td>
-            </tr>
-            <tr>
-                <td>Data 9</td>
-                <td>Data 10</td>
-                <td>Data 11</td>
-                <td>Data 12</td>
-            </tr>
-        </table>
-    </div>
-
-</body>
-</html>
+    }
+    
+    if (deExists) {
+        Write("Success! The Data Extension '" + deName + "' exists.");
+    } else if (fileExists) {
+        Write("The Data Extension does not exist, but the file '" + fileName + "' is present in FTP.");
+    } else {
+        Write("Neither the Data Extension nor the file exists.");
+    }
+    </script>
