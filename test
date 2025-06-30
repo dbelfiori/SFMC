@@ -1,57 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Automation Folder Path Lookup</title>
-</head>
-<body>
-    <h1>Automation Folder Path Lookup</h1>
-    <form method="get">
-        <label for="automationName">Enter Automation Name:</label>
-        <input type="text" id="automationName" name="automationName" required>
-        <input type="submit" value="Lookup">
-    </form>
-
-    <h2>Folder Path: <span id="folderPath" style="font-weight: 300;"></span></h2>
-
-    <script runat="server">
-        Platform.Load("Core", "1");
-        var api = new Script.Util.WSProxy();
-
-        function getFolderPath(categoryId) {
-            var path = '';
-            var folder = api.retrieve("DataFolder", ["ID", "Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: categoryId });
-            if (folder && folder.Results && folder.Results.length > 0) {
-                var currentFolder = folder.Results[0];
-                while (currentFolder) {
-                    path = currentFolder.Name + '/' + path;
-                    if (currentFolder.ParentFolder && currentFolder.ParentFolder.ID) {
-                        currentFolder = api.retrieve("DataFolder", ["ID", "Name", "ParentFolder.ID"], { Property: "ID", SimpleOperator: "equals", Value: currentFolder.ParentFolder.ID }).Results[0];
-                    } else {
-                        currentFolder = null;
-                    }
-                }
+<script runat="server">
+    Platform.Load("Core", "1.1");
+    
+    var fileName = "your-file-name.csv"; // Replace with your dynamic filename
+    var ftpFolder = "/Import"; // Adjust to your FTP directory
+    var fullPath = ftpFolder + "/" + fileName;
+    
+    try {
+        var file = Platform.Function.File;
+        var fileList = file.List(ftpFolder);
+    
+        var fileExists = false;
+        for (var i = 0; i < fileList.length; i++) {
+            if (fileList[i].Name == fileName) {
+                fileExists = true;
+                break;
             }
-            return path;
         }
-
-        try {
-            var automationName = Request.GetQueryStringParameter("automationName");
-            if (automationName) {
-                var filter = { Property: "Name", SimpleOperator: "equals", Value: automationName };
-                var automations = api.retrieve("Automation", ["Name", "CategoryID"], filter);
-                if (automations && automations.Results && automations.Results.length > 0) {
-                    var categoryId = automations.Results[0].CategoryID;
-                    var folderPath = getFolderPath(categoryId);
-                    Write('<script>document.getElementById("folderPath").innerText = "' + folderPath + '";</script>');
-                } else {
-                    Write('<script>document.getElementById("folderPath").innerText = "Automation not found";</script>');
-                }
-            }
-        } catch (err) {
-            Write('<script>document.getElementById("folderPath").innerText = "Error: ' + Stringify(err) + '";</script>');
+    
+        if (fileExists) {
+            Write("✅ File exists: " + fullPath);
+        } else {
+            Write("❌ File not found: " + fullPath);
         }
+    } catch (e) {
+        Write("⚠️ Error checking FTP: " + Stringify(e));
+    }
     </script>
-</body>
-</html>
