@@ -2,23 +2,21 @@
 Platform.Load("Core", "1.1");
 
 var fileName = "your-file.csv";
-var folderPath = "/Import"; // Use "/" for root if unsure
-var fileExists = false;
+var filter = {
+  Property: "Name",
+  SimpleOperator: "equals",
+  Value: fileName
+};
 
 try {
-    var fileList = Platform.Function.File.List(folderPath);
+    var fileResult = Platform.Function.File.Retrieve(filter);
 
-    if (fileList && fileList.length > 0) {
-        for (var i = 0; i < fileList.length; i++) {
-            if (fileList[i].Name == fileName) {
-                fileExists = true;
-                break;
-            }
-        }
+    if (fileResult && fileResult.length > 0) {
+        Write("✅ File exists: " + fileName);
+    } else {
+        Write("❌ File not found: " + fileName);
     }
-
-    Write("File exists: " + fileExists);
 } catch (e) {
-    Write("⚠️ Error: " + Stringify(e));
+    Write("⚠️ Error using File.Retrieve: " + Stringify(e));
 }
 </script>
