@@ -1,22 +1,4 @@
 <script runat="server">
 Platform.Load("Core", "1.1");
-
-var fileName = "your-file.csv";
-var filter = {
-  Property: "Name",
-  SimpleOperator: "equals",
-  Value: fileName
-};
-
-try {
-    var fileResult = Platform.Function.File.Retrieve(filter);
-
-    if (fileResult && fileResult.length > 0) {
-        Write("✅ File exists: " + fileName);
-    } else {
-        Write("❌ File not found: " + fileName);
-    }
-} catch (e) {
-    Write("⚠️ Error using File.Retrieve: " + Stringify(e));
-}
+Write("Available File methods: " + Stringify(Object.keys(Platform.Function.File)));
 </script>
