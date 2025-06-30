@@ -1,28 +1,24 @@
 <script runat="server">
-    Platform.Load("Core", "1.1");
-    
-    var fileName = "your-file.csv";
-    var ftpFolder = "/Import"; // or "/" for root
-    var fileExists = false;
-    
-    try {
-        var fileList = Platform.Function.File.List(ftpFolder);
-    
-        if (fileList && fileList.length > 0) {
-            for (var i = 0; i < fileList.length; i++) {
-                if (fileList[i].Name == fileName) {
-                    fileExists = true;
-                    break;
-                }
+Platform.Load("Core", "1.1");
+
+var fileName = "your-file.csv";
+var folderPath = "/Import"; // Use "/" for root if unsure
+var fileExists = false;
+
+try {
+    var fileList = Platform.Function.File.List(folderPath);
+
+    if (fileList && fileList.length > 0) {
+        for (var i = 0; i < fileList.length; i++) {
+            if (fileList[i].Name == fileName) {
+                fileExists = true;
+                break;
             }
         }
-    
-        if (fileExists) {
-            Write("✅ File exists: " + fileName);
-        } else {
-            Write("❌ File not found: " + fileName);
-        }
-    } catch (e) {
-        Write("⚠️ Error: " + Stringify(e));
     }
-    </script>
+
+    Write("File exists: " + fileExists);
+} catch (e) {
+    Write("⚠️ Error: " + Stringify(e));
+}
+</script>
