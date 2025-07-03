@@ -1,16 +1,22 @@
+%%[
+SET @run_DE2DE = RequestParameter("run")
+]%%
+
+<a class="button-link" href="%%=RedirectTo(Concat(CloudPagesURL(12345),'?run=true'))=%%">Run Transfer</a>
+
 <script runat="server">
-Platform.Load("Core","1");
+Platform.Load("Core", "1");
 
-// Source and Target DEs
-var sourceDE = DataExtension.Init("SOURCE_DE_NAME");
-var targetDE = DataExtension.Init("TARGET_DE_NAME");
+var run_DE2DE = Request.GetQueryStringParameter("run");
 
-// Retrieve rows from source
-var rows = sourceDE.Rows.Retrieve();
+if (run_DE2DE == "true") {
+  var sourceDE = DataExtension.Init("SOURCE_DE_NAME");
+  var targetDE = DataExtension.Init("TARGET_DE_NAME");
+  var rows = sourceDE.Rows.Retrieve();
 
-// Loop and insert into target
-for (var i = 0; i < rows.length; i++) {
-  var row = rows[i];
-  targetDE.Rows.Add(row);
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    targetDE.Rows.Add(row);
+  }
 }
 </script>
