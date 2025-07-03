@@ -1,21 +1,26 @@
-%%[
-SET @run_DE2DE = RequestParameter("run")
-]%%
-
-<a class="button-link" href="%%=RedirectTo(Concat(CloudPagesURL(12345),'?run=true'))=%%">Run Transfer</a>
-
 <script runat="server">
 Platform.Load("Core", "1");
 
-var run_DE2DE = Request.GetQueryStringParameter("run");
+// Define DEs
+var sourceDE = DataExtension.Init("SOURCE_DE_NAME");
+var targetDE = DataExtension.Init("TARGET_DE_NAME");
 
-if (run_DE2DE == "true") {
-  var sourceDE = DataExtension.Init("SOURCE_DE_NAME");
-  var targetDE = DataExtension.Init("TARGET_DE_NAME");
-  var rows = sourceDE.Rows.Retrieve();
+// Retrieve all rows from source
+var rows = sourceDE.Rows.Retrieve();
 
-  for (var i = 0; i < rows.length; i++) {
-    var row = rows[i];
+// Loop through each row
+for (var i = 0; i < rows.length; i++) {
+  var row = rows[i];
+  var emailKey = row["EmailAddress"]; // 🔑 Replace with your primary key field
+
+  // Check if row exists in targetDE
+  var exists = targetDE.Rows.Lookup(["EmailAddress"], [emailKey]);
+
+  if (exists) {
+    // Update existing row
+    targetDE.Rows.Update(row, ["EmailAddress"]);
+  } else {
+    // Add new row
     targetDE.Rows.Add(row);
   }
 }
