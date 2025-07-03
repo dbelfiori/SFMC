@@ -1,4 +1,16 @@
 <script runat="server">
-Platform.Load("Core", "1.1");
-Write("Available File methods: " + Stringify(Object.keys(Platform.Function.File)));
+Platform.Load("Core","1");
+
+// Source and Target DEs
+var sourceDE = DataExtension.Init("SOURCE_DE_NAME");
+var targetDE = DataExtension.Init("TARGET_DE_NAME");
+
+// Retrieve rows from source
+var rows = sourceDE.Rows.Retrieve();
+
+// Loop and insert into target
+for (var i = 0; i < rows.length; i++) {
+  var row = rows[i];
+  targetDE.Rows.Add(row);
+}
 </script>
